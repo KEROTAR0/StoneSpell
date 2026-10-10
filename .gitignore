@@ -19,7 +19,7 @@ Assets/Sprites/
 # Visual Studio / Rider
 .vs/
 .idea/
-.csproj
+*.csproj
 *.sln
 *.user
 *.userprefs
