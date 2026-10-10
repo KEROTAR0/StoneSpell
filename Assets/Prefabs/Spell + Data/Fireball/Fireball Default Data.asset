@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Fireball Default Data
+  m_EditorClassIdentifier: Assembly-CSharp::D_Spell
+  spellName: Fireball
+  spellIcon: {fileID: -2754850766384764900, guid: 52bf32cc5b0cc7246a02b05c5d4484b6, type: 3}
+  manaCost: 1
+  lifeTime: 5
+  castingTime: 0.3
+  cooldown: 0.1
+  isSelfTargeted: 0
+  isPermanentPassive: 0
+  isSpawnAtMouse: 0
+  maxCastRange: 8
+  isPenetrating: 0
+  isLaser: 0
+  acceleration: 10
+  laserMaxLength: 10
+  laserWidth: 1
+  isProjectile: 1
+  moveSpeed: 4
+  maxBounces: 0
+  isRotating: 0
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 0
+  impactVFX: {fileID: 6300947510988114241, guid: d981ed91604b35a4cb5b68eb3a313789, type: 3}
+  canBlock: 0
+  maxBlocks: 0
+  canReflect: 0
+  hasAura: 0
+  auraCheckRadius: 3
+  auraTickRate: 0.5
+  hitEffects:
+  - {fileID: 11400000, guid: 543b7bfcf1411fd439c6600769b18aae, type: 2}

@@ -1,0 +1,16 @@
+{
+    "name": "PackageToolsEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a32b3bca0528d4d47bdd26761222fe2b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,44 @@
+# Unity generated folders
+[Ll]ibrary/
+[Ll]ibrary_old/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+# Ignore Sprites folder
+Assets/Sprites/
+
+# Memory captures
+[Mm]emoryCaptures/
+
+# Asset import settings
+/Assets/[Aa]ssets/[Ss]treamingAssets/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+.csproj
+*.sln
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Crash reports
+sysinfo.txt
+
+# Unity generated metadata
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Build files
+*.apk
+*.aab
+*.unitypackage

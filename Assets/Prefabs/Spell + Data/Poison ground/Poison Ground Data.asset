@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Poison Ground Data
+  m_EditorClassIdentifier: Assembly-CSharp::D_Spell
+  spellName: Poison Ground
+  spellIcon: {fileID: -5726938272343101628, guid: fc3f3008415766b479f8ac5434c22859, type: 3}
+  manaCost: 10
+  lifeTime: 10
+  castingTime: 0.3
+  cooldown: 10
+  isSelfTargeted: 0
+  isPermanentPassive: 0
+  isSpawnAtMouse: 1
+  maxCastRange: 6
+  isPenetrating: 0
+  isLaser: 0
+  acceleration: 10
+  laserMaxLength: 10
+  laserWidth: 1
+  isProjectile: 0
+  moveSpeed: 15
+  maxBounces: 0
+  isRotating: 1
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 1
+  impactVFX: {fileID: 0}
+  canBlock: 0
+  maxBlocks: 3
+  canReflect: 0
+  hasAura: 1
+  auraCheckRadius: 5
+  auraTickRate: 0.5
+  hitEffects:
+  - {fileID: 11400000, guid: b9ec45c62de72e941a3af970db87a8b3, type: 2}
+  - {fileID: 11400000, guid: f69eaebcbac576c4aa978f87b5facc93, type: 2}

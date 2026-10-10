@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Bolt Data
+  m_EditorClassIdentifier: Assembly-CSharp::D_Spell
+  spellName: Bolt
+  spellIcon: {fileID: -7068270789321512278, guid: f351f58ae74d78d49b65a59472cec851, type: 3}
+  manaCost: 1
+  lifeTime: 0.27
+  castingTime: 0.1
+  cooldown: 1
+  isSelfTargeted: 0
+  isPermanentPassive: 0
+  isSpawnAtMouse: 0
+  maxCastRange: 8
+  isPenetrating: 1
+  isLaser: 1
+  acceleration: 0
+  laserMaxLength: 0
+  laserWidth: 1
+  isProjectile: 0
+  moveSpeed: 0
+  maxBounces: 0
+  isRotating: 0
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 0
+  impactVFX: {fileID: 0}
+  canBlock: 0
+  maxBlocks: 3
+  canReflect: 0
+  hasAura: 0
+  auraCheckRadius: 3
+  auraTickRate: 0.5
+  hitEffects:
+  - {fileID: 11400000, guid: 3d9758cd87227f349bfac1813fcf68ed, type: 2}
+  - {fileID: 11400000, guid: 6c538a308e4a8404f9b39d6fcfda598f, type: 2}

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Shuriken Data
+  m_EditorClassIdentifier: Assembly-CSharp::D_Spell
+  spellName: Electric Ball
+  spellIcon: {fileID: 7485676631222198405, guid: f2001ccc634000f4c933ca69cce68fc7, type: 3}
+  manaCost: 1
+  lifeTime: 8
+  castingTime: 1
+  cooldown: 1
+  isSelfTargeted: 0
+  isPermanentPassive: 0
+  isSpawnAtMouse: 1
+  maxCastRange: 8
+  isPenetrating: 0
+  isLaser: 0
+  acceleration: 10
+  laserMaxLength: 10
+  laserWidth: 1
+  isProjectile: 0
+  moveSpeed: 0.5
+  maxBounces: 0
+  isRotating: 1
+  rotationSpeed: 720
+  isPassThroughtHighObstacle: 1
+  impactVFX: {fileID: 7817449403422615033, guid: 55dfd287e30b28e458874e661717e8e2, type: 3}
+  canBlock: 0
+  maxBlocks: 3
+  canReflect: 0
+  hasAura: 1
+  auraCheckRadius: 1
+  auraTickRate: 0.25
+  hitEffects:
+  - {fileID: 11400000, guid: 9d6fe926e1a1b0f41841b10b02bf6c81, type: 2}
+  - {fileID: 11400000, guid: 85e9f420614aa3f4286b109efee7a297, type: 2}
+  - {fileID: 11400000, guid: fde56fd7ba75aa64abc452fbe88ba052, type: 2}

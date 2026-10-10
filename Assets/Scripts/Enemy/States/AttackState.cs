@@ -1,0 +1,46 @@
+using UnityEngine;
+
+public class AttackState : State
+{
+    protected bool isAnimationFinished;
+    protected bool isAttacking;
+
+    public AttackState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
+        : base(entity, stateMachine, animBoolName)
+    {
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        isAnimationFinished = false;
+        isAttacking = false;
+        
+        entity.StopMovement(); 
+    }
+    public override void LogicUpdate()
+    {
+        base.LogicUpdate();
+        
+        if (isAnimationFinished)
+        {
+            entity.ReturnToDefaultState();
+        }
+    }
+    public override void Exit()
+    {
+        base.Exit();  
+    }
+    // Animation Event
+    public override void TriggerAttack()
+    {
+        base.TriggerAttack();
+        isAttacking = true;
+    }
+
+    public override void FinishAttack()
+    {
+        base.FinishAttack();
+        isAnimationFinished = true;
+    }
+}
