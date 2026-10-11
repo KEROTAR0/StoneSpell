@@ -9,7 +9,6 @@ public class D_Entity : ScriptableObject
     public float stunRecoveryTime = 2f;
     public float stunVFXPrefabHeight = 0.25f;
     public float shortRangeAction = 1f;
-    public LayerMask playerLayer;
 
     [Header("Idle State")]
     public float minIdleTime = 1f;
@@ -24,7 +23,6 @@ public class D_Entity : ScriptableObject
     public float patrolRadius = 8f;
     public float visionRange = 7f;
     public float visionAngle = 90f;
-    public LayerMask visionBlockLayer; // Gắn layer Tường/Vật cản để không nhìn xuyên tường
 
     [Header("Dodge Settings")]
     public bool canDodge = false;
@@ -35,7 +33,6 @@ public class D_Entity : ScriptableObject
     [Header("Spell Detection")]
     public bool canDodgeSpells = false;
     public float spellDetectionRadius = 3f;
-    public LayerMask playerSpellLayer;
     
     [Header("Attack Prefabs")]
     public GameObject meleeAttackPrefab;
@@ -51,7 +48,6 @@ public class D_Entity : ScriptableObject
     [Range(0f, 1f)]
     public float selfDestructHpThreshold = 0.2f; 
     public float selfDestructDamage = 2f;
-    public LayerMask selfDestructTargetLayer;
     public GameObject selfDestructVFX;
     
     [Header("Death Settings")]
@@ -59,6 +55,5 @@ public class D_Entity : ScriptableObject
 
     [Header("Obstacle Detection")]
     public float obstacleCheckDistance = 0.5f;
-    public LayerMask obstacleLayer;
 
 }

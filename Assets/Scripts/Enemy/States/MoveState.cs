@@ -6,8 +6,8 @@ public class MoveState : State
     protected float moveTime;
     protected bool isMoveTimeOver;
     private State idleState;
-    public MoveState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public MoveState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

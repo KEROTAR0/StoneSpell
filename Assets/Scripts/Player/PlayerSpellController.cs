@@ -21,7 +21,7 @@ public class PlayerSpellController : MonoBehaviour
                 
                 if (UIManager.Instance != null && equippedSpellPrefabs[i] != null)
                 {
-                    D_Spell data = equippedSpellPrefabs[i].GetComponent<SpellBase>().spellData;
+                    D_Spell data = equippedSpellPrefabs[i].GetComponent<SpellController>().spellData;
                     UIManager.Instance.UpdateCooldownUI(i + 1, cooldownTimers[i], data.cooldown);
                 }
             }
@@ -36,7 +36,7 @@ public class PlayerSpellController : MonoBehaviour
 
             if (equippedSpellPrefabs[i] != null)
             {
-                D_Spell data = equippedSpellPrefabs[i].GetComponent<SpellBase>().spellData;
+                D_Spell data = equippedSpellPrefabs[i].GetComponent<SpellController>().spellData;
                 if (data != null && UIManager.Instance != null)
                 {
                     // Gắn hình ảnh vào UI
@@ -65,7 +65,7 @@ public class PlayerSpellController : MonoBehaviour
         // 2. Cập nhật Icon lên giao diện UI ngay lập tức
         if (spellPrefab != null)
         {
-            D_Spell data = spellPrefab.GetComponent<SpellBase>().spellData;
+            D_Spell data = spellPrefab.GetComponent<SpellController>().spellData;
             if (UIManager.Instance != null && data != null)
             {
                 UIManager.Instance.SetSpellIcon(slotIndex, data.spellIcon);
@@ -85,10 +85,10 @@ public class PlayerSpellController : MonoBehaviour
         GameObject prefab = equippedSpellPrefabs[slotIndex];
         if (prefab == null) return false;
 
-        SpellBase spellBase = prefab.GetComponent<SpellBase>();
-        if (spellBase == null || spellBase.spellData == null) return false;
+        SpellController SpellController = prefab.GetComponent<SpellController>();
+        if (SpellController == null || SpellController.spellData == null) return false;
 
-        D_Spell spellData = spellBase.spellData;
+        D_Spell spellData = SpellController.spellData;
 
         if (spellData.isPermanentPassive) 
         {
@@ -105,7 +105,7 @@ public class PlayerSpellController : MonoBehaviour
 
     public void TriggerCooldown(int slotIndex)
     {
-        D_Spell spellData = equippedSpellPrefabs[slotIndex].GetComponent<SpellBase>().spellData;
+        D_Spell spellData = equippedSpellPrefabs[slotIndex].GetComponent<SpellController>().spellData;
         cooldownTimers[slotIndex] = spellData.cooldown;
     }
 }

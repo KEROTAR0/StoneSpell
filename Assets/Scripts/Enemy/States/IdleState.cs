@@ -6,8 +6,8 @@ public class IdleState : State
     protected bool isIdleTimeOver;
     private State moveState;
 
-    public IdleState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public IdleState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

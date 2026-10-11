@@ -1,3 +1,4 @@
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 public class State
@@ -6,24 +7,24 @@ public class State
     protected Entity entity;
 
     public float startTime {get; protected set;}
-    protected string animBoolName;
+    protected int animBoolHash;
 
-    public State(Entity entity, FiniteStateMachine stateMachine, string animBoolName)
+    public State(Entity entity, FiniteStateMachine stateMachine, int animBoolHash)
     {
         this.entity = entity;
         this.stateMachine = stateMachine;
-        this.animBoolName = animBoolName;
+        this.animBoolHash = animBoolHash;
     }
 
     public virtual void Enter()
     {
         startTime = Time.time;
-        entity.anim.SetBool(animBoolName, true);
+        entity.anim.SetBool(animBoolHash, true);
         DoCheck();
     }
     public virtual void Exit()
     {
-        entity.anim.SetBool(animBoolName, false);
+        entity.anim.SetBool(animBoolHash, false);
     }
     public virtual void LogicUpdate(){}
     public virtual void PhysicUpdate()

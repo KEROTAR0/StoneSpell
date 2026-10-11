@@ -4,8 +4,8 @@ public class MeleeState : AttackState
 {
 protected GameObject meleePrefab;
 
-    public MeleeState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, GameObject meleePrefab) 
-        : base(entity, stateMachine, animBoolName)
+    public MeleeState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash, GameObject meleePrefab) 
+        : base(entity, stateMachine, animBoolHash)
     {
         this.meleePrefab = meleePrefab;
     }

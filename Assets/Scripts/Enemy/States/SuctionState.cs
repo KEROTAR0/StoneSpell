@@ -6,8 +6,8 @@ public class SuctionState : State
     protected float pullSpeed;
     protected float pullDuration;
 
-    public SuctionState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public SuctionState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

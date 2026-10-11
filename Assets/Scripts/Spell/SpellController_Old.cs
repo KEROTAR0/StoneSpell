@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-public class SpellBase : MonoBehaviour
+public class SpellController_Old : MonoBehaviour
 {
     public D_Spell spellData;
 
@@ -303,8 +303,8 @@ public class SpellBase : MonoBehaviour
         SetVelocity(currentDirection);
         
         // Đảo layer từ Đạn Địch thành Đạn Người Chơi
-        gameObject.layer = LayerMask.NameToLayer("PlayerSpell");
-        this.targetLayer = LayerMask.GetMask("Enemy", "Damageable"); // Đổi mục tiêu thành quái
+        gameObject.layer = GameLayers.PlayerLayerIndex; 
+        this.targetLayer = GameLayers.EnemyAndDamageableMask;
     }
 
     private void ApplyEffectsToTarget(GameObject target)

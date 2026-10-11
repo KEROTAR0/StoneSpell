@@ -18,7 +18,7 @@ public class EnemyProjectile : MonoBehaviour
         currentDirection = direction.normalized;
         spawnTime = Time.time;
         isReflected = false;
-        gameObject.layer = LayerMask.NameToLayer("EnemyAttack");
+        gameObject.layer = GameLayers.EnemyAttackLayerIndex;
 
         if (attackData.behavior == AttackBehavior.TelegraphedAoE)
         {
@@ -55,18 +55,17 @@ public class EnemyProjectile : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+        private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Nếu đạn đã bị Player phản lại, nó sẽ nhắm vào Enemy
-        if (isReflected && collision.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+        int colLayer = collision.gameObject.layer;
+
+        if (isReflected && (GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
         {
-            // Trừ máu quái vật...
             Despawn();
             return;
         }
 
-        // Đạn đánh trúng Player
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (!isReflected && (GameLayers.PlayerAndDamageableMask.value & (1 << colLayer)) > 0)
         {
             IDamageable damageable = collision.GetComponent<IDamageable>();
             if (damageable != null)
@@ -78,12 +77,12 @@ public class EnemyProjectile : MonoBehaviour
                 };
                 damageable.TakeDamage(details);
 
-                // Áp dụng Status Ailment lên Player (Cần một hàm ApplyAilment bên Player)
+                // Áp dụng Status Ailment lên Player 
                 // Player.Instance.ApplyAilment(attackData.ailmentType, attackData.ailmentDuration, attackData.ailmentValue);
             }
             Despawn();
         }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
+        else if ((GameLayers.WallAndHighObstacleMask.value & (1 << colLayer)) > 0)
         {
             Despawn();
         }
@@ -111,7 +110,7 @@ public class EnemyProjectile : MonoBehaviour
         isReflected = true;
         currentDirection = -currentDirection;
         rb.linearVelocity = currentDirection * attackData.moveSpeed;
-        gameObject.layer = LayerMask.NameToLayer("PlayerSpell"); 
+        gameObject.layer = GameLayers.PlayerAttackLayerIndex; 
     }
 
     public void Despawn()

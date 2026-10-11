@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class SelfDestructState : State
 {
-    public SelfDestructState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public SelfDestructState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 
@@ -16,7 +16,7 @@ public class SelfDestructState : State
 
     private void Explode()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(entity.transform.position, entity.entityData.shortRangeAction, entity.entityData.selfDestructTargetLayer);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(entity.transform.position, entity.entityData.shortRangeAction, GameLayers.PlayerAndDamageableMask);
         
         foreach (var col in colliders)
         {

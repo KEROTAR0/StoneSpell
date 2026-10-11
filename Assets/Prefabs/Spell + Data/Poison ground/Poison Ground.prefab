@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 4310411225076914362}
   - component: {fileID: 2337759224140432678}
   - component: {fileID: 7777433245927325339}
-  - component: {fileID: 3785454299940675747}
+  - component: {fileID: 6362802410710568930}
+  - component: {fileID: -3647916769317275506}
+  - component: {fileID: 5242091567145588280}
   m_Layer: 13
   m_Name: Poison Ground
   m_TagString: Untagged
@@ -159,7 +161,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!114 &3785454299940675747
+--- !u!114 &6362802410710568930
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -168,12 +170,35 @@ MonoBehaviour:
   m_GameObject: {fileID: 2084608934214389636}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e126cefb8ede93e4c939193910731c95, type: 3}
+  m_Script: {fileID: 11500000, guid: ea9fcaec516a9c14b87237c8f6133a60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellBase
+  m_EditorClassIdentifier: GameScripts::SpellController
   spellData: {fileID: 11400000, guid: 6b45d3c5e732d564ca22265999c56db0, type: 2}
-  prefabOriginal: {fileID: 2084608934214389636}
   visualHolder: {fileID: 2469469761480575033}
+--- !u!114 &-3647916769317275506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084608934214389636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a308de3c29f974c98376204896e311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellCollision
+--- !u!114 &5242091567145588280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084608934214389636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0846f9542a229c648a0dcba69a3d9a9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellAura
 --- !u!1 &3598419014682504388
 GameObject:
   m_ObjectHideFlags: 0

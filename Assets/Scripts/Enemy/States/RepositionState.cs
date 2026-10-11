@@ -5,8 +5,8 @@ public class RepositionState : State
     private Vector2 destination;
     private bool isRepositioning;
 
-    public RepositionState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public RepositionState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

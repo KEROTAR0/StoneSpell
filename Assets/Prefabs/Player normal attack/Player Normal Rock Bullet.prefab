@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4340119126491440136}
   - component: {fileID: 1785943112638004438}
   - component: {fileID: 1482713756908722224}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Player Normal Rock Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}

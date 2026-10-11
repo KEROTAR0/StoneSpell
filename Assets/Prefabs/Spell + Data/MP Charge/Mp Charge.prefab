@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3179966482997821664}
   - component: {fileID: -1514258562125919939}
   - component: {fileID: 1124663701516955913}
-  - component: {fileID: -2843210813261478310}
+  - component: {fileID: -3805210956742599342}
   m_Layer: 0
   m_Name: Mp Charge
   m_TagString: Untagged
@@ -108,7 +108,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &-2843210813261478310
+--- !u!114 &-3805210956742599342
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,11 +117,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7629955786383490810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e126cefb8ede93e4c939193910731c95, type: 3}
+  m_Script: {fileID: 11500000, guid: ea9fcaec516a9c14b87237c8f6133a60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellBase
+  m_EditorClassIdentifier: GameScripts::SpellController
   spellData: {fileID: 11400000, guid: 5a28e1c3f1cd7294dac416f0765cc9d7, type: 2}
-  prefabOriginal: {fileID: 7629955786383490810}
   visualHolder: {fileID: 0}
 --- !u!1 &9220974482463148664
 GameObject:

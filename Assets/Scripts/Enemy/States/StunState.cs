@@ -6,8 +6,8 @@ public class StunnedState : State
     protected bool isStunFinished;
     protected GameObject stunVfxPrefab;
     protected GameObject currentVfxInstance;
-    public StunnedState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public StunnedState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

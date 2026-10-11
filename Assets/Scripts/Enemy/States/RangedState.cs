@@ -4,8 +4,8 @@ public class RangedState : AttackState
 {
 protected GameObject projectilePrefab;
 
-    public RangedState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, GameObject projectilePrefab) 
-        : base(entity, stateMachine, animBoolName)
+    public RangedState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash, GameObject projectilePrefab) 
+        : base(entity, stateMachine, animBoolHash)
     {
         this.projectilePrefab = projectilePrefab;
     }

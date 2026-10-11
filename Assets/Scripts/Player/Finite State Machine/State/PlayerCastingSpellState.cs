@@ -21,7 +21,7 @@ public class PlayerCastingSpellState : PlayerAttackState
         
         slotIndex = player.currentSpellSlot;
         currentSpellPrefab = player.SpellController.equippedSpellPrefabs[slotIndex];
-        currentSpellData = currentSpellPrefab.GetComponent<SpellBase>().spellData;
+        currentSpellData = currentSpellPrefab.GetComponent<SpellController>().spellData;
     }
 
     public override void LogicUpdate()
@@ -104,14 +104,14 @@ public class PlayerCastingSpellState : PlayerAttackState
         }
 
         GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
-        SpellBase spellScript = spellObj.GetComponent<SpellBase>();
+        SpellController spellScript = spellObj.GetComponent<SpellController>();
 
         if (spellScript != null)
         {
-            LayerMask enemyLayer = LayerMask.GetMask("Enemy", "Damageable");
-            LayerMask wallLayer = LayerMask.GetMask("Wall");
-            LayerMask highObsLayer = LayerMask.GetMask("HighObstacle");
-            LayerMask enemySpellLayer = LayerMask.GetMask("EnemySpell");
+            LayerMask enemyLayer = GameLayers.EnemyAndDamageableMask;
+            LayerMask wallLayer = GameLayers.WallLayerIndex;
+            LayerMask highObsLayer = GameLayers.HighObstacleLayerIndex;
+            LayerMask enemySpellLayer = GameLayers.EnemyAttackLayerIndex;
 
             spellScript.Initialize(enemyLayer, wallLayer, highObsLayer, enemySpellLayer, shootDirection);
         }   

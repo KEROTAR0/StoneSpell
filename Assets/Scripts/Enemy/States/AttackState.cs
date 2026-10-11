@@ -5,8 +5,8 @@ public class AttackState : State
     protected bool isAnimationFinished;
     protected bool isAttacking;
 
-    public AttackState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public AttackState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 4167975842439232770}
   - component: {fileID: 2847667343515777033}
   - component: {fileID: -5210133219855396159}
-  - component: {fileID: 3812873154448852481}
+  - component: {fileID: 4838396498461104574}
+  - component: {fileID: 295752209172743781}
+  - component: {fileID: -8349810740992515263}
   m_Layer: 13
   m_Name: Fireball
   m_TagString: Untagged
@@ -181,7 +183,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!114 &3812873154448852481
+--- !u!114 &4838396498461104574
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,11 +192,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 5805104165631598183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e126cefb8ede93e4c939193910731c95, type: 3}
+  m_Script: {fileID: 11500000, guid: ea9fcaec516a9c14b87237c8f6133a60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellBase
+  m_EditorClassIdentifier: GameScripts::SpellController
   spellData: {fileID: 11400000, guid: b9c7f9ca1d0c3b74b9dfd11c1c817f14, type: 2}
-  prefabOriginal: {fileID: 5805104165631598183}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 192
+  visualHolder: {fileID: 0}
+--- !u!114 &295752209172743781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5805104165631598183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a308de3c29f974c98376204896e311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellCollision
+--- !u!114 &-8349810740992515263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5805104165631598183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87ed3278f292644aaa9a6ba75791ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellMovement

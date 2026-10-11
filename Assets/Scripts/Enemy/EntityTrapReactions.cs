@@ -3,7 +3,6 @@ using UnityEngine;
 public class EntityTrapReactions : MonoBehaviour
 {
     private Entity entity;
-    public LayerMask trapLayer;
 
     private void Start()
     {
@@ -15,7 +14,7 @@ public class EntityTrapReactions : MonoBehaviour
         if (entity == null || entity.isDead) return;
 
         // Nếu chạm vào bẫy (Kiểm tra layer)
-        if ((trapLayer.value & (1 << collision.gameObject.layer)) > 0)
+        if ((GameLayers.TrapLayerIndex & (1 << collision.gameObject.layer)) > 0)
         {
             // Nếu quái đang có quyền di chuyển (không bị Stun, Suction...)
             if (entity.stateMachine.currentState != ((EntitySlime)entity).stunnedState &&

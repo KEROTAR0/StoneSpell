@@ -5,8 +5,8 @@ public class PatrolState : State
     private State observeState;
     private Vector2 destination;
 
-    public PatrolState(Entity entity, FiniteStateMachine stateMachine, string animBoolName) 
-        : base(entity, stateMachine, animBoolName)
+    public PatrolState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+        : base(entity, stateMachine, animBoolHash)
     {
     }
 

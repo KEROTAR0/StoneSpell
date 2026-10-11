@@ -35,7 +35,13 @@ public class Entity : MonoBehaviour
     protected Vector2 velocityWorkSpace;
     public Vector2 facingDirection { get; protected set; } 
     public int FacingDirX { get; protected set; } = 1;
-    
+
+    private int dirXHash;
+    private int dirYHash;
+    private int moveHash;
+    private int idleHash;
+    private int speedHash;
+
     public float moveSpeedMultiplier = 1f;
     public float damageMultiplier = 1f;
     public float damageTakenMultiplier = 1f;
@@ -60,6 +66,12 @@ public class Entity : MonoBehaviour
         anim = GetComponent<Animator>();
         ASTM = GetComponent<AnimationToStateMachine>();
         sr = GetComponent<SpriteRenderer>();
+
+        dirXHash = Animator.StringToHash("dirX");
+        dirYHash = Animator.StringToHash("dirY");
+        moveHash = Animator.StringToHash("move");
+        idleHash = Animator.StringToHash("idle");
+        speedHash = Animator.StringToHash("speed");
 
         if (sr != null)
         {
@@ -188,7 +200,7 @@ public class Entity : MonoBehaviour
     }
     public virtual bool CheckObstacle()
     {
-        return Physics2D.Raycast(transform.position, facingDirection, entityData.obstacleCheckDistance, entityData.obstacleLayer);
+        return Physics2D.Raycast(transform.position, facingDirection, entityData.obstacleCheckDistance, GameLayers.WallAndHighObstacleMask);
     }
     public virtual void ChooseRandom4Direction()
     {
@@ -321,7 +333,7 @@ public class Entity : MonoBehaviour
 
         // 3. Phóng Raycast
         // Quan trọng: Chỉ quét obstacleLayer. Đảm bảo obstacleLayer trên D_Entity CHỈ tick "Wall/Ground", không tick "Player" hay "Enemy".
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dirToPlayer.normalized, distance, entityData.obstacleLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dirToPlayer.normalized, distance, GameLayers.WallAndHighObstacleMask);
         
         if (hit.collider != null) 
         {
@@ -338,7 +350,7 @@ public class Entity : MonoBehaviour
         if (!entityData.canDodgeSpells) return null;
 
         // 1. Lấy TẤT CẢ đạn phép nằm trong bán kính nhận diện
-        Collider2D[] spellCols = Physics2D.OverlapCircleAll(transform.position, entityData.spellDetectionRadius, entityData.playerSpellLayer);
+        Collider2D[] spellCols = Physics2D.OverlapCircleAll(transform.position, entityData.spellDetectionRadius, GameLayers.PlayerAttackLayerIndex);
         
         Transform nearestSpell = null;
         float minDistance = Mathf.Infinity;
@@ -356,7 +368,7 @@ public class Entity : MonoBehaviour
             {
                 // 3. Kiểm tra Tường chắn (Raycast)
                 // Đảm bảo đạn không bị khuất sau bức tường
-                RaycastHit2D hit = Physics2D.Raycast(transform.position, dirToSpell.normalized, distance, entityData.obstacleLayer);
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, dirToSpell.normalized, distance, GameLayers.WallAndHighObstacleMask);
                 
                 if (hit.collider == null) 
                 {
@@ -386,8 +398,8 @@ public class Entity : MonoBehaviour
         if (anim == null)
             return;
 
-        anim.SetFloat("dirX", facingDirection.x);
-        anim.SetFloat("dirY", facingDirection.y);
+        anim.SetFloat(dirXHash, facingDirection.x);
+        anim.SetFloat(dirYHash, facingDirection.y);
 
         float currentSpeed = 0f;
         if (aiPath != null && aiPath.canMove)
@@ -398,7 +410,7 @@ public class Entity : MonoBehaviour
         {
             currentSpeed = rb.linearVelocity.magnitude;
         }
-        anim.SetFloat("speed", currentSpeed);
+        anim.SetFloat(speedHash, currentSpeed);
     }
     
     //==================================================

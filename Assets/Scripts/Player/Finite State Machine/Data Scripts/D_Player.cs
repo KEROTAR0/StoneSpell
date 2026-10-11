@@ -29,9 +29,4 @@ public class D_Player : ScriptableObject
     public float maxMana = 100f;
     public float manaCollectionRadius = 3f;
     public float manaVacuumSpeed = 15f;
-
-    [Header("Other")]
-    //public GameObject hitParticle;
-    public LayerMask waterLayer;
-    public LayerMask damagableLayer;
 }

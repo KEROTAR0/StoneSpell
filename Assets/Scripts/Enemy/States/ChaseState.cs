@@ -8,8 +8,8 @@ public class ChaseState : State
     private DodgeState dodgeState;
     private State repositionState;
 
-    public ChaseState(Entity entity, FiniteStateMachine stateMachine, string animBoolName, State meleeState, State selfDestructState, State rangedState, State repositionState, DodgeState dodgeState) 
-        : base(entity, stateMachine, animBoolName)
+    public ChaseState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash, State meleeState, State selfDestructState, State rangedState, State repositionState, DodgeState dodgeState) 
+        : base(entity, stateMachine, animBoolHash)
     {
         this.meleeState = meleeState;
         this.selfDestructState = selfDestructState;

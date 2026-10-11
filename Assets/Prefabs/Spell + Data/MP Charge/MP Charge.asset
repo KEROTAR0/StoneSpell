@@ -22,6 +22,12 @@ MonoBehaviour:
   isPermanentPassive: 0
   isSpawnAtMouse: 0
   maxCastRange: 8
+  inaccuracy: 0
+  isPenetrating: 0
+  isLaser: 0
+  acceleration: 10
+  laserMaxLength: 10
+  laserWidth: 1
   isProjectile: 0
   moveSpeed: 0
   maxBounces: 0
@@ -33,7 +39,7 @@ MonoBehaviour:
   maxBlocks: 0
   canReflect: 0
   hasAura: 0
-  auraRadius: 0
-  auraTickRate: 0
+  auraCheckRadius: 3
+  auraTickRate: 1
   hitEffects:
   - {fileID: 11400000, guid: 9850b598bfa658448951f7ea746bc69b, type: 2}

@@ -128,7 +128,10 @@ GameObject:
   - component: {fileID: 4487226491325020261}
   - component: {fileID: 4998625246144849578}
   - component: {fileID: 7004113637217871149}
-  - component: {fileID: 5782843875703657289}
+  - component: {fileID: 2427896293287902077}
+  - component: {fileID: 2493191919575863173}
+  - component: {fileID: -2458310945325443534}
+  - component: {fileID: -6263213146010126201}
   m_Layer: 13
   m_Name: Shuriken
   m_TagString: Untagged
@@ -297,7 +300,7 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.2
---- !u!114 &5782843875703657289
+--- !u!114 &2427896293287902077
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -306,9 +309,44 @@ MonoBehaviour:
   m_GameObject: {fileID: 8593318080321558633}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e126cefb8ede93e4c939193910731c95, type: 3}
+  m_Script: {fileID: 11500000, guid: ea9fcaec516a9c14b87237c8f6133a60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpellBase
+  m_EditorClassIdentifier: GameScripts::SpellController
   spellData: {fileID: 11400000, guid: bf9abfd2297cd8d45b19921519a9f027, type: 2}
-  prefabOriginal: {fileID: 8593318080321558633}
   visualHolder: {fileID: 0}
+--- !u!114 &2493191919575863173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8593318080321558633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a308de3c29f974c98376204896e311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellCollision
+--- !u!114 &-2458310945325443534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8593318080321558633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87ed3278f292644aaa9a6ba75791ff1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellMovement
+--- !u!114 &-6263213146010126201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8593318080321558633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0846f9542a229c648a0dcba69a3d9a9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellAura

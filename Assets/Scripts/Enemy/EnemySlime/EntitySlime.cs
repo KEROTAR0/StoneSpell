@@ -20,30 +20,30 @@ public class EntitySlime : Entity, IDamageable
     {
         base.Start();
 
-        patrolState = new PatrolState(this, stateMachine, "move");
-        observeState = new ObserveState(this, stateMachine, "idle");
-        suctionState = new SuctionState(this, stateMachine, "idle");
-        stunnedState = new StunnedState(this, stateMachine, "stun");
+        patrolState = new PatrolState(this, stateMachine, AnimHashes.Move);
+        observeState = new ObserveState(this, stateMachine, AnimHashes.Idle);
+        suctionState = new SuctionState(this, stateMachine, AnimHashes.Idle);
+        stunnedState = new StunnedState(this, stateMachine, AnimHashes.Stun);
         
-        deadState = new DeadState(this, stateMachine, "dead");
+        deadState = new DeadState(this, stateMachine, AnimHashes.Dead);
 
-        if (entityData.meleeAttackPrefab != null) meleeState = new MeleeState(this, stateMachine, "melee", entityData.meleeAttackPrefab);
+        if (entityData.meleeAttackPrefab != null) meleeState = new MeleeState(this, stateMachine, AnimHashes.Melee, entityData.meleeAttackPrefab);
         else meleeState = null;
 
         if (entityData.rangedAttackPrefab != null)
         {
-            rangedState = new RangedState(this, stateMachine, "ranged", entityData.rangedAttackPrefab);
-            repositionState = new RepositionState(this, stateMachine, "move");
+            rangedState = new RangedState(this, stateMachine, AnimHashes.Ranged, entityData.rangedAttackPrefab);
+            repositionState = new RepositionState(this, stateMachine, AnimHashes.Move);
         }
         else rangedState = null;
 
-        if (entityData.canSelfDestruct) selfDestructState = new SelfDestructState(this, stateMachine, "destruct");
+        if (entityData.canSelfDestruct) selfDestructState = new SelfDestructState(this, stateMachine, AnimHashes.Destruct);
         else selfDestructState = null;
 
-        if(entityData.canDodge) dodgeState = new DodgeState(this, stateMachine, "dodge");
+        if(entityData.canDodge) dodgeState = new DodgeState(this, stateMachine, AnimHashes.Dodge);
         else dodgeState = null;
 
-        chaseState = new ChaseState(this, stateMachine, "chase", meleeState, selfDestructState, rangedState, repositionState, dodgeState);
+        chaseState = new ChaseState(this, stateMachine, AnimHashes.Move, meleeState, selfDestructState, rangedState, repositionState, dodgeState);
 
         patrolState.SetTransitions(observeState);
         observeState.SetTransitions(patrolState);
