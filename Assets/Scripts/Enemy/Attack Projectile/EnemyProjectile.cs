@@ -119,13 +119,11 @@ public class EnemyProjectile : MonoBehaviour
         // Cơ chế sinh vũng lầy (Puddle) hoặc Vụ nổ AoE khi đạn kết thúc
         if (attackData.behavior == AttackBehavior.SpawnAoEOnHit && attackData.spawnOnDeathPrefab != null)
         {
-            // SỬA: Chuyển sang dùng EnemyAttackPool
-            EnemyAttackPool.Instance.GetFromPool(attackData.spawnOnDeathPrefab, transform.position, Quaternion.identity);
+            ObjectPoolManager.Instance.GetFromPool(attackData.spawnOnDeathPrefab, transform.position, Quaternion.identity);
         }
 
         rb.linearVelocity = Vector2.zero;
         
-        // SỬA: Chuyển sang dùng EnemyAttackPool và bỏ null đi
-        EnemyAttackPool.Instance.AddToPool(gameObject); 
+        ObjectPoolManager.Instance.AddToPool(gameObject); 
     }
 }

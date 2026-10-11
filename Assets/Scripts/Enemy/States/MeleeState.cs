@@ -22,7 +22,7 @@ protected GameObject meleePrefab;
         // Spawn tại meleeAttackPosition
         Vector2 spawnPos = entity.meleeAttackPosition != null ? entity.meleeAttackPosition.position : entity.transform.position;
         
-        GameObject meleeObj = EnemyAttackPool.Instance.GetFromPool(meleePrefab, spawnPos, Quaternion.identity);
+        GameObject meleeObj = ObjectPoolManager.Instance.GetFromPool(meleePrefab, spawnPos, Quaternion.identity);
         EnemyProjectile projScript = meleeObj.GetComponent<EnemyProjectile>();
 
         if (projScript != null)

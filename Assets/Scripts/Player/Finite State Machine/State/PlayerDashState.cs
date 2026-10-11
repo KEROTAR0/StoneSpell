@@ -15,7 +15,7 @@ public class PlayerDashState : PlayerState
         player.InputHandler.UsedDashInput();
         Vector2 rawInput = player.InputHandler.movementInput;
 
-        PlayerAfterImagePool.Instance.GetFromPool();
+        ObjectPoolManager.Instance.GetFromPool(playerData.afterImagePrefab, player.transform.position, player.transform.rotation);
         lastAITime = Time.time;
 
         if (rawInput.sqrMagnitude > 0.01f)
@@ -42,7 +42,7 @@ public class PlayerDashState : PlayerState
 
         if (Time.time >= (lastAITime + distanceBetweenImages))
         {
-            PlayerAfterImagePool.Instance.GetFromPool();
+            ObjectPoolManager.Instance.GetFromPool(playerData.afterImagePrefab, player.transform.position, player.transform.rotation);
             lastAITime = Time.time;
         }
 

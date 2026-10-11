@@ -5,7 +5,6 @@ using UnityEngine;
 public class SpellBase : MonoBehaviour
 {
     public D_Spell spellData;
-    public GameObject prefabOriginal; // Tham chiếu về prefab gốc để SpellPool nhận diện
 
     [Header("Visuals")]
     [Tooltip("Kéo object con chứa SpriteRenderer và Animator vào đây")]
@@ -32,7 +31,7 @@ public class SpellBase : MonoBehaviour
     private float currentSpeed = 0f;
     private HashSet<GameObject> hitTargets = new HashSet<GameObject>(); // Bộ lọc chống sát thương lặp
 
-    public void Initialize(GameObject originalPrefab, LayerMask target, LayerMask wall, LayerMask highObs, LayerMask enemyProjectile, Vector2 direction)
+    public void Initialize(LayerMask target, LayerMask wall, LayerMask highObs, LayerMask enemyProjectile, Vector2 direction)
     {
         if (spellData == null)
         {
@@ -40,7 +39,6 @@ public class SpellBase : MonoBehaviour
             return;
         }
 
-        this.prefabOriginal = originalPrefab;
         this.targetLayer = target;
         this.wallLayer = wall;
         this.highObstacleLayer = highObs;
@@ -70,7 +68,9 @@ public class SpellBase : MonoBehaviour
         // Ví dụ: ItemManager.Instance.ApplyModifiers(this);
         // Trạm kiểm duyệt sẽ cộng thêm activeEffects.Add(poisonEffect) hoặc sửa currentBounces
         // ----------------------------------------------------------
-
+        float randomAngle = Random.Range(-spellData.inaccuracy, spellData.inaccuracy);
+        currentDirection = (Quaternion.Euler(0, 0, randomAngle) * direction.normalized).normalized;
+        
         GetComponent<Collider2D>().enabled = true;
         if (animChild != null)
         {
@@ -339,9 +339,9 @@ public class SpellBase : MonoBehaviour
         transform.SetParent(null);
 
         // Trả về Pool
-        if (SpellPool.Instance != null && prefabOriginal != null)
+        if (ObjectPoolManager.Instance != null)
         {
-            SpellPool.Instance.AddToPool(gameObject, prefabOriginal);
+            ObjectPoolManager.Instance.AddToPool(gameObject);
         }
         else
         {

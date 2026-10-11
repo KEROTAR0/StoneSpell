@@ -184,4 +184,4 @@ MonoBehaviour:
   spinSpeed: 360
   damageAmount: 2
   stunDamageAmount: 1
-  knockbackForce: 0.5
+  knockbackForce: 0.25

@@ -27,7 +27,7 @@ protected GameObject projectilePrefab;
             shootDir = ((Vector2)Player.Instance.transform.position - spawnPos).normalized;
         }
 
-        GameObject spellObj = EnemyAttackPool.Instance.GetFromPool(projectilePrefab, spawnPos, Quaternion.identity);
+        GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(projectilePrefab, spawnPos, Quaternion.identity);
         EnemyProjectile projScript = spellObj.GetComponent<EnemyProjectile>();
 
         if (projScript != null)

@@ -17,6 +17,7 @@ MonoBehaviour:
   dashVelocity: 7
   dashTime: 0.25
   dashCooldown: 4
+  afterImagePrefab: {fileID: 6616587502207149230, guid: dc5291692391fe04e8e6f943b497b95a, type: 3}
   bulletSpeed: 15
   normalAttackCooldown: 1
   normalAttackCastingTime: 0.15
@@ -31,4 +32,4 @@ MonoBehaviour:
     m_Bits: 16
   damagableLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 192

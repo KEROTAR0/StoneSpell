@@ -12,13 +12,13 @@ public class DeadState : State
         base.Enter();
         entity.StopMovement(); 
 
-        if (ManaPool.Instance != null)
+        if (GameManager.Instance != null)
         {
-            ManaPool.Instance.GetFromPool(entity.transform.position);
+            GameManager.Instance.SpawnMana(entity.transform.position);
         }
         if (entity.entityData.deathAoEPrefab != null)
         {
-            EnemyAttackPool.Instance.GetFromPool(entity.entityData.deathAoEPrefab, entity.transform.position, Quaternion.identity);
+            ObjectPoolManager.Instance.GetFromPool(entity.entityData.deathAoEPrefab, entity.transform.position, Quaternion.identity);
         }
 
         Collider2D col = entity.GetComponent<Collider2D>();

@@ -38,13 +38,10 @@ public class DamageEffect : SpellEffect
             // 3. Sinh hiệu ứng VFX từ Pool
             if (hitVFXPrefab != null)
             {
-                GameObject vfx = SpellPool.Instance.GetFromPool(hitVFXPrefab, target.transform.position, Quaternion.identity);
+                GameObject vfx = ObjectPoolManager.Instance.GetFromPool(hitVFXPrefab, target.transform.position, Quaternion.identity);
                 
                 var vfxScript = vfx.GetComponent<VFXAnimationDespawn>();
                 if (vfxScript == null) vfxScript = vfx.AddComponent<VFXAnimationDespawn>();
-                
-                // Gọi Setup chỉ với 1 tham số (không cần thời gian nữa)
-                vfxScript.Setup(hitVFXPrefab); 
             }
         }
     }

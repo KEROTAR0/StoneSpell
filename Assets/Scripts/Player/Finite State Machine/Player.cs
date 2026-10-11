@@ -182,10 +182,12 @@ public class Player : MonoBehaviour, IDamageable
     public void RecordNormalHit(Vector2 hitPosition)
     {
         normalHitCount++;
+        Debug.Log("<color=green>>>> RECORD NORMAL HIT!</color>");
         if (normalHitCount >= hitCountNeedToSpawnMana)
         {
             normalHitCount = 0;
-            ManaPool.Instance.GetFromPool(hitPosition);
+            GameManager.Instance.SpawnMana(transform.position);
+            Debug.Log("<color=blue>>>> RECORD NORMAL HIT SPAWN MANA!</color>");
         }
     }
     private void CheckSpellInput()

@@ -21,7 +21,7 @@ public class SpeedBuffEffect : SpellEffect
         // Sinh VFX dính vào mục tiêu
         if (auraVFXPrefab != null)
         {
-            GameObject vfx = SpellPool.Instance.GetFromPool(auraVFXPrefab, target.transform.position, Quaternion.identity);
+            GameObject vfx = ObjectPoolManager.Instance.GetFromPool(auraVFXPrefab, target.transform.position, Quaternion.identity);
             vfx.transform.SetParent(target.transform);
             
             // Gắn cờ để RemoveEffect biết đường xóa

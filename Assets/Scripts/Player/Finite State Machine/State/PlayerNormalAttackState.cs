@@ -54,14 +54,16 @@ public class PlayerNormalAttackState : PlayerAttackState
     }
     private void Shoot()
     {
-        // lấy đạn từ Pool
-        GameObject bullet = ProjectilePool.Instance.GetFromPool(player.attackPosition.position, Quaternion.identity);
+        float maxSpreadAngle = 5f; 
+        float randomAngle = Random.Range(-maxSpreadAngle, maxSpreadAngle);
+        Vector2 spreadDirection = Quaternion.Euler(0, 0, randomAngle) * shootDirection;
+        
+        GameObject bullet = GameManager.Instance.SpawnPlayerNormalAttack(player.attackPosition.position, Quaternion.identity);
 
-        // logic bay và sát thương
         Projectile projectileScript = bullet.GetComponent<Projectile>();
         if (projectileScript != null)
         {
-            projectileScript.Fire(shootDirection);
+            projectileScript.Fire(spreadDirection);
         }
     }
 }

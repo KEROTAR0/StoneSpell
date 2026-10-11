@@ -75,6 +75,6 @@ public class ManaShard : MonoBehaviour
         }
 
         spinSpeed = 360f;
-        ManaPool.Instance.AddToPool(gameObject);
+        ObjectPoolManager.Instance.AddToPool(gameObject);
     }
 }

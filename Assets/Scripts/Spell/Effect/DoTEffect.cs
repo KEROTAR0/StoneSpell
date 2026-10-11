@@ -53,12 +53,9 @@ public class DoTStatusComponent : MonoBehaviour
             // Hiện VFX
             if (vfxPrefab != null)
             {
-                GameObject vfx = SpellPool.Instance.GetFromPool(vfxPrefab, transform.position, Quaternion.identity);
+                GameObject vfx = ObjectPoolManager.Instance.GetFromPool(vfxPrefab, transform.position, Quaternion.identity);
                 var vfxScript = vfx.GetComponent<VFXAnimationDespawn>();
                 if (vfxScript == null) vfxScript = vfx.AddComponent<VFXAnimationDespawn>();
-                
-                // Gọi Setup chỉ với 1 tham số (không cần thời gian nữa)
-                vfxScript.Setup(vfxPrefab);
             }
 
             yield return new WaitForSeconds(tickRate);

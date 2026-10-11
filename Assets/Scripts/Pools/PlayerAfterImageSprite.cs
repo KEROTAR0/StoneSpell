@@ -18,16 +18,27 @@ public class PlayerAfterImageSprite : MonoBehaviour
     private SpriteRenderer playerSR;
 
     private Color color;
-    private void OnEnable()
+    private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        playerSR = player.GetComponent<SpriteRenderer>();
-
+        
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+            playerSR = player.GetComponent<SpriteRenderer>();
+        }
+    }
+    private void OnEnable()
+    {
         alpha = alphaSet;
+        // Gán hình ảnh của player vào bóng mờ
         spriteRenderer.sprite = playerSR.sprite;
+        
+        // Vị trí và góc xoay bây giờ đã được ObjectPoolManager truyền vào từ hàm GetFromPool
+        // Nhưng nếu cẩn thận, ta có thể cập nhật lại:
         transform.position = player.position;
         transform.rotation = player.rotation;
+        
         timeActivated = Time.time;
     }
     private void Update()
@@ -40,7 +51,7 @@ public class PlayerAfterImageSprite : MonoBehaviour
 
         if(Time.time >= (timeActivated + activeTime))
         {
-            PlayerAfterImagePool.Instance.AddToPool(gameObject);
+            ObjectPoolManager.Instance.AddToPool(gameObject);
         }
     }
 }

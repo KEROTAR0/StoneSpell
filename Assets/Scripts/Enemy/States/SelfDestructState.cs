@@ -37,7 +37,7 @@ public class SelfDestructState : State
 
         if (entity.entityData.selfDestructVFX != null)
         {
-            SpellPool.Instance.GetFromPool(entity.entityData.selfDestructVFX, entity.transform.position, Quaternion.identity);
+            ObjectPoolManager.Instance.GetFromPool(entity.entityData.selfDestructVFX, entity.transform.position, Quaternion.identity);
         }
 
         entity.Die();

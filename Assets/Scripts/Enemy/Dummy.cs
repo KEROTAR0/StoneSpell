@@ -38,9 +38,9 @@ public class Dummy : MonoBehaviour, IDamageable
     private void Die()
     {
         // gọi từ hệ thống Pool
-        if (ManaPool.Instance != null)
+        if (GameManager.Instance != null)
         {
-            ManaPool.Instance.GetFromPool(transform.position);
+            GameManager.Instance.SpawnMana(transform.position);
         }
         
         Destroy(gameObject);

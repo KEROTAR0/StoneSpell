@@ -27,7 +27,7 @@ public class StunnedState : State
         if (stunVfxPrefab != null)
         {
             Vector3 vfxPos = entity.transform.position + Vector3.up * entity.entityData.stunVFXPrefabHeight; 
-            currentVfxInstance = SpellPool.Instance.GetFromPool(stunVfxPrefab, vfxPos, Quaternion.identity);
+            currentVfxInstance = ObjectPoolManager.Instance.GetFromPool(stunVfxPrefab, vfxPos, Quaternion.identity);
             
             currentVfxInstance.transform.SetParent(entity.transform);
         }
@@ -52,7 +52,7 @@ public class StunnedState : State
         if (currentVfxInstance != null)
         {
             currentVfxInstance.transform.SetParent(null);
-            SpellPool.Instance.AddToPool(currentVfxInstance, stunVfxPrefab);
+            ObjectPoolManager.Instance.AddToPool(currentVfxInstance);
         }
     }
 }

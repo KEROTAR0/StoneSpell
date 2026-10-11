@@ -12,6 +12,9 @@ public class D_Player : ScriptableObject
     public float dashTime = 0.2f;
     public float dashCooldown = 1f;
 
+    [Header("Dash Effects")]
+    public GameObject afterImagePrefab;
+
     [Header("Normal Attack")]
     public float bulletSpeed = 15f;
     public float normalAttackCooldown = 0.5f;

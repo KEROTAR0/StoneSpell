@@ -61,14 +61,12 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 1. Kiểm tra xem vật va chạm có nằm trong LayerMask cho phép gây sát thương không
         if ((whatLayerDamageable.value & (1 << collision.gameObject.layer)) > 0)
         {
             IDamageable damageable = collision.GetComponent<IDamageable>();
             
             if (damageable != null)
             {
-                // Chỉ khởi tạo AttackDetails khi đã xác nhận đúng mục tiêu
                 AttackDetails attackDetails = new AttackDetails
                 {
                     position = transform.position, 
@@ -76,35 +74,34 @@ public class Projectile : MonoBehaviour
                     stunDamageAmount = this.stunDamageAmount,
                     knockbackForce = this.knockbackForce
                 };
+                
                 SpawnImpactVFX();
                 damageable.TakeDamage(attackDetails);
-                Player.Instance.RecordNormalHit(transform.position);
+                
+                Player.Instance.RecordNormalHit(collision.transform.position);
+                
                 ReturnToPool(); 
                 return; 
             }
         }
 
-        // 2. Xử lý va chạm với tường/vật cản cứng
         if ((obstacleLayer.value & (1 << collision.gameObject.layer)) > 0)
         {
+            SpawnImpactVFX();
             ReturnToPool(); 
         }
     }
+
     private void SpawnImpactVFX()
     {
         if (impactVFX != null)
         {
-            Instantiate(impactVFX, transform.position, Quaternion.identity);
+            ObjectPoolManager.Instance.GetFromPool(impactVFX, transform.position, Quaternion.identity);
         }
     }
-    // Hàm reset vận tốc và trả về Pool
+
     private void ReturnToPool()
     {
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero; // Xóa quán tính cũ
-        }
-        ProjectilePool.Instance.AddToPool(gameObject);
+        ObjectPoolManager.Instance.AddToPool(gameObject);
     }
 }

@@ -20,6 +20,7 @@ public class D_Spell : ScriptableObject
 
     [Header("Spell Types")]
     // (Đã có: public bool isProjectile; public bool hasAura; public bool isSelfTargeted; ...)
+    public float inaccuracy = 0f;
     public bool isPenetrating;
     public bool isLaser;
 

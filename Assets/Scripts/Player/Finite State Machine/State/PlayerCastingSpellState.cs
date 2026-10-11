@@ -103,7 +103,7 @@ public class PlayerCastingSpellState : PlayerAttackState
             }
         }
 
-        GameObject spellObj = SpellPool.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
+        GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
         SpellBase spellScript = spellObj.GetComponent<SpellBase>();
 
         if (spellScript != null)
@@ -113,7 +113,7 @@ public class PlayerCastingSpellState : PlayerAttackState
             LayerMask highObsLayer = LayerMask.GetMask("HighObstacle");
             LayerMask enemySpellLayer = LayerMask.GetMask("EnemySpell");
 
-            spellScript.Initialize(currentSpellPrefab, enemyLayer, wallLayer, highObsLayer, enemySpellLayer, shootDirection);
+            spellScript.Initialize(enemyLayer, wallLayer, highObsLayer, enemySpellLayer, shootDirection);
         }   
     }
 }
