@@ -4,25 +4,22 @@ using UnityEngine;
 public class D_Entity : ScriptableObject
 {
     public bool hasNoAnimLeftOrRight;
-    public float maxHealth = 100;
+    public int maxHealth = 100;
     public float stunResistance = 3f;
     public float stunRecoveryTime = 2f;
     public float stunVFXPrefabHeight = 0.25f;
     public float shortRangeAction = 1f;
 
-    [Header("Idle State")]
-    public float minIdleTime = 1f;
-    public float maxIdleTime = 2f;
-
-    [Header("Move State")]
-    public float moveSpeed = 2f;
-    public float minMoveTime = 1f;
-    public float maxMoveTime = 3f;
+    [Header("Movement")]
+    public float movementSpeed = 2f;
 
     [Header("Patrol & Vision")]
     public float patrolRadius = 8f;
     public float visionRange = 7f;
     public float visionAngle = 90f;
+    
+    [Header("Mana Hunter Settings")]
+    public bool isManaHunter = false;
 
     [Header("Dodge Settings")]
     public bool canDodge = false;

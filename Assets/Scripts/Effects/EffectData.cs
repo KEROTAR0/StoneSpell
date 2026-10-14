@@ -1,16 +1,12 @@
 using UnityEngine;
 
-public class EffectData : MonoBehaviour
+[System.Serializable]
+public class EffectData
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public EffectType type;
+    public float duration;   // Thời gian tồn tại (Để 0 nếu là hiệu ứng nổ tức thì)
+    public float value;      // Lượng sát thương, tốc độ hút, lượng mana...
+    
+    [Tooltip("Khoảng cách giữa các lần giật. Ví dụ: 1 = mỗi giây giật 1 lần. Để 0 nếu hiệu ứng tác dụng 1 lần duy nhất.")]
+    public float tickRate;   
 }

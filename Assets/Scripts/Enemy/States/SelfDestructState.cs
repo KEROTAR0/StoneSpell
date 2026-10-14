@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class SelfDestructState : State
 {
-    public SelfDestructState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    public SelfDestructState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }

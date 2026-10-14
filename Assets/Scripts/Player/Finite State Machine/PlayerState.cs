@@ -4,30 +4,30 @@ using UnityEngine;
 public class PlayerState
 {
     protected PlayerStateMachine stateMachine;
-    protected Player player;
+    protected PlayerController player;
     protected D_Player playerData;
     protected Vector2 input;
 
     public float startTime {get; protected set;}
-    protected string animBoolName;
+    protected int animBoolHash;
 
-    public PlayerState(Player player, PlayerStateMachine stateMachine, D_Player playerData, string animBoolName)
+    public PlayerState(PlayerController player, PlayerStateMachine stateMachine, D_Player playerData, int animBoolHash)
     {
         this.player = player;
         this.stateMachine = stateMachine;
         this.playerData = playerData;
-        this.animBoolName = animBoolName;
+        this.animBoolHash = animBoolHash;
     }
 
     public virtual void Enter()
     {
         startTime = Time.time;
-        player.anim.SetBool(animBoolName, true);
+        player.anim.SetBool(animBoolHash, true);
         DoCheck();
     }
     public virtual void Exit()
     {
-        player.anim.SetBool(animBoolName, false);
+        player.anim.SetBool(animBoolHash, false);
     }
     public virtual void LogicUpdate()
     {
@@ -41,8 +41,8 @@ public class PlayerState
     {
         if (input != Vector2.zero)
         {
-            player.anim.SetFloat("MoveX", input.x);
-            player.anim.SetFloat("MoveY", input.y);
+            player.anim.SetFloat("dirX", input.x);
+            player.anim.SetFloat("dirY", input.y);
         }
     }
     public virtual void DoCheck()

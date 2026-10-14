@@ -3,55 +3,36 @@ using UnityEngine;
 public class PlayerNormalAttackState : PlayerAttackState
 {
     private bool hasShot;
-    public PlayerNormalAttackState(Player player, PlayerStateMachine stateMachine, D_Player playerData, string animBoolName) : base(player, stateMachine, playerData, animBoolName)
+
+    // Sửa Player thành PlayerController
+    public PlayerNormalAttackState(PlayerController player, PlayerStateMachine stateMachine, D_Player playerData, int animBoolHash) 
+        : base(player, stateMachine, playerData, animBoolHash)
     {
     }
+
     public override void Enter()
     {
         base.Enter();
         player.InputHandler.UseAttackInput();
         player.ResetNormalAttackCooldown();
-
         hasShot = false;
     }
-    public override void DoCheck()
-    {
-        base.DoCheck();
-    }
+
     public override void LogicUpdate()
     {
         base.LogicUpdate();
+        
+        // Chặn bắn nếu đang bị choáng giữa chừng
+        if (player.CC != null && player.CC.isStunned) return;
+
         if (!hasShot && Time.time >= (startTime + playerData.normalAttackCastingTime))
         {
             Shoot();
             hasShot = true;
             FinishAttack();
         }
+    }
 
-        if (isAnimationFinished)
-        {
-            if (input.sqrMagnitude > 0.01f)
-            {
-                stateMachine.ChangeState(player.MoveState);
-            }
-            else
-            {
-                stateMachine.ChangeState(player.IdleState);
-            }
-        }
-    }
-    public override void PhysicUpdate()
-    {
-        base.PhysicUpdate();
-    }
-    public override void FinishAttack()
-    {
-        base.FinishAttack();
-    }
-    public override void Exit()
-    {
-        base.Exit();
-    }
     private void Shoot()
     {
         float maxSpreadAngle = 5f; 
@@ -60,8 +41,7 @@ public class PlayerNormalAttackState : PlayerAttackState
         
         GameObject bullet = GameManager.Instance.SpawnPlayerNormalAttack(player.attackPosition.position, Quaternion.identity);
 
-        Projectile projectileScript = bullet.GetComponent<Projectile>();
-        if (projectileScript != null)
+        if (bullet.TryGetComponent(out PlayerNormalProjectile projectileScript))
         {
             projectileScript.Fire(spreadDirection);
         }

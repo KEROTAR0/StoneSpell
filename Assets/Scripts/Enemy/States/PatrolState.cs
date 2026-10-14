@@ -5,7 +5,7 @@ public class PatrolState : State
     private State observeState;
     private Vector2 destination;
 
-    public PatrolState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    public PatrolState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }

@@ -10,7 +10,7 @@ public class ObserveState : State
     private float timePerLook = 1.2f; 
     private bool isAlertMode = false;
 
-    public ObserveState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    public ObserveState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }

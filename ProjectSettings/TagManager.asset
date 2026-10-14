@@ -16,12 +16,12 @@ TagManager:
   - Enemy
   - Wall
   - 
-  - PlayerProjectile
+  - 
   - LowObstacle
   - HighObstacle
-  - PlayerSpell
+  - PlayerAttack
   - EnemyAttack
-  - 
+  - Mana
   - 
   - 
   - 

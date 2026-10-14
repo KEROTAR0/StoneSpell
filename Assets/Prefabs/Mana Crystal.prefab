@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 6874815233310652148}
   - component: {fileID: 2268215925894051912}
   - component: {fileID: 7330020909169796667}
-  m_Layer: 0
+  - component: {fileID: 627968518486377322}
+  m_Layer: 6
   m_Name: Mana Crystal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +62,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -82,7 +83,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 7
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -5296020158829308393, guid: 197bee18b6a524c4f9ce1be56552281c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -156,8 +157,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.40041667
+  m_Offset: {x: 0, y: -0.1}
+  m_Radius: 0.3
 --- !u!114 &7330020909169796667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,3 +172,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dummy
   maxHealth: 5
+  dropMana: 1
+  explodeOnDeath: 0
+  explosionRadius: 2.5
+  explosionDamage: 20
+  explosionKnockback: 5
+  explosionVFX: {fileID: 0}
+  explosionEffects: []
+  spawnShrapnel: 0
+  shrapnelPrefab: {fileID: 0}
+  shrapnelCount: 8
+  shrapnelSpeed: 10
+--- !u!114 &627968518486377322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735881980859692737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e151b3551d4624bbc94c5e6128827c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::EffectReceiver

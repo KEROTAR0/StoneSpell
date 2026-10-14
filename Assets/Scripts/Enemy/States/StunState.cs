@@ -2,42 +2,41 @@ using UnityEngine;
 
 public class StunnedState : State
 {
-    protected float stunDuration;
-    protected bool isStunFinished;
-    protected GameObject stunVfxPrefab;
     protected GameObject currentVfxInstance;
-    public StunnedState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    private bool isSleepState; // Dùng để chọn đúng loại VFX
+    
+    public StunnedState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }
 
-    public void SetupStun(float duration, GameObject vfxPrefab)
+    // Hàm gọi từ EnemyController khi bị ngắt
+    public void SetupStun(bool isSleep)
     {
-        this.stunDuration = duration;
-        this.stunVfxPrefab = vfxPrefab;
+        this.isSleepState = isSleep;
     }
 
     public override void Enter()
     {
         base.Enter();
-        isStunFinished = false;
         entity.StopMovement();
-        entity.SetStunStatus(true);
 
-        if (stunVfxPrefab != null)
+        // Xin VFX từ GameManager thay vì từ Entity Data
+        if (GameManager.Instance != null)
         {
-            Vector3 vfxPos = entity.transform.position + Vector3.up * entity.entityData.stunVFXPrefabHeight; 
-            currentVfxInstance = ObjectPoolManager.Instance.GetFromPool(stunVfxPrefab, vfxPos, Quaternion.identity);
-            
-            currentVfxInstance.transform.SetParent(entity.transform);
+            if (isSleepState)
+                currentVfxInstance = GameManager.Instance.SpawnSleepVFX(entity.transform, entity.entityData.stunVFXPrefabHeight);
+            else
+                currentVfxInstance = GameManager.Instance.SpawnStunVFX(entity.transform, entity.entityData.stunVFXPrefabHeight);
         }
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
-
-        if (Time.time >= startTime + stunDuration)
+        
+        // Thoát State khi CoreCCComponent báo hết giờ
+        if (entity.CC != null && !entity.CC.isStunned)
         {
             entity.ReturnToDefaultState();
         }
@@ -46,8 +45,6 @@ public class StunnedState : State
     public override void Exit()
     {
         base.Exit();
-        entity.SetLastStunEndTime(); 
-        entity.SetStunStatus(false);
 
         if (currentVfxInstance != null)
         {

@@ -8,8 +8,8 @@ public class PlayerCastingSpellState : PlayerAttackState
     private bool hasCast;
     private float manaDrainedThisCast; 
 
-    public PlayerCastingSpellState(Player player, PlayerStateMachine stateMachine, D_Player playerData, string animBoolName) 
-        : base(player, stateMachine, playerData, animBoolName)
+    public PlayerCastingSpellState(PlayerController player, PlayerStateMachine stateMachine, D_Player playerData, int animBoolHash) 
+        : base(player, stateMachine, playerData, animBoolHash)
     {
     }
 
@@ -21,14 +21,19 @@ public class PlayerCastingSpellState : PlayerAttackState
         
         slotIndex = player.currentSpellSlot;
         currentSpellPrefab = player.SpellController.equippedSpellPrefabs[slotIndex];
-        currentSpellData = currentSpellPrefab.GetComponent<SpellController>().spellData;
+        
+        // Lấy Khuôn đúc Data từ kiến trúc mới
+        currentSpellData = currentSpellPrefab.GetComponent<SpellController>().baseSpellData;
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
 
-        // 1. CANCEL BẰNG DASH
+        // NẾU BỊ KHỐNG CHẾ -> BỊ KHÓA LUÔN, KHÔNG CHO DASH ĐỂ CANCEL NỮA
+        if (player.CC != null && player.CC.isStunned) return;
+
+        // 1. CANCEL BẰNG DASH (Khi an toàn)
         if (player.InputHandler.DashInput && player.CanDash())
         {
             player.InputHandler.UsedDashInput(); 
@@ -47,10 +52,12 @@ public class PlayerCastingSpellState : PlayerAttackState
                     manaDrainPerFrame = currentSpellData.manaCost - manaDrainedThisCast;
                 }
 
-                player.AddMana(-manaDrainPerFrame);
+                // GỌI COMPONENT MANA: Truyền số âm để trừ Mana
+                player.Mana.RestoreMana(-manaDrainPerFrame);
                 manaDrainedThisCast += manaDrainPerFrame;
 
-                if (player.currentMana <= 0)
+                // KIỂM TRA TỪ COMPONENT MANA
+                if (player.Mana.currentMana <= 0)
                 {
                     stateMachine.ChangeState(player.IdleState);
                     return;
@@ -62,24 +69,12 @@ public class PlayerCastingSpellState : PlayerAttackState
                 float leftoverMana = currentSpellData.manaCost - manaDrainedThisCast;
                 if (leftoverMana > 0)
                 {
-                    player.AddMana(-leftoverMana);
+                    player.Mana.RestoreMana(-leftoverMana);
                 }
                 
                 CastSpell();
                 hasCast = true;
                 FinishAttack();
-            }
-        }
-
-        if (isAnimationFinished)
-        {
-            if (input.sqrMagnitude > 0.01f)
-            {
-                stateMachine.ChangeState(player.MoveState);
-            }
-            else
-            {
-                stateMachine.ChangeState(player.IdleState);
             }
         }
     }
@@ -92,28 +87,20 @@ public class PlayerCastingSpellState : PlayerAttackState
         if (currentSpellData.isSpawnAtMouse)
         {
             float distanceToMouse = Vector2.Distance(player.attackPosition.position, mouseWorldPos);
-            
-            if (distanceToMouse > currentSpellData.maxCastRange)
-            {
-                spawnPosition = player.attackPosition.position + (Vector3)(shootDirection * currentSpellData.maxCastRange);
-            }
-            else
-            {
-                spawnPosition = mouseWorldPos;
-            }
+            spawnPosition = distanceToMouse > currentSpellData.maxCastRange 
+                ? player.attackPosition.position + (Vector3)(shootDirection * currentSpellData.maxCastRange) 
+                : mouseWorldPos;
         }
 
-        GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
-        SpellController spellScript = spellObj.GetComponent<SpellController>();
-
-        if (spellScript != null)
+        if (ObjectPoolManager.Instance != null)
         {
-            LayerMask enemyLayer = GameLayers.EnemyAndDamageableMask;
-            LayerMask wallLayer = GameLayers.WallLayerIndex;
-            LayerMask highObsLayer = GameLayers.HighObstacleLayerIndex;
-            LayerMask enemySpellLayer = GameLayers.EnemyAttackLayerIndex;
-
-            spellScript.Initialize(enemyLayer, wallLayer, highObsLayer, enemySpellLayer, shootDirection);
-        }   
+            GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
+            
+            if (spellObj.TryGetComponent(out SpellController spellScript))
+            {
+                // Dùng GameLayers đã tối ưu
+                spellScript.Initialize(shootDirection);
+            }   
+        }
     }
 }

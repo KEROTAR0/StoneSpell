@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2481579306697909926}
   - component: {fileID: 5088052898091915660}
   - component: {fileID: 1568125260971428053}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Mana Shard
   m_TagString: Untagged
   m_Icon: {fileID: 0}

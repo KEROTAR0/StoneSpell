@@ -8,7 +8,7 @@ public class ChaseState : State
     private DodgeState dodgeState;
     private State repositionState;
 
-    public ChaseState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash, State meleeState, State selfDestructState, State rangedState, State repositionState, DodgeState dodgeState) 
+    public ChaseState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash, State meleeState, State selfDestructState, State rangedState, State repositionState, DodgeState dodgeState) 
         : base(entity, stateMachine, animBoolHash)
     {
         this.meleeState = meleeState;
@@ -31,12 +31,12 @@ public class ChaseState : State
 
         Debug.Log("<color=green>>>> ĐÃ VÀO CHASE STATE!</color>");
 
-        if (entity.aiPath != null && Player.Instance != null)
+        if (entity.aiPath != null && PlayerController.Instance != null)
         {
             entity.aiPath.SetPath(null); 
             entity.aiPath.canMove = true;
             entity.aiPath.isStopped = false;
-            entity.aiPath.destination = Player.Instance.transform.position;
+            entity.aiPath.destination = PlayerController.Instance.transform.position;
             entity.aiPath.SearchPath();
         }
     }
@@ -68,7 +68,7 @@ public override void LogicUpdate()
             }
             else if (entity.CheckPlayerInShortRangeAction())
             {
-                Vector2 dirAwayFromPlayer = (entity.transform.position - Player.Instance.transform.position).normalized;
+                Vector2 dirAwayFromPlayer = (entity.transform.position - PlayerController.Instance.transform.position).normalized;
                 dodgeState.SetDodgeDirection(GetRandomEvasiveDirection(dirAwayFromPlayer));
                 stateMachine.ChangeState(dodgeState);
                 return;

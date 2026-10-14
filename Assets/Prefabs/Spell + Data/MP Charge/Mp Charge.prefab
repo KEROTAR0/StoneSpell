@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea9fcaec516a9c14b87237c8f6133a60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameScripts::SpellController
-  spellData: {fileID: 11400000, guid: 5a28e1c3f1cd7294dac416f0765cc9d7, type: 2}
+  baseSpellData: {fileID: 11400000, guid: 5a28e1c3f1cd7294dac416f0765cc9d7, type: 2}
   visualHolder: {fileID: 0}
 --- !u!1 &9220974482463148664
 GameObject:

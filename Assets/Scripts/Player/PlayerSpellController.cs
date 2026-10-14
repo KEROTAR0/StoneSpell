@@ -1,16 +1,34 @@
 using UnityEngine;
 
+// Đảm bảo phải có Mana Component đi kèm
+[RequireComponent(typeof(PlayerManaComponent))]
 public class PlayerSpellController : MonoBehaviour
 {
     [Header("Spell Slots (Kéo Prefab Phép Thuật vào đây)")]
     public GameObject[] equippedSpellPrefabs = new GameObject[5]; 
     
+    // Mảng lưu đệm Data để KHÔNG gọi GetComponent trong Update
+    private D_Spell[] cachedSpellData = new D_Spell[5]; 
     private float[] cooldownTimers = new float[5];
+
+    private PlayerManaComponent playerMana;
+
+    private void Awake()
+    {
+        // Liên kết nội bộ thay vì dùng PlayerController.Instance
+        playerMana = GetComponent<PlayerManaComponent>();
+    }
+
     private void Start()
     {
-        // Gửi thông tin Icon lên UI ngay khi bắt đầu game
+        // Lưu đệm toàn bộ data lúc bắt đầu
+        for (int i = 0; i < equippedSpellPrefabs.Length; i++)
+        {
+            CacheSpellData(i, equippedSpellPrefabs[i]);
+        }
         InitializeUI();
     }
+
     private void Update()
     {
         for (int i = 0; i < cooldownTimers.Length; i++)
@@ -19,78 +37,64 @@ public class PlayerSpellController : MonoBehaviour
             {
                 cooldownTimers[i] -= Time.deltaTime;
                 
-                if (UIManager.Instance != null && equippedSpellPrefabs[i] != null)
+                // Dùng thẳng data đã lưu đệm, tốc độ xử lý nhanh gấp 100 lần!
+                if (UIManager.Instance != null && cachedSpellData[i] != null)
                 {
-                    D_Spell data = equippedSpellPrefabs[i].GetComponent<SpellController>().spellData;
-                    UIManager.Instance.UpdateCooldownUI(i + 1, cooldownTimers[i], data.cooldown);
+                    UIManager.Instance.UpdateCooldownUI(i + 1, cooldownTimers[i], cachedSpellData[i].cooldown);
                 }
             }
         }
     }
-    public void InitializeUI()
+
+    // Hàm tiện ích để nạp Data vào mảng đệm
+    private void CacheSpellData(int index, GameObject prefab)
     {
-        // Vòng lặp quét 5 ô kỹ năng
-        for (int i = 0; i < equippedSpellPrefabs.Length; i++)
+        if (prefab != null && prefab.TryGetComponent(out SpellController spellCtrl))
         {
-            int uiSlotIndex = i; 
-
-            if (equippedSpellPrefabs[i] != null)
-            {
-                D_Spell data = equippedSpellPrefabs[i].GetComponent<SpellController>().spellData;
-                if (data != null && UIManager.Instance != null)
-                {
-                    // Gắn hình ảnh vào UI
-                    UIManager.Instance.SetSpellIcon(uiSlotIndex, data.spellIcon);
-                }
-            }
-            else
-            {
-                // Nếu ô phép trống, gửi null để UI ẩn icon đi
-                if (UIManager.Instance != null)
-                {
-                    UIManager.Instance.SetSpellIcon(uiSlotIndex, null);
-                }
-            }
-        }
-    }
-    // Hàm dùng để trang bị (gán) phép thuật vào túi đồ
-    public void EquipSpell(int slotIndex, GameObject spellPrefab)
-    {
-        // Kiểm tra xem index có hợp lệ không (từ 0 đến 4)
-        if (slotIndex < 0 || slotIndex >= equippedSpellPrefabs.Length) return;
-
-        // 1. Gán prefab vào mảng
-        equippedSpellPrefabs[slotIndex] = spellPrefab;
-
-        // 2. Cập nhật Icon lên giao diện UI ngay lập tức
-        if (spellPrefab != null)
-        {
-            D_Spell data = spellPrefab.GetComponent<SpellController>().spellData;
-            if (UIManager.Instance != null && data != null)
-            {
-                UIManager.Instance.SetSpellIcon(slotIndex, data.spellIcon);
-            }
+            // SỬ DỤNG baseSpellData ĐÚNG THEO KIẾN TRÚC MỚI
+            cachedSpellData[index] = spellCtrl.baseSpellData; 
         }
         else
         {
-            // Nếu truyền prefab = null (tháo phép), ẩn icon đi
+            cachedSpellData[index] = null;
+        }
+    }
+
+    public void InitializeUI()
+    {
+        for (int i = 0; i < cachedSpellData.Length; i++)
+        {
             if (UIManager.Instance != null)
             {
-                UIManager.Instance.SetSpellIcon(slotIndex, null);
+                Sprite icon = cachedSpellData[i] != null ? cachedSpellData[i].spellIcon : null;
+                UIManager.Instance.SetSpellIcon(i, icon);
             }
         }
     }
+
+    public void EquipSpell(int slotIndex, GameObject spellPrefab)
+    {
+        if (slotIndex < 0 || slotIndex >= equippedSpellPrefabs.Length) return;
+
+        equippedSpellPrefabs[slotIndex] = spellPrefab;
+        
+        // Cập nhật mảng đệm ngay khi thay đồ
+        CacheSpellData(slotIndex, spellPrefab); 
+
+        if (UIManager.Instance != null)
+        {
+            Sprite icon = cachedSpellData[slotIndex] != null ? cachedSpellData[slotIndex].spellIcon : null;
+            UIManager.Instance.SetSpellIcon(slotIndex, icon);
+        }
+    }
+
     public bool CanCastSpell(int slotIndex)
     {
-        GameObject prefab = equippedSpellPrefabs[slotIndex];
-        if (prefab == null) return false;
+        // Tra cứu cực nhanh từ mảng đệm
+        D_Spell data = cachedSpellData[slotIndex];
+        if (data == null) return false;
 
-        SpellController SpellController = prefab.GetComponent<SpellController>();
-        if (SpellController == null || SpellController.spellData == null) return false;
-
-        D_Spell spellData = SpellController.spellData;
-
-        if (spellData.isPermanentPassive) 
+        if (data.isPermanentPassive) 
         {
             Debug.Log("Không thể tự kích hoạt phép nội tại tĩnh!");
             return false;
@@ -98,14 +102,18 @@ public class PlayerSpellController : MonoBehaviour
         
         if (cooldownTimers[slotIndex] > 0) return false;
         
-        if (Player.Instance.currentMana < spellData.manaCost) return false;
+        // Gọi thẳng qua Component Mana thay vì chạy vòng qua Controller
+        if (playerMana.currentMana < data.manaCost) return false;
 
         return true;
     }
 
     public void TriggerCooldown(int slotIndex)
     {
-        D_Spell spellData = equippedSpellPrefabs[slotIndex].GetComponent<SpellController>().spellData;
-        cooldownTimers[slotIndex] = spellData.cooldown;
+        D_Spell data = cachedSpellData[slotIndex];
+        if (data != null)
+        {
+            cooldownTimers[slotIndex] = data.cooldown;
+        }
     }
 }

@@ -17,11 +17,12 @@ MonoBehaviour:
   manaCost: 10
   lifeTime: 10
   castingTime: 0.3
-  cooldown: 10
+  cooldown: 15
   isSelfTargeted: 0
   isPermanentPassive: 0
   isSpawnAtMouse: 1
   maxCastRange: 6
+  inaccuracy: 0
   isPenetrating: 0
   isLaser: 0
   acceleration: 10
@@ -33,13 +34,19 @@ MonoBehaviour:
   isRotating: 1
   rotationSpeed: 360
   isPassThroughtHighObstacle: 1
-  impactVFX: {fileID: 0}
+  impactVFX: {fileID: 3731619693224757666, guid: d574d174b44f63b47ad3c12035dfecbe, type: 3}
   canBlock: 0
   maxBlocks: 3
   canReflect: 0
   hasAura: 1
-  auraCheckRadius: 5
+  auraCheckRadius: 1.5
   auraTickRate: 0.5
   hitEffects:
-  - {fileID: 11400000, guid: b9ec45c62de72e941a3af970db87a8b3, type: 2}
-  - {fileID: 11400000, guid: f69eaebcbac576c4aa978f87b5facc93, type: 2}
+  - type: 0
+    duration: 5
+    value: 1
+    tickRate: 1
+  - type: 6
+    duration: 5
+    value: 1
+    tickRate: 1

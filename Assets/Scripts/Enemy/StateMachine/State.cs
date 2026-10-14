@@ -4,12 +4,12 @@ using UnityEngine;
 public class State
 {
     protected FiniteStateMachine stateMachine;
-    protected Entity entity;
+    protected EnemyController entity;
 
     public float startTime {get; protected set;}
     protected int animBoolHash;
 
-    public State(Entity entity, FiniteStateMachine stateMachine, int animBoolHash)
+    public State(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash)
     {
         this.entity = entity;
         this.stateMachine = stateMachine;

@@ -5,7 +5,7 @@ public class RepositionState : State
     private Vector2 destination;
     private bool isRepositioning;
 
-    public RepositionState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    public RepositionState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }
@@ -16,7 +16,7 @@ public class RepositionState : State
         isRepositioning = true;
         
         // 1. Tính toán điểm chạy lách (Ví dụ: chạy lùi hoặc dạt sang ngang 2-3 mét)
-        Vector2 dirAwayFromPlayer = (entity.transform.position - Player.Instance.transform.position).normalized;
+        Vector2 dirAwayFromPlayer = (entity.transform.position - PlayerController.Instance.transform.position).normalized;
         
         // Trộn thêm 1 chút góc ngẫu nhiên để nó không đi thẳng lùi: Range(-45f, 45f);
         float randomAngle = Random.Range(-135f, 135f);

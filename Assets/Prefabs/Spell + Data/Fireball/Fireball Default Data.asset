@@ -37,9 +37,12 @@ MonoBehaviour:
   impactVFX: {fileID: 6300947510988114241, guid: d981ed91604b35a4cb5b68eb3a313789, type: 3}
   canBlock: 0
   maxBlocks: 10
-  canReflect: 1
+  canReflect: 0
   hasAura: 0
   auraCheckRadius: 3
   auraTickRate: 0.5
   hitEffects:
-  - {fileID: 11400000, guid: 543b7bfcf1411fd439c6600769b18aae, type: 2}
+  - type: 0
+    duration: 0
+    value: 10
+    tickRate: 0

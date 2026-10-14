@@ -5,7 +5,7 @@ public class DodgeState : State
     private Vector2 dodgeDirection;
     private float dodgeEndTime;
 
-    public DodgeState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    public DodgeState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }

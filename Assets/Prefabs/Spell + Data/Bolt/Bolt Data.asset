@@ -22,6 +22,7 @@ MonoBehaviour:
   isPermanentPassive: 0
   isSpawnAtMouse: 0
   maxCastRange: 8
+  inaccuracy: 0
   isPenetrating: 1
   isLaser: 1
   acceleration: 0
@@ -33,13 +34,19 @@ MonoBehaviour:
   isRotating: 0
   rotationSpeed: 360
   isPassThroughtHighObstacle: 0
-  impactVFX: {fileID: 0}
+  impactVFX: {fileID: 7689684247619834549, guid: d95165f5c26d24f4faabe4ca23d46141, type: 3}
   canBlock: 0
   maxBlocks: 3
   canReflect: 0
   hasAura: 0
   auraCheckRadius: 3
-  auraTickRate: 0.5
+  auraTickRate: 0
   hitEffects:
-  - {fileID: 11400000, guid: 3d9758cd87227f349bfac1813fcf68ed, type: 2}
-  - {fileID: 11400000, guid: 6c538a308e4a8404f9b39d6fcfda598f, type: 2}
+  - type: 3
+    duration: 5
+    value: 0
+    tickRate: 0
+  - type: 0
+    duration: 0
+    value: 1
+    tickRate: 0

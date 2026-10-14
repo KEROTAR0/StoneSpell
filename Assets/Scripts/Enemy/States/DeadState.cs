@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DeadState : State
 {
-    public DeadState(Entity entity, FiniteStateMachine stateMachine, int animBoolHash) 
+    public DeadState(EnemyController entity, FiniteStateMachine stateMachine, int animBoolHash) 
         : base(entity, stateMachine, animBoolHash)
     {
     }

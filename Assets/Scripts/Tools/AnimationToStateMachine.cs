@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AnimationToStateMachine : MonoBehaviour
 {
-    public Entity entity;
+    public EnemyController entity;
     private void TriggerAttack()
     {
         entity.stateMachine.currentState.TriggerAttack();
