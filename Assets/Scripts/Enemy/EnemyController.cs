@@ -37,7 +37,8 @@ public class EnemyController : MonoBehaviour
 
     [Header("Hit Flash Effect (Giao cho Component phụ trách VFX xử lý thì tốt hơn)")]
     public Material whiteFlashMat;
-    public float flashDuration = 0.1f;
+    private Coroutine flashCoroutine;
+    public float flashDuration = 0.05f;
     private SpriteRenderer sr;
     private Material originalMat;
 
@@ -156,24 +157,66 @@ public class EnemyController : MonoBehaviour
     
     protected virtual void HandleHurt()
     {
+        // 1. Kiểm tra trạng thái chết
+        if (stateMachine.currentState == deadState) return;
+
+        // Bỏ qua nếu đang Choáng cứng (Stun). KHÔNG bỏ qua nếu đang Ngủ (Sleep) hoặc bình thường.
+        if (stateMachine.currentState == stunnedState && CC != null && !CC.isSleeping)
+        {
+            // Ngay cả khi đang bị Choáng (Stun), ta VẪN cho phép Nhấp nháy trắng khi ăn đòn, chỉ là không đổi State thôi!
+            TriggerFlashWhite(); 
+            return;
+        }
+
         // Đánh thức nếu đang ngủ
-        CC.WakeUp();
+        if (CC != null) CC.WakeUp();
+        
+        isAggroed = true;
 
-        if (sr != null && whiteFlashMat != null) 
-            StartCoroutine(FlashWhiteRoutine());
+        // ==========================================
+        // GỌI HIỆU ỨNG NHÁY TRẮNG (FLASH WHITE)
+        // ==========================================
+        TriggerFlashWhite();
 
-        // LƯU Ý: Nếu Quái vật có StunState (bị đánh khựng), bạn phải gọi lệnh ChangeState ở đây!
-        // Ví dụ: if (CanBeStunned()) stateMachine.ChangeState(stunnedState);
+        // 2. Chuyển đổi State nếu cần thiết (Khi đang đi tuần/quan sát)
+        if (stateMachine.currentState == patrolState || 
+            stateMachine.currentState == observeState || 
+            stateMachine.currentState == stunnedState) 
+        {
+            ReturnToDefaultState(); 
+        }
     }
-
-    protected virtual void HandleInterrupt()
+    private void TriggerFlashWhite()
     {
+        if (sr != null && whiteFlashMat != null)
+        {
+            // NẾU ĐANG NHẤY: Tắt ngay Coroutine cũ để tránh việc nó tự phục hồi Material gốc sớm
+            if (flashCoroutine != null)
+            {
+                StopCoroutine(flashCoroutine);
+            }
+            // Khởi chạy lượt nhấp nháy mới (Thời gian flash sẽ được reset về 0.1s từ đầu)
+            flashCoroutine = StartCoroutine(FlashWhiteRoutine());
+        }
+    }
+    public virtual void HandleInterrupt()
+    {
+        if (stateMachine.currentState == deadState) return;
         StopMovement();
         
-        if (stateMachine.currentState != deadState && stateMachine.currentState != vacuumState)
+        if (CC != null)
         {
-            stunnedState.SetupStun(CC.isSleeping); 
-            stateMachine.ChangeState(stunnedState); 
+            if (Pullable != null && Pullable.isBeingVacuumed)
+            {
+                stateMachine.ChangeState(vacuumState);
+                Debug.Log("vacuum!");
+                return;
+            }
+            if (CC.isStunned || CC.isSleeping)
+            {
+                stunnedState.SetupStun(CC.isSleeping); 
+                stateMachine.ChangeState(stunnedState);
+            }
         }
     }
 
@@ -182,6 +225,7 @@ public class EnemyController : MonoBehaviour
         sr.material = whiteFlashMat;
         yield return new WaitForSeconds(flashDuration);
         sr.material = originalMat;
+        flashCoroutine = null; // Giải phóng
     }
 
     public virtual void Die()

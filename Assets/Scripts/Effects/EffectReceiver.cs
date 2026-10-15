@@ -13,6 +13,7 @@ public class EffectReceiver : MonoBehaviour
         public float currentTimer;
         public float tickTimer;
         public Vector2 sourcePos;
+        public GameObject vfxInstance;
 
         public void Reset(EffectData newData, Vector2 newPos)
         {
@@ -25,6 +26,8 @@ public class EffectReceiver : MonoBehaviour
 
     public void ApplyEffect(EffectData data, Vector2 sourcePosition = default)
     {
+        if (Random.value > data.procChance) return;
+        
         if (activeEffects.TryGetValue(data.type, out ActiveEffect existingEffect))
         {
             // Trùng hiệu ứng -> Reset lại thời gian (Không bị cộng dồn vô hạn)
@@ -34,6 +37,11 @@ public class EffectReceiver : MonoBehaviour
         {
             // Hiệu ứng mới -> Khởi tạo và thêm vào Dictionary
             ActiveEffect newEffect = new ActiveEffect { data = data, currentTimer = data.duration, tickTimer = data.tickRate, sourcePos = sourcePosition };
+            if (data.vfxPrefab != null)
+            {
+                newEffect.vfxInstance = ObjectPoolManager.Instance.GetFromPool(data.vfxPrefab, transform.position, Quaternion.identity);
+                newEffect.vfxInstance.transform.SetParent(transform);
+            }
             activeEffects.Add(data.type, newEffect);
 
             // Kích hoạt tác dụng tức thời (nếu có)
@@ -48,7 +56,11 @@ public class EffectReceiver : MonoBehaviour
         {
             if (EffectDictionary.OnEndMap.TryGetValue(type, out var action))
                 action.Invoke(this, effect.data, effect.sourcePos);
-                
+            if (effect.vfxInstance != null)
+            {
+                effect.vfxInstance.transform.SetParent(null);
+                ObjectPoolManager.Instance.AddToPool(effect.vfxInstance);
+            }
             activeEffects.Remove(type);
         }
     }
@@ -95,6 +107,10 @@ public class EffectReceiver : MonoBehaviour
     public void HandleContinuousVacuum(Vector2 pos, float speed)
     {
         if (TryGetComponent(out PullableComponent pullable)) pullable.ReceiveContinuousVacuum(pos, speed);
+        if (TryGetComponent(out CoreCCComponent cc)) 
+        {
+            cc.OnInterrupt?.Invoke(); 
+        }
     }
 
     public void TakeDamage(float amount)

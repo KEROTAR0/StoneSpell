@@ -57,9 +57,10 @@ public class SpellCollision : MonoBehaviour
             {
                 if (!hitTargets.Contains(collision.gameObject))
                 {
+                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
                     controller.ApplyEffectsToTarget(collision.gameObject);
                     hitTargets.Add(collision.gameObject);
-                    controller.SpawnImpactVFX();
+                    controller.SpawnImpactVFXAtPosition(hitPoint);
                 }
             }
         }
@@ -85,7 +86,8 @@ public class SpellCollision : MonoBehaviour
             else
             {
                 if (TryGetComponent(out Rigidbody2D rb)) rb.linearVelocity = Vector2.zero; 
-                controller.SpawnImpactVFX();
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                controller.SpawnImpactVFXAtPosition(hitPoint);
                 controller.Despawn();
             }
             return; 
@@ -100,7 +102,8 @@ public class SpellCollision : MonoBehaviour
                 // Không thể Block hay Reflect những loại này
                 if (enemyProj.attackData.behavior == AttackBehavior.TelegraphedAoE) return;
 
-                controller.SpawnImpactVFX(); // Hiện tia lửa va chạm
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                controller.SpawnImpactVFXAtPosition(hitPoint);
 
                 // REFLECT
                 if (baseData.canReflect)
@@ -148,8 +151,9 @@ public class SpellCollision : MonoBehaviour
         // 3. Trúng Mục Tiêu (Quái hoặc Đồ vật)
         if (!baseData.isPenetrating && !baseData.isLaser && (GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
         {
+            Vector2 hitPoint = (Vector2)transform.position + ((Vector2)collision.transform.position - (Vector2)transform.position) * 0.5f;
             controller.ApplyEffectsToTarget(collision.gameObject);
-            controller.SpawnImpactVFX();
+            controller.SpawnImpactVFXAtPosition(hitPoint);
             
             if (baseData.isProjectile && !baseData.hasAura) controller.Despawn();
         }

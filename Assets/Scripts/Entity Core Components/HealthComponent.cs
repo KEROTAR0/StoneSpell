@@ -22,7 +22,11 @@ public class HealthComponent : MonoBehaviour, IDamageable
         this.currentHealth = this.maxHealth;
         UpdateUI();
     }
-
+    public void IncreaseMaxHealth(int health)
+    {
+        this.maxHealth += health;
+        RestoreHealth(health);
+    }
     public void RestoreHealth(int amount)
     {
         if (currentHealth <= 0) return;

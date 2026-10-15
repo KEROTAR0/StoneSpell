@@ -21,8 +21,12 @@ public class SpellAura : MonoBehaviour
             Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, controller.baseSpellData.auraCheckRadius, GameLayers.EnemyAndDamageableMask);
             foreach (var target in targets) 
             {
-                controller.ApplyEffectsToTarget(target.gameObject);
-                controller.SpawnImpactVFX();
+                if(target != null)
+                {
+                    controller.ApplyEffectsToTarget(target.gameObject);
+                    Vector2 hitPoint = target.ClosestPoint(transform.position);
+                    controller.SpawnImpactVFXAtPosition(hitPoint);
+                }
             }
         }
     }

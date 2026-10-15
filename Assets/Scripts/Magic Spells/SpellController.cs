@@ -18,7 +18,10 @@ public class SpellController : MonoBehaviour
         currentStats = new RuntimeSpellStats(baseSpellData);
 
         // 2. TRẠM KIỂM DUYỆT (INTERCEPTOR)
-        // ItemManager.Instance.ApplyModifiers(this.currentStats);
+        if (RunManager.Instance != null)
+        {
+            RunManager.Instance.InterceptSpell(this);
+        }
 
         timeActivated = Time.time;
         auraTimer = currentStats.auraTickRate; 
@@ -57,7 +60,7 @@ public class SpellController : MonoBehaviour
             if (auraTimer >= currentStats.auraTickRate)
             {
                 auraTimer = 0f;
-                ApplyEffectsToTarget(PlayerController.Instance.gameObject);
+                ApplyEffectsToTarget(PlayerController.Instance.gameObject, true);
             }
         }
 
@@ -67,23 +70,32 @@ public class SpellController : MonoBehaviour
         }
     }
 
-    public void ApplyEffectsToTarget(GameObject target)
+    public void ApplyEffectsToTarget(GameObject target, bool isSelfCast = false)
     {
         if (target.TryGetComponent(out EffectReceiver receiver))
         {
             foreach (var effect in currentStats.activeEffects)
             {
+                if (isSelfCast && !effect.isBuff) continue;
+
+                // 2. Đánh trúng mục tiêu khác: CHỈ gây Sát thương/Khống chế, KHÔNG lỡ tay buff máu cho quái vật
+                if (!isSelfCast && effect.isBuff) continue;
+
                 receiver.ApplyEffect(effect, transform.position);
             }
         }
     }
 
-    public void SpawnImpactVFX()
+    public void SpawnImpactVFXAtPosition(Vector2 exactPosition)
     {
-        if (baseSpellData.impactVFX != null)
-            ObjectPoolManager.Instance.GetFromPool(baseSpellData.impactVFX, transform.position, Quaternion.identity); // Đổi Instantiate thành ObjectPool
+        foreach (var effect in currentStats.activeEffects)
+        {
+            if (effect.tickRate <= 0 && effect.vfxPrefab != null)
+            {
+                ObjectPoolManager.Instance.GetFromPool(effect.vfxPrefab, exactPosition, Quaternion.identity);
+            }
+        }
     }
-
     public void Despawn()
     {
         if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)

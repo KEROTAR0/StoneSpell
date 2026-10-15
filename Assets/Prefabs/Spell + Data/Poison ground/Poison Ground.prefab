@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2337759224140432678}
   - component: {fileID: 7777433245927325339}
   - component: {fileID: 6362802410710568930}
-  - component: {fileID: -3647916769317275506}
   - component: {fileID: 5242091567145588280}
   m_Layer: 13
   m_Name: Poison Ground
@@ -73,7 +72,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.01
+  m_Radius: 1.5
 --- !u!50 &2337759224140432678
 Rigidbody2D:
   serializedVersion: 5
@@ -175,18 +174,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameScripts::SpellController
   baseSpellData: {fileID: 11400000, guid: 6b45d3c5e732d564ca22265999c56db0, type: 2}
   visualHolder: {fileID: 2469469761480575033}
---- !u!114 &-3647916769317275506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084608934214389636}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6a308de3c29f974c98376204896e311, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameScripts::SpellCollision
 --- !u!114 &5242091567145588280
 MonoBehaviour:
   m_ObjectHideFlags: 0

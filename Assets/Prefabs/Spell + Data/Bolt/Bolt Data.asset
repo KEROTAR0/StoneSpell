@@ -43,10 +43,14 @@ MonoBehaviour:
   auraTickRate: 0
   hitEffects:
   - type: 3
+    procChance: 0.7
     duration: 5
     value: 0
     tickRate: 0
+    isBuff: 0
   - type: 0
+    procChance: 1
     duration: 0
-    value: 1
+    value: 3
     tickRate: 0
+    isBuff: 0

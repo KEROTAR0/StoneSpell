@@ -16,7 +16,11 @@ public class PlayerManaComponent : MonoBehaviour
         this.hitCountNeedToSpawnMana = hitCountNeeded;
         UpdateUI();
     }
-
+    public void IncreaseMaxMana(int mana)
+    {
+        this.maxMana += mana;
+        RestoreMana(mana);
+    }
     public void RestoreMana(float amount)
     {
         float actualAmount = amount * manaGainMultiplier;

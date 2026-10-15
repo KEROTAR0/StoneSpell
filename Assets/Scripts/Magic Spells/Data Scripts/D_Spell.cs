@@ -41,8 +41,6 @@ public class D_Spell : ScriptableObject
     [Header("Obstacle Interaction")]
     public bool isPassThroughtHighObstacle;
 
-    [Header("VFX")]
-    public GameObject impactVFX;
 
     [Header("Defensive Traits")]
     public bool canBlock;

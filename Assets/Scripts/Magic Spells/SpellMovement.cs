@@ -56,7 +56,7 @@ public class SpellMovement : MonoBehaviour
     public void PerformBounce()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position - (Vector3)currentDirection * 0.5f, currentDirection, 1.5f, GameLayers.WallAndHighObstacleMask);
-        controller.SpawnImpactVFX();
+        controller.SpawnImpactVFXAtPosition(transform.position);
         
         if (hit.collider != null) currentDirection = Vector2.Reflect(currentDirection, hit.normal).normalized;
         else currentDirection = -currentDirection;

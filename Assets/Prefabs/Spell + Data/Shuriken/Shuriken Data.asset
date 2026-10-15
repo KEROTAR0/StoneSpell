@@ -29,7 +29,7 @@ MonoBehaviour:
   laserMaxLength: 10
   laserWidth: 1
   isProjectile: 1
-  moveSpeed: 3
+  moveSpeed: 2
   maxBounces: 0
   isRotating: 1
   rotationSpeed: 720
@@ -43,6 +43,14 @@ MonoBehaviour:
   auraTickRate: 0.25
   hitEffects:
   - type: 0
+    procChance: 1
     duration: 0
     value: 3
     tickRate: 0
+    isBuff: 0
+  - type: 6
+    procChance: 1
+    duration: 1
+    value: 1
+    tickRate: 0
+    isBuff: 0
