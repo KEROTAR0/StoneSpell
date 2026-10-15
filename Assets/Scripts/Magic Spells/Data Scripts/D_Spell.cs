@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "newSpellData", menuName = "Data/Spell Data/Spell")]
+[CreateAssetMenu(fileName = "newSpellData", menuName = "Data/Spell Data")]
 public class D_Spell : ScriptableObject
 {    
 [Header("Basic Info")]
@@ -11,29 +11,30 @@ public class D_Spell : ScriptableObject
     public float lifeTime = 5f;
     public float castingTime = 0.3f;
     public float cooldown = 2f;
-    public bool isSelfTargeted;
-    public bool isPermanentPassive;
+
 
     [Header("Targeting")]
     public bool isSpawnAtMouse;
     public float maxCastRange = 8f;
 
+
     [Header("Spell Types")]
-    // (Đã có: public bool isProjectile; public bool hasAura; public bool isSelfTargeted; ...)
-    public float inaccuracy = 0f;
+    public bool isProjectile;
     public bool isPenetrating;
     public bool isLaser;
+    public bool isSelfTargeted;
+    public bool isPermanentPassive;
 
-    [Header("Penetrate & Laser Settings")]
-    public float acceleration = 10f;
+
+    [Header("Movement & Physics")]
+    public float inaccuracy = 0f;
+    public float moveSpeed = 5f;
+    public int maxBounces = 0;
+    public float acceleration = 1.1f;
     public float laserMaxLength = 10f;
     [Tooltip("Độ dày (trục Y) của tia Laser")]
     public float laserWidth = 1f;
 
-    [Header("Movement & Physics")]
-    public bool isProjectile;
-    public float moveSpeed = 15f;
-    public int maxBounces = 0;
 
     [Header("Animation & Visuals")]
     public bool isRotating;
@@ -44,7 +45,7 @@ public class D_Spell : ScriptableObject
 
     [Header("Defensive Traits")]
     public bool canBlock;
-    public int maxBlocks = 3;
+    public int maxBlocks = 1;
     public bool canReflect;
 
     [Header("Aura")]

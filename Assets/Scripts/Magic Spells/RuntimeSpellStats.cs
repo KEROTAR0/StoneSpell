@@ -13,6 +13,7 @@ public class RuntimeSpellStats
     public float laserMaxLength;
     public float laserWidth;
     public float rotationSpeed;
+    public float inaccuracy;
     
     // Bản sao danh sách hiệu ứng để Trạm kiểm duyệt nhét thêm Độc, Cháy...
     public List<EffectData> activeEffects;
@@ -29,6 +30,7 @@ public class RuntimeSpellStats
         laserMaxLength = template.laserMaxLength;
         laserWidth = template.laserWidth;
         rotationSpeed = template.rotationSpeed;
+        inaccuracy = template.inaccuracy;
 
         activeEffects = new List<EffectData>();
         if (template.hitEffects != null)

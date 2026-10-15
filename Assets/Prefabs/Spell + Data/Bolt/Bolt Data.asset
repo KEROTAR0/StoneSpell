@@ -18,23 +18,22 @@ MonoBehaviour:
   lifeTime: 0.27
   castingTime: 0.1
   cooldown: 1
-  isSelfTargeted: 0
-  isPermanentPassive: 0
   isSpawnAtMouse: 0
   maxCastRange: 8
-  inaccuracy: 0
+  isProjectile: 0
   isPenetrating: 1
   isLaser: 1
+  isSelfTargeted: 0
+  isPermanentPassive: 0
+  inaccuracy: 0
+  moveSpeed: 0
+  maxBounces: 0
   acceleration: 0
   laserMaxLength: 0
   laserWidth: 1
-  isProjectile: 0
-  moveSpeed: 0
-  maxBounces: 0
   isRotating: 0
   rotationSpeed: 360
   isPassThroughtHighObstacle: 0
-  impactVFX: {fileID: 7689684247619834549, guid: d95165f5c26d24f4faabe4ca23d46141, type: 3}
   canBlock: 0
   maxBlocks: 3
   canReflect: 0
@@ -48,9 +47,11 @@ MonoBehaviour:
     value: 0
     tickRate: 0
     isBuff: 0
+    vfxPrefab: {fileID: 0}
   - type: 0
     procChance: 1
     duration: 0
-    value: 3
+    value: 1
     tickRate: 0
     isBuff: 0
+    vfxPrefab: {fileID: 0}

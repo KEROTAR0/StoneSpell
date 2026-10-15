@@ -39,6 +39,7 @@ public class DestructibleObject : MonoBehaviour, IDamageable
     public void TakeDamage(AttackDetails attackDetails)
     {
         currentHealth -= attackDetails.damageAmount;
+        Debug.Log($"HP left: '{currentHealth}'" );
 
         if (rb != null)
         {

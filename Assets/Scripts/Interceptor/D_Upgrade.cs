@@ -20,6 +20,7 @@ public class D_Upgrade : ScriptableObject
     public float speedBonus = 0f;
     public int bonusBounces = 0;
     public int bonusBlocks = 0;
+    public float inaccuracy = 0f;
 
     [Header("Hit Effects (Gắn thêm Hiệu ứng)")]
     [Tooltip("Thêm Độc, Làm Chậm, v.v... vào mọi đòn đánh")]

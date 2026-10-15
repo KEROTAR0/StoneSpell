@@ -47,6 +47,7 @@ public class RunManager : MonoBehaviour
             spell.currentStats.moveSpeed += upgrade.speedBonus;
             spell.currentStats.maxBounces += upgrade.bonusBounces;
             spell.currentStats.maxBlocks += upgrade.bonusBlocks;
+            spell.currentStats.inaccuracy += upgrade.inaccuracy;
 
             // =========================================================
             // SỬA CHỮA: ÁP DỤNG SÁT THƯƠNG THEO CHUẨN DOT (TICKRATE = 0)
@@ -70,13 +71,20 @@ public class RunManager : MonoBehaviour
                         
                         // Cộng sát thương theo phần trăm (Percent) - Dựa vào Data Gốc
                         // Ta cần đối chiếu với baseSpellData để tính % chuẩn xác
-                        if (upgrade.percentDamageBonus > 0)
+                        if (upgrade.percentDamageBonus != 0) // Kiểm tra != 0 thay vì > 0
                         {
                             EffectData originalEffect = spell.baseSpellData.hitEffects.Find(e => e.type == EffectType.DoT && e.tickRate <= 0);
-                            if (originalEffect != null)
+                            if (originalEffect.type == EffectType.DoT) // Check an toàn
                             {
+                                // Ví dụ: Base = 10, percent = -0.9f -> Trừ đi 9 máu
                                 currentEffect.value += (originalEffect.value * upgrade.percentDamageBonus);
                             }
+                        }
+
+                        // ÉP SÁT THƯƠNG TỐI THIỂU = 1 (Chỉ áp dụng nếu đây là đòn có sát thương lúc đầu)
+                        if (currentEffect.value < 1f && spell.baseSpellData.hitEffects.Exists(e => e.type == EffectType.DoT && e.tickRate <= 0))
+                        {
+                            currentEffect.value = 1f;
                         }
                         
                         // Cập nhật lại vào danh sách Động

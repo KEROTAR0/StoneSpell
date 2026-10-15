@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
 public class SpellController : MonoBehaviour
 {
     // Dữ liệu TĨNH (Khuôn đúc)
@@ -8,15 +9,17 @@ public class SpellController : MonoBehaviour
 
     // Dữ liệu ĐỘNG (Bản sao dùng cho viên đạn này)
     public RuntimeSpellStats currentStats { get; private set; } 
+    public Vector2 initialDirection { get; private set; }
     private float timeActivated;
     private float auraTimer = 0f; 
 
     // SỬA HÀM INIT: Xóa toàn bộ các tham số LayerMask
     public void Initialize(Vector2 direction)
     {
+        this.initialDirection = direction;
         // 1. TẠO BẢN SAO DỮ LIỆU ĐỘNG
         currentStats = new RuntimeSpellStats(baseSpellData);
-
+    
         // 2. TRẠM KIỂM DUYỆT (INTERCEPTOR)
         if (RunManager.Instance != null)
         {
@@ -25,6 +28,12 @@ public class SpellController : MonoBehaviour
 
         timeActivated = Time.time;
         auraTimer = currentStats.auraTickRate; 
+        Vector2 finalDirection = direction;
+        if (currentStats.inaccuracy > 0)
+        {
+            float randomAngle = Random.Range(-currentStats.inaccuracy, currentStats.inaccuracy);
+            finalDirection = Quaternion.Euler(0, 0, randomAngle) * direction;
+        }
 
         // 3. KHỞI TẠO LOGIC
         if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)
@@ -45,7 +54,7 @@ public class SpellController : MonoBehaviour
         }
         else
         {
-            if (TryGetComponent(out SpellMovement movement)) movement.Init(direction);
+            if (TryGetComponent(out SpellMovement movement)) movement.Init(finalDirection);
             if (TryGetComponent(out SpellCollision collision)) collision.Init();
             if (TryGetComponent(out SpellLaser laser)) laser.Init(direction);
             if (TryGetComponent(out SpellAura aura)) aura.Init();
@@ -82,6 +91,28 @@ public class SpellController : MonoBehaviour
                 if (!isSelfCast && effect.isBuff) continue;
 
                 receiver.ApplyEffect(effect, transform.position);
+            }
+        }
+        if (target.TryGetComponent(out IDamageable damageable))
+        {
+            float totalFlatDamage = 0f;
+
+            foreach (var effect in currentStats.activeEffects)
+            {
+                if (effect.type == EffectType.DoT && effect.tickRate <= 0)
+                {
+                    totalFlatDamage += effect.value;
+                }
+            }
+
+            if (totalFlatDamage > 0)
+            {
+                AttackDetails details = new AttackDetails 
+                { 
+                    damageAmount = totalFlatDamage, 
+                    position = transform.position,
+                };
+                damageable.TakeDamage(details);
             }
         }
     }

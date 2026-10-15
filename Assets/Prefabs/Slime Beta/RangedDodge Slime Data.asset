@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RangedDodge Slime Data
   m_EditorClassIdentifier: Assembly-CSharp::D_Entity
   hasNoAnimLeftOrRight: 0
-  maxHealth: 100
+  maxHealth: 500
   stunResistance: 0
   stunRecoveryTime: 7
   stunVFXPrefabHeight: -0.1

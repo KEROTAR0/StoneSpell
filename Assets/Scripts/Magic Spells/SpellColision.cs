@@ -22,9 +22,17 @@ public class SpellCollision : MonoBehaviour
     {
         currentBounces = controller.currentStats.maxBounces;
         currentBlocks = controller.currentStats.maxBlocks;
-        isHitboxActive = false;
-        hitTargets.Clear();
         
+        if (controller.baseSpellData.isProjectile)
+        {
+            isHitboxActive = true; 
+        }
+        else
+        {
+            isHitboxActive = false;
+        }
+        
+        hitTargets.Clear();
         GetComponent<Collider2D>().enabled = true;
         if (TryGetComponent(out Animator animChild))
         {
@@ -37,6 +45,13 @@ public class SpellCollision : MonoBehaviour
     {
         isHitboxActive = true;
         hitTargets.Clear(); 
+        
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            col.enabled = false;
+            col.enabled = true;
+        }
     }
 
     public void AnimationEvent_DisableHitbox()
@@ -47,23 +62,7 @@ public class SpellCollision : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        D_Spell baseData = controller.baseSpellData;
-        int colLayer = collision.gameObject.layer;
-
-        if (isHitboxActive && (baseData.isPenetrating || baseData.isLaser))
-        {
-            // Xuyên thấu trúng Quái hoặc Đồ vật
-            if ((GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
-            {
-                if (!hitTargets.Contains(collision.gameObject))
-                {
-                    Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                    controller.ApplyEffectsToTarget(collision.gameObject);
-                    hitTargets.Add(collision.gameObject);
-                    controller.SpawnImpactVFXAtPosition(hitPoint);
-                }
-            }
-        }
+        if (isHitboxActive) TryDamageTarget(collision);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -100,7 +99,7 @@ public class SpellCollision : MonoBehaviour
             {
                 // BỎ QUA TelegraphedAoE (Sét đánh, Cột lửa từ dưới đất...)
                 // Không thể Block hay Reflect những loại này
-                if (enemyProj.attackData.behavior == AttackBehavior.TelegraphedAoE) return;
+                // if (enemyProj.attackData.behavior == AttackBehavior.TelegraphedAoE) return;
 
                 Vector2 hitPoint = collision.ClosestPoint(transform.position);
                 controller.SpawnImpactVFXAtPosition(hitPoint);
@@ -149,13 +148,34 @@ public class SpellCollision : MonoBehaviour
         }
 
         // 3. Trúng Mục Tiêu (Quái hoặc Đồ vật)
-        if (!baseData.isPenetrating && !baseData.isLaser && (GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
+        if (isHitboxActive) 
         {
-            Vector2 hitPoint = (Vector2)transform.position + ((Vector2)collision.transform.position - (Vector2)transform.position) * 0.5f;
-            controller.ApplyEffectsToTarget(collision.gameObject);
-            controller.SpawnImpactVFXAtPosition(hitPoint);
-            
-            if (baseData.isProjectile && !baseData.hasAura) controller.Despawn();
+            TryDamageTarget(collision);
+        }
+    }
+    private void TryDamageTarget(Collider2D collision)
+    {
+        D_Spell baseData = controller.baseSpellData;
+        int colLayer = collision.gameObject.layer;
+
+        // Nếu chạm trúng Quái hoặc Đồ vật phá được
+        if ((GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
+        {
+            // Tránh việc 1 viên đạn giật cùng 1 mục tiêu 2 lần
+            if (!hitTargets.Contains(collision.gameObject))
+            {
+                Vector2 hitPoint = (Vector2)transform.position + ((Vector2)collision.transform.position - (Vector2)transform.position) * 0.5f;
+                controller.ApplyEffectsToTarget(collision.gameObject);
+                controller.SpawnImpactVFXAtPosition(hitPoint);
+                
+                hitTargets.Add(collision.gameObject);
+
+                // NẾU KHÔNG PHẢI XUYÊN THẤU -> HỦY VIÊN ĐẠN NGAY LẬP TỨC
+                if (!baseData.isPenetrating && !baseData.isLaser && baseData.isProjectile && !baseData.hasAura)
+                {
+                    controller.Despawn();
+                }
+            }
         }
     }
 }

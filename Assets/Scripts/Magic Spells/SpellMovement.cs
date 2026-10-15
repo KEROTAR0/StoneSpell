@@ -18,6 +18,9 @@ public class SpellMovement : MonoBehaviour
 
     public void Init(Vector2 direction)
     {
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
+        if (controller == null) controller = GetComponent<SpellController>();
+        
         D_Spell baseData = controller.baseSpellData;
         RuntimeSpellStats stats = controller.currentStats;
         
@@ -28,7 +31,8 @@ public class SpellMovement : MonoBehaviour
         currentSpeed = baseData.isPenetrating ? 0f : stats.moveSpeed;
         hasFinishedAttackFrame = false;
 
-        if (baseData.isProjectile || baseData.isPenetrating) SetVelocity(currentDirection);
+        if (baseData.isProjectile || baseData.isPenetrating) 
+            SetVelocity(currentDirection);
         else rb.linearVelocity = Vector2.zero;
     }
 

@@ -17,24 +17,23 @@ MonoBehaviour:
   manaCost: 10
   lifeTime: 10
   castingTime: 0.3
-  cooldown: 15
-  isSelfTargeted: 0
-  isPermanentPassive: 0
+  cooldown: 1
   isSpawnAtMouse: 1
   maxCastRange: 6
-  inaccuracy: 0
+  isProjectile: 0
   isPenetrating: 0
   isLaser: 0
+  isSelfTargeted: 0
+  isPermanentPassive: 0
+  inaccuracy: 0
+  moveSpeed: 1
+  maxBounces: 0
   acceleration: 10
   laserMaxLength: 10
   laserWidth: 1
-  isProjectile: 0
-  moveSpeed: 15
-  maxBounces: 0
   isRotating: 1
   rotationSpeed: 360
   isPassThroughtHighObstacle: 1
-  impactVFX: {fileID: 3731619693224757666, guid: d574d174b44f63b47ad3c12035dfecbe, type: 3}
   canBlock: 0
   maxBlocks: 3
   canReflect: 0
@@ -46,11 +45,13 @@ MonoBehaviour:
     procChance: 1
     duration: 5
     value: 1
-    tickRate: 1
+    tickRate: 0.5
     isBuff: 0
+    vfxPrefab: {fileID: 3731619693224757666, guid: d574d174b44f63b47ad3c12035dfecbe, type: 3}
   - type: 6
     procChance: 1
-    duration: 5
-    value: 1
-    tickRate: 1
+    duration: 0.05
+    value: 5
+    tickRate: 0
     isBuff: 0
+    vfxPrefab: {fileID: 0}
