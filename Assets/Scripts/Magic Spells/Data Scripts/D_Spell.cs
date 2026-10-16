@@ -35,6 +35,12 @@ public class D_Spell : ScriptableObject
     [Tooltip("Độ dày (trục Y) của tia Laser")]
     public float laserWidth = 1f;
 
+    [Header("Explosion on Despawn (Rocket/Fireball)")]
+    [Tooltip("Tích vào đây nếu muốn đạn phát nổ khi va chạm hoặc hết thời gian bay")]
+    public bool explodeOnDespawn = false;
+    public float explosionRadius = 2.5f;
+    [Tooltip("VFX của vụ nổ (Đảm bảo VFX này tự động tắt/thu hồi sau khi nổ xong)")]
+    public GameObject explosionVFX;
 
     [Header("Animation & Visuals")]
     public bool isRotating;

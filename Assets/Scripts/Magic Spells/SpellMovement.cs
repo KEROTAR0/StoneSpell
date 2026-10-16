@@ -56,16 +56,44 @@ public class SpellMovement : MonoBehaviour
             targetRotate.Rotate(Vector3.forward, stats.rotationSpeed * Time.deltaTime);
         }
     }
-
-    public void PerformBounce()
+    private void FixedUpdate()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position - (Vector3)currentDirection * 0.5f, currentDirection, 1.5f, GameLayers.WallAndHighObstacleMask);
-        controller.SpawnImpactVFXAtPosition(transform.position);
-        
-        if (hit.collider != null) currentDirection = Vector2.Reflect(currentDirection, hit.normal).normalized;
-        else currentDirection = -currentDirection;
+        // CHỐNG XUYÊN TƯỜNG (RAYCAST AHEAD)
+        if (rb != null && controller != null && controller.baseSpellData.isProjectile)
+        {
+            // 1. CHỐNG XUYÊN TƯỜNG (RAYCAST AHEAD)
+            float distanceThisFrame = controller.currentStats.moveSpeed * Time.fixedDeltaTime;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, currentDirection, distanceThisFrame, GameLayers.WallMask.value | GameLayers.HighObstacleMask.value);
             
-        SetVelocity(currentDirection);
+            if (hit.collider != null)
+            {
+                // Dời vị trí đến sát mặt tường nhưng LÙI LẠI MỘT CHÚT (0.05f) để không bị lún vào Collider
+                transform.position = hit.point - currentDirection * 0.05f; 
+                
+                // TUYỆT ĐỐI KHÔNG gán rb.linearVelocity = Vector2.zero ở đây nữa!
+                // Giữ nguyên vận tốc để OnTriggerEnter2D có dữ liệu tính toán góc phản xạ.
+            }
+            else
+            {
+                rb.linearVelocity = currentDirection * controller.currentStats.moveSpeed;
+            }
+        }
+    }
+    public void PerformBounce(Vector2 surfaceNormal)
+    {
+        // 1. Tính toán góc phản xạ (Góc tới = Góc nảy)
+        // Vector2.Reflect sẽ lấy hướng bay hiện tại, đập vào mặt phẳng (surfaceNormal) và trả ra hướng nảy
+        currentDirection = Vector2.Reflect(currentDirection, surfaceNormal).normalized;
+
+        // 2. Gán lại vận tốc mới cho viên đạn
+        if (rb != null)
+        {
+            rb.linearVelocity = currentDirection * controller.currentStats.moveSpeed;
+        }
+
+        // 3. (Tùy chọn) Xoay hình ảnh viên đạn hướng theo góc bay mới
+        float angle = Mathf.Atan2(currentDirection.y, currentDirection.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
     }
 
     public void ReflectTo(Vector2 newDir)

@@ -11,6 +11,7 @@ public class SpellCollision : MonoBehaviour
     private HashSet<GameObject> hitTargets = new HashSet<GameObject>();
     private int currentBounces;
     private int currentBlocks;
+    private float lastBounceTime = 0f;
 
     private void Awake()
     {
@@ -75,12 +76,32 @@ public class SpellCollision : MonoBehaviour
         if ((GameLayers.WallMask.value & (1 << colLayer)) > 0 || 
             ((GameLayers.HighObstacleMask.value & (1 << colLayer)) > 0 && !baseData.isPassThroughtHighObstacle))
         {
-            if (baseData.isPenetrating) return; 
+            if (baseData.isPenetrating || baseData.isSelfTargeted) return;
 
             if (currentBounces > 0 && movement != null)
             {
+                // CHỐNG VA CHẠM KÉP Ở GÓC VUÔNG: Chỉ cho phép nảy tối đa 1 lần mỗi 0.05 giây
+                if (Time.time < lastBounceTime + 0.05f) return; 
+                
+                lastBounceTime = Time.time;
                 currentBounces--;
-                movement.PerformBounce();
+                
+                Vector2 currentDir = Vector2.zero;
+                if (TryGetComponent(out Rigidbody2D rbBounce)) currentDir = rbBounce.linearVelocity.normalized;
+
+                // CÁCH TÍNH GÓC MẶT PHẲNG (NORMAL) CHUẨN NHẤT CHO VẬT THỂ TRÒN:
+                // Lấy vector nối từ tâm vật thể đập vuông góc ra mép va chạm
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                Vector2 surfaceNormal = ((Vector2)transform.position - hitPoint).normalized;
+                
+                // Nếu đạn bay quá nhanh lún thẳng vào tâm, phép trừ bị bằng 0 -> Dùng Raycast cứu viện
+                if (surfaceNormal == Vector2.zero) 
+                {
+                    RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position - currentDir * 0.5f, currentDir, 2f, GameLayers.WallMask.value | GameLayers.HighObstacleMask.value);
+                    surfaceNormal = hit.collider != null ? hit.normal : -currentDir;
+                }
+
+                movement.PerformBounce(surfaceNormal);
             }
             else
             {

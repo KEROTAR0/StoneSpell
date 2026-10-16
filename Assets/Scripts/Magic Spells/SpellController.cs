@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class SpellController : MonoBehaviour
 {
     // Dữ liệu TĨNH (Khuôn đúc)
@@ -127,8 +127,31 @@ public class SpellController : MonoBehaviour
             }
         }
     }
+    private void TriggerExplosion()
+    {
+        // 1. SPAWN VFX ĐỒNG BỘ: Sinh ra ngay tại tâm viên đạn trước khi nó biến mất
+        if (baseSpellData.explosionVFX != null)
+        {
+            ObjectPoolManager.Instance.GetFromPool(baseSpellData.explosionVFX, transform.position, Quaternion.identity);
+        }
+
+        // 2. GÂY SÁT THƯƠNG AOE
+        // Quét tất cả Quái và Thùng gỗ trong bán kính
+        Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, baseSpellData.explosionRadius, GameLayers.EnemyAndDamageableMask);
+        
+        foreach (Collider2D target in targets)
+        {
+            // Dùng lại hàm ApplyEffectsToTarget thần thánh để truyền Độc, Cháy, Choáng, Sát thương... vào vùng nổ
+            ApplyEffectsToTarget(target.gameObject);
+        }
+    }
     public void Despawn()
     {
+        if (baseSpellData.explodeOnDespawn)
+        {
+            TriggerExplosion();
+        }
+
         if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)
         {
             if (PlayerController.Instance.TryGetComponent(out EffectReceiver receiver))

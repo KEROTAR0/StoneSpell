@@ -59,7 +59,7 @@ public class SpellGatlingTrait : MonoBehaviour
 
             if (cloneObj != null)
             {
-                // 1. ÉP VIÊN ĐẠN ACTIVE ĐỂ UNITY KÍCH HOẠT CÁC HÀM AWAKE()
+                cloneObj.name = cloneObj.name.Replace("(Clone)", "").Trim() + "(Clone)";
                 cloneObj.SetActive(true);
 
                 if (cloneObj.TryGetComponent(out SpellController cloneController))
