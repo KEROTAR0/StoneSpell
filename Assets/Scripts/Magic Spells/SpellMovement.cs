@@ -50,7 +50,7 @@ public class SpellMovement : MonoBehaviour
             SetVelocity(currentDirection * currentSpeed);
         }
 
-        if (baseData.isRotating)
+        if (baseData.isRotating && !baseData.isSpawnAtMouse)
         {
             Transform targetRotate = controller.visualHolder != null ? controller.visualHolder : transform;
             targetRotate.Rotate(Vector3.forward, stats.rotationSpeed * Time.deltaTime);

@@ -73,7 +73,6 @@ public class ObserveState : State
         
         if (entity.GetNearestSpell() != null)
         {
-            Debug.Log("<color=red>Quan sát thấy đạn phép -> BÁO ĐỘNG!</color>");
             entity.ForceAggro();
             return;
         }

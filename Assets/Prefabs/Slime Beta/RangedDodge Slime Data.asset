@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0b3832d1a660b419b42561dd87d9fc, type: 3}
   m_Name: RangedDodge Slime Data
   m_EditorClassIdentifier: Assembly-CSharp::D_Entity
+  xpYield: 80
   hasNoAnimLeftOrRight: 0
-  maxHealth: 500
+  maxHealth: 50
   stunResistance: 0
   stunRecoveryTime: 7
   stunVFXPrefabHeight: -0.1
   shortRangeAction: 0.75
-  movementSpeed: 0
+  movementSpeed: 1
   patrolRadius: 20
   visionRange: 2
   visionAngle: 120

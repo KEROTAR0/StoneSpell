@@ -20,7 +20,6 @@ public class PatrolState : State
         base.Enter();
         
         destination = entity.GetRandomWalkablePoint();
-        Debug.Log("<color=cyan>Bắt đầu đi tuần điểm mới: " + destination + "</color>");
 
         if (entity.aiPath != null)
         {
@@ -47,7 +46,6 @@ public class PatrolState : State
 
         if (entity.GetNearestSpell() != null)
         {
-            Debug.Log("<color=yellow>Phát hiện đạn khi đi tuần -> Chuyển sang Cảnh giác!</color>");
             
             if (observeState is ObserveState obs) obs.SetAlertMode(true);
             stateMachine.ChangeState(observeState);

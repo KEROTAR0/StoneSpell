@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: crossed bullet
+  m_EditorClassIdentifier: GameScripts::D_Spell
+  spellName: crossed bullet
+  spellIcon: {fileID: -1259408508766424310, guid: 52bf00d4d3f481845a4c87a3d9ff6a8d, type: 3}
+  manaCost: 1
+  lifeTime: 5
+  castingTime: 0
+  cooldown: 0.3
+  isSpawnAtMouse: 0
+  maxCastRange: 8
+  isProjectile: 1
+  isPenetrating: 0
+  isLaser: 0
+  isSelfTargeted: 1
+  isManualToggle: 0
+  inaccuracy: 0
+  moveSpeed: 6
+  maxBounces: 1
+  acceleration: 5
+  laserMaxLength: 10
+  laserWidth: 1
+  explodeOnDespawn: 1
+  explosionRadius: 1
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 180
+  homingDelayTimer: 0.3
+  explosionVFX: {fileID: 9107473462069098598, guid: 30e3a7ad8beaa184c83ec0f1ef69bd05, type: 3}
+  toggleIndicatorVFX: {fileID: 0}
+  isRotating: 0
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 0
+  canBlock: 1
+  maxBlocks: 2
+  canReflect: 0
+  hasAura: 0
+  auraCheckRadius: 3
+  auraTickRate: 0.1
+  spawnCount: 3
+  orbitRadius: 1.5
+  orbRotationSpeed: 90
+  hitEffects:
+  - type: 0
+    procChance: 1
+    duration: 0
+    value: 10
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 7817449403422615033, guid: 55dfd287e30b28e458874e661717e8e2, type: 3}
+  - type: 0
+    procChance: 1
+    duration: 5
+    value: 1
+    tickRate: 0.5
+    isBuff: 0
+    vfxPrefab: {fileID: 7817449403422615033, guid: 55dfd287e30b28e458874e661717e8e2, type: 3}
+  - type: 7
+    procChance: 1
+    duration: 0
+    value: 10
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 7817449403422615033, guid: 55dfd287e30b28e458874e661717e8e2, type: 3}

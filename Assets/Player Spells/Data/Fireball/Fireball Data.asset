@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Fireball Data
+  m_EditorClassIdentifier: Assembly-CSharp::D_Spell
+  spellName: Fireball
+  spellIcon: {fileID: -2754850766384764900, guid: 52bf32cc5b0cc7246a02b05c5d4484b6, type: 3}
+  manaCost: 1
+  lifeTime: 3
+  castingTime: 0.3
+  cooldown: 1
+  isSpawnAtMouse: 0
+  maxCastRange: 15
+  isProjectile: 1
+  isPenetrating: 0
+  isLaser: 0
+  isSelfTargeted: 0
+  isManualToggle: 0
+  inaccuracy: 5
+  moveSpeed: 4
+  maxBounces: 0
+  acceleration: 1.1
+  laserMaxLength: 10
+  laserWidth: 1
+  explodeOnDespawn: 1
+  explosionRadius: 2
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 30
+  homingDelayTimer: 0.3
+  explosionVFX: {fileID: 4079823893518979777, guid: 97c03cc1d2bd11b49be4a2f3f9ecdd8a, type: 3}
+  toggleIndicatorVFX: {fileID: 0}
+  isRotating: 0
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 0
+  canBlock: 0
+  maxBlocks: 1
+  canReflect: 0
+  hasAura: 0
+  auraCheckRadius: 3
+  auraTickRate: 0.1
+  spawnCount: 1
+  orbitRadius: 1.5
+  orbRotationSpeed: 90
+  hitEffects:
+  - type: 0
+    procChance: 1
+    duration: 0
+    value: 1
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 6300947510988114241, guid: d981ed91604b35a4cb5b68eb3a313789, type: 3}

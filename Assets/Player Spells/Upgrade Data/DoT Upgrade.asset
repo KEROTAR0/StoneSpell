@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
+  m_Name: DoT Upgrade
+  m_EditorClassIdentifier: GameScripts::D_Upgrade
+  upgradeName: Damage over Time
+  description: "G\xE2y s\xE1t th\u01B0\u01A1ng c\xF3 50% c\u01A1 h\u1ED9i g\xE2y
+    1 s\xE1t th\u01B0\u01A1ng li\xEAn t\u1EE5c m\u1ED7i gi\xE2y trong 5 gi\xE2y"
+  icon: {fileID: 4812645761167233964, guid: f6a53d4d9acb7e949aa4845a00bf0bca, type: 3}
+  flatHealthBonus: 0
+  flatManaBonus: 0
+  moveSpeedBonus: 0
+  flatDamageBonus: 0
+  percentDamageBonus: 0
+  speedBonus: 0
+  bonusBounces: 0
+  bonusBlocks: 0
+  inaccuracy: 0
+  additionalHitEffects:
+  - type: 0
+    procChance: 0.5
+    duration: 5
+    value: 1
+    tickRate: 1
+    isBuff: 0
+    vfxPrefab: {fileID: 0}
+  behaviorComponentNames: []

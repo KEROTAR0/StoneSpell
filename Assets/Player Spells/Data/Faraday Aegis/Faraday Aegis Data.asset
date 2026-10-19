@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Faraday Aegis Data
+  m_EditorClassIdentifier: GameScripts::D_Spell
+  spellName: Faraday Aegis
+  spellIcon: {fileID: 1362047000828182893, guid: 9aad2c46ea4397747a9fa42ec3f2fce2, type: 3}
+  manaCost: 1
+  lifeTime: 10
+  castingTime: 0.3
+  cooldown: 0.5
+  isSpawnAtMouse: 1
+  maxCastRange: 15
+  isProjectile: 0
+  isPenetrating: 0
+  isLaser: 0
+  isSelfTargeted: 0
+  isManualToggle: 0
+  inaccuracy: 0
+  moveSpeed: 1
+  maxBounces: 0
+  acceleration: 1.1
+  laserMaxLength: 10
+  laserWidth: 1
+  explodeOnDespawn: 0
+  explosionRadius: 2.5
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 180
+  homingDelayTimer: 0.3
+  explosionVFX: {fileID: 0}
+  toggleIndicatorVFX: {fileID: 0}
+  isRotating: 0
+  rotationSpeed: 90
+  isPassThroughtHighObstacle: 1
+  canBlock: 1
+  maxBlocks: 3
+  canReflect: 1
+  hasAura: 1
+  auraCheckRadius: 0.8
+  auraTickRate: 0.25
+  spawnCount: 1
+  orbitRadius: 1.5
+  orbRotationSpeed: 90
+  hitEffects:
+  - type: 0
+    procChance: 1
+    duration: 0
+    value: 1
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 7689684247619834549, guid: d95165f5c26d24f4faabe4ca23d46141, type: 3}
+  - type: 3
+    procChance: 0.5
+    duration: 2.5
+    value: 0
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 0}

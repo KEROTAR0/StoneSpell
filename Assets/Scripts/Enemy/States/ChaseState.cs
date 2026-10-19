@@ -29,8 +29,6 @@ public class ChaseState : State
     {
         base.Enter();
 
-        Debug.Log("<color=green>>>> ĐÃ VÀO CHASE STATE!</color>");
-
         if (entity.aiPath != null && PlayerController.Instance != null)
         {
             entity.aiPath.SetPath(null); 

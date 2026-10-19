@@ -43,7 +43,32 @@ public class RunManager : MonoBehaviour
 
         foreach (var upgrade in activeUpgrades)
         {
-            // 1. Áp dụng Chỉ số Động (Stats cơ bản)
+            // Lọc theo tên phép cụ thể
+            if (upgrade.targetSpecificSpell != null && spell.baseSpellData != upgrade.targetSpecificSpell) 
+                continue; 
+                
+            // Lọc theo loại phép
+            if (upgrade.targetProjectilesOnly && !spell.baseSpellData.isProjectile) 
+                continue;
+            if (upgrade.targetToggleOnly && !spell.baseSpellData.isManualToggle) 
+                continue;
+            if (upgrade.targetAurasOnly && !spell.baseSpellData.hasAura) 
+                continue;
+
+            // A. Tăng Sát thương (Sát thương của bạn nằm trong EffectData)
+            foreach (var effect in spell.currentStats.activeEffects)
+            {
+                if (effect.type == EffectType.DoT && effect.duration == 0)
+                {
+                    // Cộng thẳng damage
+                    effect.value += upgrade.flatDamageBonus;
+                    
+                    // Nhân Damage Multiplier (percentDamageBonus)
+                    // Ví dụ: value = 10, bonus = 0.2 -> value += 2 (Tổng = 12)
+                    effect.value += (effect.value * upgrade.percentDamageBonus);
+                }
+            }
+            // B. Áp dụng Chỉ số Động (Stats cơ bản)
             spell.currentStats.moveSpeed += upgrade.speedBonus;
             spell.currentStats.maxBounces += upgrade.bonusBounces;
             spell.currentStats.maxBlocks += upgrade.bonusBlocks;
@@ -113,7 +138,9 @@ public class RunManager : MonoBehaviour
             if (upgrade.additionalHitEffects != null && upgrade.additionalHitEffects.Count > 0)
             {
                 if (spell.currentStats.activeEffects == null) 
+                {
                     spell.currentStats.activeEffects = new List<EffectData>();
+                }
                 
                 spell.currentStats.activeEffects.AddRange(upgrade.additionalHitEffects);
             }

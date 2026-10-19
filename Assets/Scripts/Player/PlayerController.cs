@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
     // --- CÁC LINH KIỆN ĐỘC LẬP (COMPONENTS) ---
     public HealthComponent Health { get; private set; }
     public PlayerManaComponent Mana { get; private set; }
+    public PlayerLevelComponent Exp { get; private set; }
     public CoreCCComponent CC { get; private set; } // <-- Đã bổ sung
     public Rigidbody2D rb { get; private set; }
     public Animator anim { get; private set; }
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour
         
         Health = GetComponent<HealthComponent>();
         Mana = GetComponent<PlayerManaComponent>();
+        Exp = GetComponent<PlayerLevelComponent>();
         CC = GetComponent<CoreCCComponent>();
         Knockback = GetComponent<KnockbackComponent>();
 
@@ -90,7 +92,7 @@ public class PlayerController : MonoBehaviour
         // Khởi tạo các Component Runtime (Không sửa vào file Data gốc)
         Health.Init(playerData.maxHealth);
         Mana.Init(playerData.maxMana, 5); 
-        
+        Exp.Init(0, playerData.xpFirstLevel, 1);
         StateMachine.Initialize(IdleState);
     }
 

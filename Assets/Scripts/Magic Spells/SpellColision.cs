@@ -24,21 +24,36 @@ public class SpellCollision : MonoBehaviour
         currentBounces = controller.currentStats.maxBounces;
         currentBlocks = controller.currentStats.maxBlocks;
         
-        if (controller.baseSpellData.isProjectile)
-        {
-            isHitboxActive = true; 
-        }
-        else
-        {
-            isHitboxActive = false;
-        }
-        
         hitTargets.Clear();
         GetComponent<Collider2D>().enabled = true;
+        
         if (TryGetComponent(out Animator animChild))
         {
             animChild.Rebind();
             animChild.Update(0f);
+        }
+
+        if (controller.useMultiStateAnimation && controller.baseSpellData.castingTime > 0)
+        {
+            isHitboxActive = false; 
+            Invoke(nameof(EnableHitboxDelayed), controller.baseSpellData.castingTime); 
+        }
+        else
+        {
+            isHitboxActive = true; 
+        }
+    }
+
+    private void EnableHitboxDelayed()
+    {
+        isHitboxActive = true;
+        hitTargets.Clear(); 
+        
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            col.enabled = false;
+            col.enabled = true;
         }
     }
 

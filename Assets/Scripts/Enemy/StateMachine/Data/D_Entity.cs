@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "newEntityData", menuName = "Data/Entity Data/Base Data")]
 public class D_Entity : ScriptableObject
 {
+    public int xpYield = 20;
     public bool hasNoAnimLeftOrRight;
     public int maxHealth = 100;
     public float stunResistance = 3f;

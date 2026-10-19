@@ -18,29 +18,17 @@ MonoBehaviour:
   stunRecoveryTime: 7
   stunVFXPrefabHeight: -0.1
   shortRangeAction: 0.75
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  minIdleTime: 1
-  maxIdleTime: 2
-  moveSpeed: 0.75
-  minMoveTime: 1
-  maxMoveTime: 3
+  movementSpeed: 1.5
   patrolRadius: 20
   visionRange: 2
   visionAngle: 120
-  visionBlockLayer:
-    serializedVersion: 2
-    m_Bits: 256
+  isManaHunter: 0
   canDodge: 0
   dodgeCooldown: 6
   dodgeSpeed: 12
   dodgeDuration: 0.25
   canDodgeSpells: 0
   spellDetectionRadius: 3
-  playerSpellLayer:
-    serializedVersion: 2
-    m_Bits: 8192
   meleeAttackPrefab: {fileID: 8399142430204242319, guid: 8bc61a29501f56b4099d4c21b23a85ce, type: 3}
   rangedAttackPrefab: {fileID: 8739397420522011886, guid: 809be1dba7e42774dba77ebaaaefeabd, type: 3}
   meleeCooldown: 10
@@ -49,12 +37,6 @@ MonoBehaviour:
   knockbackForce: 1
   selfDestructHpThreshold: 0.2
   selfDestructDamage: 2
-  selfDestructTargetLayer:
-    serializedVersion: 2
-    m_Bits: 72
   selfDestructVFX: {fileID: 0}
   deathAoEPrefab: {fileID: 0}
   obstacleCheckDistance: 0.5
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 6400

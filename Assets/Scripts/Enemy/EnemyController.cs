@@ -135,7 +135,11 @@ public class EnemyController : MonoBehaviour
 
     public virtual void Update()
     {
-        // Nếu bị Choáng hoặc Ngủ, ngưng cập nhật Logic của State hiện tại
+        if (aiPath != null && CC != null)
+        {
+             aiPath.maxSpeed = entityData.movementSpeed * CC.moveSpeedMultiplier;
+        }
+
         if (!CC.isStunned)
         {
             stateMachine.currentState.LogicUpdate();
@@ -231,6 +235,10 @@ public class EnemyController : MonoBehaviour
     public virtual void Die()
     {
         gameObject.SetActive(false);
+        if (PlayerController.Instance != null && PlayerController.Instance.TryGetComponent(out PlayerLevelComponent levelComp))
+        {
+            levelComp.AddXp(entityData.xpYield);
+        }
     }
 
     public virtual void ForceAggro()
@@ -269,10 +277,7 @@ public class EnemyController : MonoBehaviour
         if (PlayerController.Instance == null) return;
 
         if (aiPath != null)
-        {
-            // Ép tốc độ AI Path bằng đúng tốc độ quy định nhân với hệ số Slow (nếu có)
-            aiPath.maxSpeed = entityData.movementSpeed * CC.moveSpeedMultiplier;
-            
+        {            
             aiPath.canMove = true;
             aiPath.isStopped = false;
             aiPath.destination = PlayerController.Instance.transform.position;

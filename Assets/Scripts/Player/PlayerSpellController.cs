@@ -10,8 +10,10 @@ public class PlayerSpellController : MonoBehaviour
     // Mảng lưu đệm Data để KHÔNG gọi GetComponent trong Update
     private D_Spell[] cachedSpellData = new D_Spell[5]; 
     private float[] cooldownTimers = new float[5];
-
+    public bool[] toggleStates = new bool[5];
+    private GameObject[] activeToggleVFX = new GameObject[5];
     private PlayerManaComponent playerMana;
+    public int unlockedSlotCount { get; private set; } = 2;
 
     private void Awake()
     {
@@ -31,16 +33,58 @@ public class PlayerSpellController : MonoBehaviour
 
     private void Update()
     {
+        // ====================================================
+        // 1. VÒNG LẶP TRỪ THỜI GIAN COOLDOWN VÀ CẬP NHẬT UI
+        // ====================================================
         for (int i = 0; i < cooldownTimers.Length; i++)
         {
+            // Nếu là phép Toggle và ĐANG BẬT: Giữ UI màu Xanh, bỏ qua trừ Cooldown
+            if (cachedSpellData[i] != null && cachedSpellData[i].isManualToggle && toggleStates[i])
+            {
+                if (UIManager.Instance != null) UIManager.Instance.UpdateCooldownUI(i + 1, 1f, 1f, true);
+                continue; 
+            }
+
+            // Nếu đang trong thời gian hồi chiêu
             if (cooldownTimers[i] > 0)
             {
                 cooldownTimers[i] -= Time.deltaTime;
-                
-                // Dùng thẳng data đã lưu đệm, tốc độ xử lý nhanh gấp 100 lần!
                 if (UIManager.Instance != null && cachedSpellData[i] != null)
                 {
-                    UIManager.Instance.UpdateCooldownUI(i + 1, cooldownTimers[i], cachedSpellData[i].cooldown);
+                    // Truyền false để hiện màu Đỏ (hồi chiêu bình thường)
+                    UIManager.Instance.UpdateCooldownUI(i + 1, cooldownTimers[i], cachedSpellData[i].cooldown, false);
+                }
+            }
+        }
+
+        // ====================================================
+        // 2. VÒNG LẶP DUY TRÌ TOGGLE VÀ TRỪ MANA
+        // ====================================================
+        for (int i = 0; i < toggleStates.Length; i++)
+        {
+            if (toggleStates[i] && cachedSpellData[i] != null)
+            {
+                D_Spell data = cachedSpellData[i];
+
+                float manaDrainPerSec = 0f;
+                foreach (var effect in data.hitEffects)
+                {
+                    if (effect.type == EffectType.ManaRestore && effect.value < 0)
+                    {
+                        float tick = effect.tickRate > 0 ? effect.tickRate : 1f;
+                        manaDrainPerSec += (effect.value / tick); 
+                    }
+                }
+
+                if (manaDrainPerSec < 0)
+                {
+                    playerMana.RestoreMana(manaDrainPerSec * Time.deltaTime);
+                }
+
+                if (playerMana.currentMana <= 0)
+                {
+                    Debug.Log($"Hết Mana! Tự động tắt chiêu ở slot {i+1}");
+                    ToggleSpell(i, gameObject);
                 }
             }
         }
@@ -59,7 +103,79 @@ public class PlayerSpellController : MonoBehaviour
             cachedSpellData[index] = null;
         }
     }
+    public void ToggleSpell(int slotIndex, GameObject playerObj)
+    {
+        D_Spell data = cachedSpellData[slotIndex];
+        if (data == null || !data.isManualToggle) return;
 
+        // Đảo ngược trạng thái
+        toggleStates[slotIndex] = !toggleStates[slotIndex];
+
+        if (toggleStates[slotIndex])
+        {
+            // BẬT: 
+            if (UIManager.Instance != null) UIManager.Instance.UpdateCooldownUI(slotIndex + 1, 1f, 1f, true);
+            
+            if (playerObj != null && data.isSelfTargeted) 
+            {
+                // Bỏ logic Instantiate cái toggleIndicatorVFX đi, 
+                // hoặc gộp nó làm child của cái auraObj bên dưới để dễ quản lý.
+                
+                if (equippedSpellPrefabs[slotIndex].TryGetComponent(out SpellController prefabCtrl))
+                {
+                    // Sinh ra CÁI AURA (chứa logic sát thương và trừ mana)
+                    GameObject auraObj = Instantiate(equippedSpellPrefabs[slotIndex], playerObj.transform);
+                    
+                    // LƯU CÁI AURA VÀO MẢNG ĐỂ LÁT NỮA TÌM VÀ TẮT NÓ!
+                    activeToggleVFX[slotIndex] = auraObj; 
+
+                    if (auraObj.TryGetComponent(out SpellController activeCtrl))
+                    {
+                        activeCtrl.Initialize(Vector2.zero);
+                        
+                        // Nếu có Indicator hình ảnh, sinh nó ra và làm con của Aura
+                        if (data.toggleIndicatorVFX != null)
+                        {
+                            GameObject indicator = Instantiate(data.toggleIndicatorVFX, auraObj.transform);
+                            indicator.transform.localPosition = Vector3.zero;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            // TẮT:
+            TriggerCooldown(slotIndex);
+            if (UIManager.Instance != null) UIManager.Instance.UpdateCooldownUI(slotIndex + 1, cooldownTimers[slotIndex], 1f, false);
+
+            if (activeToggleVFX[slotIndex] != null) 
+            {
+                if (activeToggleVFX[slotIndex].TryGetComponent(out SpellController ctrl))
+                {
+                    ctrl.Despawn(); 
+                }
+                else
+                {
+                    Destroy(activeToggleVFX[slotIndex]); 
+                }
+                activeToggleVFX[slotIndex] = null; 
+            }
+            else if (!data.isSelfTargeted)
+            {
+                // TÌM THEO TÊN HOẶC CHỈ SỐ LAYER CHO CHẮC CHẮN
+                SpellController[] activeSpells = FindObjectsByType<SpellController>(FindObjectsInactive.Exclude);
+                foreach (var spell in activeSpells)
+                {
+                    // So sánh theo Tên của Data (chính xác hơn so sánh object reference)
+                    if (spell.baseSpellData != null && spell.baseSpellData.name == data.name) 
+                    {
+                        spell.Despawn(); 
+                    }
+                }
+            }
+        }
+    }
     public void InitializeUI()
     {
         for (int i = 0; i < cachedSpellData.Length; i++)
@@ -71,11 +187,25 @@ public class PlayerSpellController : MonoBehaviour
             }
         }
     }
-
+    public void UnlockSlot(int slotIndex)
+    {
+        if (slotIndex < equippedSpellPrefabs.Length && slotIndex >= unlockedSlotCount)
+        {
+            unlockedSlotCount = slotIndex + 1;
+            Debug.Log($"Đã mở khóa ô phép số {unlockedSlotCount}!");
+            
+            // Cập nhật UI (Ví dụ: Gỡ hình ổ khóa ở ô này)
+            // UIManager.Instance.UnlockSpellSlotUI(slotIndex);
+        }
+    }
     public void EquipSpell(int slotIndex, GameObject spellPrefab)
     {
         if (slotIndex < 0 || slotIndex >= equippedSpellPrefabs.Length) return;
-
+        if (slotIndex >= unlockedSlotCount) 
+        {
+            Debug.LogWarning("Ô phép này chưa được mở khóa!");
+            return; 
+        }
         equippedSpellPrefabs[slotIndex] = spellPrefab;
         
         // Cập nhật mảng đệm ngay khi thay đồ
@@ -90,19 +220,13 @@ public class PlayerSpellController : MonoBehaviour
 
     public bool CanCastSpell(int slotIndex)
     {
-        // Tra cứu cực nhanh từ mảng đệm
+        if (slotIndex >= unlockedSlotCount) return false;
         D_Spell data = cachedSpellData[slotIndex];
         if (data == null) return false;
 
-        if (data.isPermanentPassive) 
-        {
-            Debug.Log("Không thể tự kích hoạt phép nội tại tĩnh!");
-            return false;
-        }
+        if (data.isManualToggle && toggleStates[slotIndex]) return true;
         
         if (cooldownTimers[slotIndex] > 0) return false;
-        
-        // Gọi thẳng qua Component Mana thay vì chạy vòng qua Controller
         if (playerMana.currentMana < data.manaCost) return false;
 
         return true;

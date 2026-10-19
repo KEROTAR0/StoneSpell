@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
+  m_Name: Gatling Upgrade
+  m_EditorClassIdentifier: GameScripts::D_Upgrade
+  upgradeName: Gatling Projectile
+  description: "B\u1EAFn th\xEAm 6 vi\xEAn \u0111\u1EA1n ph\xE9p nh\u01B0ng gi\u1EA3m
+    s\xE1t th\u01B0\u01A1ng g\xE2y ra c\u1EE7a d\u1EA1ng ph\xE9p Projectile \u0111i
+    80% v\xE0 gi\u1EA3m \u0111\u1ED9 ch\xEDnh x\xE1c \u0111i 5"
+  icon: {fileID: -314987246507638928, guid: ac48f7a2a8e874c4f93509135a8aa4ad, type: 3}
+  flatHealthBonus: 0
+  flatManaBonus: 0
+  moveSpeedBonus: 0
+  flatDamageBonus: 0
+  percentDamageBonus: -0.8
+  speedBonus: 0
+  bonusBounces: 0
+  bonusBlocks: 0
+  inaccuracy: 5
+  additionalHitEffects: []
+  behaviorComponentNames:
+  - SpellGatlingTrait

@@ -38,7 +38,11 @@ public class PlayerManaComponent : MonoBehaviour
         }
         return false;
     }
-
+    public void RestoreManaPercentage(float percentMultiplier)
+    {
+        float amountToRestore = maxMana * percentMultiplier;
+        RestoreMana(amountToRestore);
+    }
     public void RecordNormalHit(Vector3 spawnPosition)
     {
         normalHitCount++;
@@ -49,7 +53,6 @@ public class PlayerManaComponent : MonoBehaviour
             {
                 GameManager.Instance.SpawnMana(spawnPosition);
             }
-            Debug.Log("<color=blue>Đánh thường trúng -> Rơi ngọc Mana!</color>");
         }
     }
 

@@ -7,14 +7,21 @@ public class SpellController : MonoBehaviour
     public D_Spell baseSpellData; 
     public Transform visualHolder;
 
+    [Header("Animation Control")]
+    [Tooltip("Tick nếu dùng 3 state Charge -> Fire -> Fade cho Toggle. Bỏ tick nếu gộp chung 1 Animation.")]
+    public bool useMultiStateAnimation = false; 
+    private Animator anim;
+    private bool isFadingOut = false;
+
     // Dữ liệu ĐỘNG (Bản sao dùng cho viên đạn này)
     public RuntimeSpellStats currentStats { get; private set; } 
     public Vector2 initialDirection { get; private set; }
     private float timeActivated;
     private float auraTimer = 0f; 
+    private float orbitAngle = 0f;
+    private bool isOrbitingOrb = false;
 
-    // SỬA HÀM INIT: Xóa toàn bộ các tham số LayerMask
-    public void Initialize(Vector2 direction)
+    public void Initialize(Vector2 direction, int index = 0, int totalCount = 1)
     {
         this.initialDirection = direction;
         // 1. TẠO BẢN SAO DỮ LIỆU ĐỘNG
@@ -25,7 +32,8 @@ public class SpellController : MonoBehaviour
         {
             RunManager.Instance.InterceptSpell(this);
         }
-
+        anim = GetComponent<Animator>();
+        isFadingOut = false;
         timeActivated = Time.time;
         auraTimer = currentStats.auraTickRate; 
         Vector2 finalDirection = direction;
@@ -38,31 +46,62 @@ public class SpellController : MonoBehaviour
         // 3. KHỞI TẠO LOGIC
         if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)
         {
-            transform.SetParent(PlayerController.Instance.transform);
-            transform.localPosition = Vector3.zero;
-            
-            // XÓA LỆNH TẮT COLLIDER VÀ RIGIDBODY, CHỈ DỪNG VẬN TỐC
-            if (TryGetComponent(out Rigidbody2D rb))
+            // NẾU LÀ ORBITING ORB (Đạn bay quanh người)
+            if (baseSpellData.isProjectile) 
             {
-                rb.linearVelocity = Vector2.zero;
-                rb.bodyType = RigidbodyType2D.Kinematic;
+                isOrbitingOrb = true;
+                orbitAngle = (360f / totalCount) * index; // Chia đều góc cho các viên
+                
+                // Cập nhật vị trí ban đầu ngay lập tức
+                UpdateOrbitPosition();
+                
+                // Đạn bay quanh người thì không có va chạm vật lý nảy/chặn tường
+                if (TryGetComponent(out Rigidbody2D rb))
+                {
+                    rb.linearVelocity = Vector2.zero;
+                    rb.bodyType = RigidbodyType2D.Kinematic;
+                }
+            }
+            // NẾU LÀ BÙA LỢI BÁM VÀO NGƯỜI (Aura/Khiên tự thân)
+            else
+            {
+                transform.SetParent(PlayerController.Instance.transform);
+                transform.localPosition = Vector3.zero;
+                
+                if (TryGetComponent(out Rigidbody2D rb))
+                {
+                    rb.linearVelocity = Vector2.zero;
+                    rb.bodyType = RigidbodyType2D.Kinematic;
+                }
             }
             
-            // BẮT BUỘC PHẢI KHỞI TẠO COLLISION ĐỂ NÓ BẮT ĐẠN ĐỊCH
+            // CHỈ cho phép Va chạm khi đạn đang xoay, HOẶC Aura.
             if (TryGetComponent(out SpellCollision collision)) collision.Init();
-            if (TryGetComponent(out SpellAura aura)) aura.Init();
+            if (baseSpellData.hasAura && TryGetComponent(out SpellAura aura)) aura.Init();
         }
         else
         {
+            // ĐẠN BẮN RA HOẶC ĐẶT MÌN TRÊN MẶT ĐẤT
+            // Nếu speed = 0, nó sẽ tự động trở thành bãi mìn tại tọa độ con trỏ chuột
             if (TryGetComponent(out SpellMovement movement)) movement.Init(finalDirection);
             if (TryGetComponent(out SpellCollision collision)) collision.Init();
             if (TryGetComponent(out SpellLaser laser)) laser.Init(direction);
-            if (TryGetComponent(out SpellAura aura)) aura.Init();
+            if (baseSpellData.hasAura && TryGetComponent(out SpellAura aura)) aura.Init();
         }
     }
 
     private void Update()
     {
+        if (baseSpellData.isSelfTargeted && baseSpellData.isRotating)
+        {
+            Transform targetRotate = visualHolder != null ? visualHolder : transform;
+            targetRotate.Rotate(Vector3.forward, currentStats.rotationSpeed * Time.deltaTime);
+        }
+        if (isOrbitingOrb && PlayerController.Instance != null)
+        {
+            orbitAngle += baseSpellData.orbRotationSpeed * Time.deltaTime;
+            UpdateOrbitPosition();
+        }
         if (baseSpellData.isSelfTargeted && PlayerController.Instance != null && currentStats.auraTickRate > 0)
         {
             auraTimer += Time.deltaTime;
@@ -73,27 +112,56 @@ public class SpellController : MonoBehaviour
             }
         }
 
-        if (Time.time >= timeActivated + currentStats.lifeTime)
+        // ĐÃ XÓA MỘT ĐOẠN IF BỊ TRÙNG LẶP GÂY LỖI TỰ SÁT Ở ĐÂY!
+        
+        // CHỈ KIỂM TRA LIFETIME NẾU KHÔNG PHẢI LÀ PHÉP TOGGLE
+        if (!baseSpellData.isManualToggle && Time.time >= timeActivated + currentStats.lifeTime)
         {
-            Despawn();
+            if (!isFadingOut) Despawn(); 
         }
     }
 
     public void ApplyEffectsToTarget(GameObject target, bool isSelfCast = false)
     {
+        bool isTargetingPlayer = target.TryGetComponent(out PlayerController playerTarget);
+        if (isTargetingPlayer && !isSelfCast) return; 
+        
+        bool isEnemyAttack = (GameLayers.EnemyAttackMask.value & (1 << gameObject.layer)) > 0;
+
+        if (isTargetingPlayer)
+        {
+            if (isEnemyAttack) 
+            {
+                // Để trống: Cho phép luồng chạy tiếp xuống dưới để nhận sát thương
+            }
+            else if (!isSelfCast) 
+            {
+                return; 
+            }
+        }
+
         if (target.TryGetComponent(out EffectReceiver receiver))
         {
             foreach (var effect in currentStats.activeEffects)
             {
-                if (isSelfCast && !effect.isBuff) continue;
-
-                // 2. Đánh trúng mục tiêu khác: CHỈ gây Sát thương/Khống chế, KHÔNG lỡ tay buff máu cho quái vật
-                if (!isSelfCast && effect.isBuff) continue;
+                if (isTargetingPlayer)
+                {
+                    // Từ chối các loại Buff tốt (Trừ ManaRestore âm/dương tùy hệ thống của bạn)
+                    if (!effect.isBuff && effect.type != EffectType.ManaRestore) continue; 
+                }
+                // Nếu đánh vào Quái:
+                else 
+                {
+                    // Bỏ qua các hiệu ứng Buff tốt để không lỡ tay hồi máu cho địch
+                    if (effect.isBuff) continue;
+                }
 
                 receiver.ApplyEffect(effect, transform.position);
             }
         }
-        if (target.TryGetComponent(out IDamageable damageable))
+        
+        // CHỈ SÁT THƯƠNG FLAT CHO QUÁI (Không bao giờ sát thương flat lên Player)
+        if (!isTargetingPlayer && target.TryGetComponent(out IDamageable damageable))
         {
             float totalFlatDamage = 0f;
 
@@ -145,13 +213,44 @@ public class SpellController : MonoBehaviour
             ApplyEffectsToTarget(target.gameObject);
         }
     }
+    private void UpdateOrbitPosition()
+    {
+        float rad = orbitAngle * Mathf.Deg2Rad;
+        Vector2 offset = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad)) * baseSpellData.orbitRadius;
+        transform.position = (Vector2)PlayerController.Instance.transform.position + offset;
+    }
     public void Despawn()
     {
-        if (baseSpellData.explodeOnDespawn)
+        // KÍCH NỔ (Nếu có)
+        if (baseSpellData.explodeOnDespawn && !isFadingOut)
         {
             TriggerExplosion();
         }
 
+        // NẾU DÙNG MULTI-STATE ANIMATION (Bao gồm cả Toggle) VÀ CHƯA CHẠY FADE
+        if (useMultiStateAnimation && anim != null && !isFadingOut)
+        {
+            isFadingOut = true;
+            
+            // Gửi lệnh kích hoạt Animation FadeOut
+            anim.SetTrigger("FadeOut");
+            
+            // Lấy thời gian của clip Spell_Fade
+            float fadeDuration = GetAnimationClipLength(anim, "Spell_Fade");
+            
+            // Nếu không tìm thấy clip, mặc định chờ 0.5s
+            if (fadeDuration <= 0) fadeDuration = 0.5f; 
+            
+            // Trì hoãn việc thu hồi (cất vào kho) cho đến khi Fade xong
+            Invoke(nameof(FinalizeDespawn), fadeDuration);
+            return; 
+        }
+
+        // Nếu không có Animation nhiều bước, thu hồi ngay lập tức
+        FinalizeDespawn();
+    }
+    private void FinalizeDespawn()
+    {
         if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)
         {
             if (PlayerController.Instance.TryGetComponent(out EffectReceiver receiver))
@@ -172,5 +271,18 @@ public class SpellController : MonoBehaviour
             ObjectPoolManager.Instance.AddToPool(gameObject);
         else
             Destroy(gameObject);
+    }
+    
+    // HÀM TIỆN ÍCH: Lấy độ dài của một Animation Clip
+    private float GetAnimationClipLength(Animator animator, string clipName)
+    {
+        if (animator == null || animator.runtimeAnimatorController == null) return 0f;
+        
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        foreach (AnimationClip clip in clips)
+        {
+            if (clip.name == clipName) return clip.length;
+        }
+        return 0f;
     }
 }

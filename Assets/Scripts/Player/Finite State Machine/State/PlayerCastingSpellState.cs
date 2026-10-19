@@ -21,19 +21,26 @@ public class PlayerCastingSpellState : PlayerAttackState
         
         slotIndex = player.currentSpellSlot;
         currentSpellPrefab = player.SpellController.equippedSpellPrefabs[slotIndex];
-        
-        // Lấy Khuôn đúc Data từ kiến trúc mới
         currentSpellData = currentSpellPrefab.GetComponent<SpellController>().baseSpellData;
+
+        // ĐÃ THÊM: NẾU ĐANG BẬT TOGGLE -> TẮT NGAY LẬP TỨC VÀ KẾT THÚC STATE, KHÔNG CẦN CHỜ CASTING TIME
+        if (currentSpellData.isManualToggle && player.SpellController.toggleStates[slotIndex])
+        {
+            if (currentSpellData.isSelfTargeted) player.SpellController.ToggleSpell(slotIndex, player.gameObject);
+            else player.SpellController.ToggleSpell(slotIndex, null);
+            
+            hasCast = true;
+            FinishAttack();
+            return;
+        }
     }
 
     public override void LogicUpdate()
     {
         base.LogicUpdate();
 
-        // NẾU BỊ KHỐNG CHẾ -> BỊ KHÓA LUÔN, KHÔNG CHO DASH ĐỂ CANCEL NỮA
         if (player.CC != null && player.CC.isStunned) return;
 
-        // 1. CANCEL BẰNG DASH (Khi an toàn)
         if (player.InputHandler.DashInput && player.CanDash())
         {
             player.InputHandler.UsedDashInput(); 
@@ -71,8 +78,25 @@ public class PlayerCastingSpellState : PlayerAttackState
                 {
                     player.Mana.RestoreMana(-leftoverMana);
                 }
+
+                if (currentSpellData.isManualToggle)
+                {
+                    if (currentSpellData.isSelfTargeted)
+                    {
+                        player.SpellController.ToggleSpell(slotIndex, player.gameObject);
+                    }
+                    else 
+                    {
+                        // ĐÃ SỬA: Sinh Cột sét ra sân
+                        player.SpellController.ToggleSpell(slotIndex, null);
+                        CastSpell(); 
+                    }
+                }
+                else
+                {
+                    CastSpell(); // Phép bắn bình thường
+                }
                 
-                CastSpell();
                 hasCast = true;
                 FinishAttack();
             }
@@ -94,13 +118,17 @@ public class PlayerCastingSpellState : PlayerAttackState
 
         if (ObjectPoolManager.Instance != null)
         {
-            GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
-            
-            if (spellObj.TryGetComponent(out SpellController spellScript))
+            int count = currentSpellData.spawnCount > 0 ? currentSpellData.spawnCount : 1;
+            for (int i = 0; i < count; i++)
             {
-                // Dùng GameLayers đã tối ưu
-                spellScript.Initialize(shootDirection);
-            }   
+                GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
+                
+                if (spellObj.TryGetComponent(out SpellController spellScript))
+                {
+                    Vector2 castDir = currentSpellData.isSpawnAtMouse ? Vector2.zero : shootDirection;
+                    spellScript.Initialize(castDir, i, count);
+                }   
+            }  
         }
     }
 }

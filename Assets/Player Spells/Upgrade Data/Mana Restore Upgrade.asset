@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
+  m_Name: Mana Restore Upgrade
+  m_EditorClassIdentifier: GameScripts::D_Upgrade
+  upgradeName: Mana Limitbreak
+  description: "T\u0103ng 200 mana t\u1ED1i \u0111a"
+  icon: {fileID: -1504793436433039653, guid: 77b1eb5c6e87100458fe8845125f7bd7, type: 3}
+  flatHealthBonus: 0
+  flatManaBonus: 200
+  moveSpeedBonus: 0
+  flatDamageBonus: 0
+  percentDamageBonus: 0
+  speedBonus: 0
+  bonusBounces: 0
+  bonusBlocks: 0
+  inaccuracy: 0
+  additionalHitEffects: []
+  behaviorComponentNames: []

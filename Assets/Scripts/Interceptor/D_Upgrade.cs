@@ -8,6 +8,19 @@ public class D_Upgrade : ScriptableObject
     public string upgradeName;
     [TextArea] public string description;
     public Sprite icon;
+    
+    [Header("Spell Filters (Chỉ áp dụng nâng cấp nếu thỏa mãn)")]
+    [Tooltip("Kéo D_Spell vào đây nếu thẻ này CHỈ dành cho 1 phép duy nhất")]
+    public D_Spell targetSpecificSpell; 
+    
+    [Tooltip("Chỉ áp dụng cho các phép bắn đạn (Projectile)")]
+    public bool targetProjectilesOnly = false;
+    
+    [Tooltip("Chỉ áp dụng cho các phép bật/tắt (Toggle)")]
+    public bool targetToggleOnly = false;
+
+    [Tooltip("Chỉ áp dụng cho phép có Aura")]
+    public bool targetAurasOnly = false;
 
     [Header("Player Stats Modifiers")]
     public int flatHealthBonus = 0;

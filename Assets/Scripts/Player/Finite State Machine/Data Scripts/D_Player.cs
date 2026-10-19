@@ -4,6 +4,8 @@ using UnityEngine;
 public class D_Player : ScriptableObject
 {
     public int maxHealth = 2;
+    [Header("Exp")]
+    public int xpFirstLevel = 100;
     [Header("Move State")]
     public float movementSpeed = 2.0f;
 
