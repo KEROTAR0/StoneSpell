@@ -26,7 +26,12 @@ public class SpellGatlingTrait : MonoBehaviour
         if (isClone || hasTriggered) return;
         if( !controller.baseSpellData.isProjectile || 
             controller.baseSpellData.hasAura || 
-            controller.baseSpellData.isSelfTargeted) return;
+            controller.baseSpellData.isSelfTargeted ||
+            controller.baseSpellData.isSpawnAtMouse) return;
+
+        // if(!controller.baseSpellData.isProjectile) return;
+        // if(controller.baseSpellData.hasAura && !controller.baseSpellData.isProjectile) return;
+        // if(controller.baseSpellData.isSelfTargeted && !controller.baseSpellData.isProjectile) return;
 
         hasTriggered = true; // Khóa chốt ngay lập tức để không nhả đạn ở frame tiếp theo
 

@@ -33,6 +33,10 @@ MonoBehaviour:
   laserWidth: 1
   explodeOnDespawn: 0
   explosionRadius: 2.5
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 180
+  homingDelayTimer: 0.3
   explosionVFX: {fileID: 0}
   toggleIndicatorVFX: {fileID: 0}
   isRotating: 0
@@ -52,7 +56,7 @@ MonoBehaviour:
     procChance: 1
     duration: 1
     value: 1
-    tickRate: 0.1
+    tickRate: 0.01
     isBuff: 1
     vfxPrefab: {fileID: 0}
   - type: 7

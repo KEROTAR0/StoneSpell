@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     [Header("Action Slots (0: Normal, 1-5: Spells)")]
     [SerializeField] private Image[] cooldownOverlays; // Ảnh nền mờ che lên ô chiêu thức
     [SerializeField] private Image[] spellIconImages;
+    [SerializeField] private Sprite lockedSlotSprite;
 
     [Header("Level Up UI")]
     [SerializeField] private GameObject levelUpPanel;
@@ -48,7 +49,10 @@ public class UIManager : MonoBehaviour
         };
         heartImage.sprite = heartSprites[index];
     }
-
+    public bool IsLevelUpPanelActive()
+    {
+        return levelUpPanel != null && levelUpPanel.activeSelf;
+    }
     // 2. Cập nhật Thanh Mana
     public void UpdateManaUI(float currentMana, float maxMana)
     {
@@ -90,19 +94,20 @@ public class UIManager : MonoBehaviour
             // Tùy chọn: Ở đây bạn có thể gọi hàm random 3 phép và gán hình ảnh/text vào upgradeCards
         }
     }
-    public void SetSpellIcon(int slotIndex, Sprite icon)
+    public void SetSpellIcon(int slotIndex, Sprite icon, bool isUnlocked = true)
     {
         if (slotIndex >= 0 && slotIndex < spellIconImages.Length)
         {
             if (icon != null)
             {
                 spellIconImages[slotIndex].sprite = icon;
-                spellIconImages[slotIndex].color = Color.white; // Hiển thị rõ màu
+                spellIconImages[slotIndex].color = Color.white; 
             }
             else
             {
-                spellIconImages[slotIndex].sprite = null;
-                spellIconImages[slotIndex].color = new Color(1, 1, 1, 0); // Ẩn đi (trong suốt) nếu ô đó trống
+                spellIconImages[slotIndex].sprite = isUnlocked ? null : lockedSlotSprite;
+                // ĐÃ SỬA: Chưa mở khóa = Trắng (thấy ổ khóa), Mở rồi = Trong suốt (trống trơn)
+                spellIconImages[slotIndex].color = isUnlocked ? new Color(1, 1, 1, 0) : Color.white; 
             }
         }
     }

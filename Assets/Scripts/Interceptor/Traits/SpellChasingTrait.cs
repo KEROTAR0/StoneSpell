@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(SpellController), typeof(SpellMovement))]
+[RequireComponent(typeof(SpellController))]
 public class SpellChasingTrait : MonoBehaviour
 {
     private SpellController controller;
@@ -28,11 +28,8 @@ public class SpellChasingTrait : MonoBehaviour
 
     private void Update()
     {
-        // 1. Chốt chặn an toàn
         if (controller.baseSpellData == null || !controller.baseSpellData.isHoming) return;
-        if (!controller.baseSpellData.isProjectile) return; // Chỉ áp dụng cho đạn bay
 
-        // 2. Chờ đếm ngược Delay
         if (delayTimer < controller.baseSpellData.homingDelayTimer)
         {
             delayTimer += Time.deltaTime;
@@ -41,13 +38,11 @@ public class SpellChasingTrait : MonoBehaviour
 
         isHomingActive = true;
 
-        // 3. Tìm mục tiêu nếu chưa có hoặc mục tiêu đã chết
         if (target == null || !target.gameObject.activeInHierarchy)
         {
             FindNearestTarget();
         }
 
-        // 4. Thực hiện bẻ lái (Homing)
         if (target != null)
         {
             SteerTowardsTarget();
@@ -56,7 +51,6 @@ public class SpellChasingTrait : MonoBehaviour
 
     private void FindNearestTarget()
     {
-        // Quét tìm quái vật và đồ vật có thể phá hủy trong bán kính
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, controller.baseSpellData.homingDetectionRadius, GameLayers.EnemyAndDamageableMask);
         
         float closestDistance = Mathf.Infinity;
@@ -84,18 +78,39 @@ public class SpellChasingTrait : MonoBehaviour
 
     private void SteerTowardsTarget()
     {
-        // Tính toán hướng bay mong muốn (chỉ thẳng vào mặt mục tiêu)
+        // 1. PHÁ VỠ QUỸ ĐẠO (Dành riêng cho Quả cầu xoay quanh người)
+        // Khi phát hiện mục tiêu, lập tức ngắt liên kết bám theo Player
+        controller.isOrbitingOrb = false;
+
         Vector2 desiredDirection = ((Vector2)target.position - (Vector2)transform.position).normalized;
 
-        // Lấy hướng bay hiện tại từ SpellMovement
-        Vector2 currentDir = movement.currentDirection;
+        // 2. NẾU LÀ ĐẠN BẮN BÌNH THƯỜNG (Có gia tốc, có Movement)
+        // (Quả cầu Orbiting do chưa Init Movement nên speed = 0, sẽ tự rẽ xuống nhánh số 3)
+        if (movement != null && movement.currentSpeed > 0)
+        {
+            Vector2 currentDir = movement.currentDirection;
+            if (currentDir == Vector2.zero) currentDir = desiredDirection; 
+            
+            float maxRadiansDelta = controller.baseSpellData.homingTurnSpeed * Mathf.Deg2Rad * Time.deltaTime;
+            Vector2 newDirection = Vector3.RotateTowards(currentDir, desiredDirection, maxRadiansDelta, 0f);
+            
+            movement.ReflectTo(newDirection.normalized);
+        }
+        // 3. NẾU LÀ QUẢ CẦU VỪA TÁCH KHỎI NGƯỜI, BÃI MÌN HOẶC CỘT SÉT
+        else
+        {
+            // Lấy tốc độ: Nếu Data có tốc độ gốc thì dùng, không thì mượn Homing Turn Speed làm vận tốc
+            float speed = controller.baseSpellData.moveSpeed > 0 
+                ? controller.baseSpellData.moveSpeed 
+                : (controller.baseSpellData.homingTurnSpeed / 50f);
+                
+            // NẾU LÀ BÃI MÌN (Mặc định moveSpeed = 0):
+            // Ép cho nó một tốc độ mặc định (VD: 5f) để nó biết "bò" tới chỗ mục tiêu
+            if (speed <= 0) speed = 5f; 
 
-        // Dùng RotateTowards để xoay vector hiện tại về phía vector mong muốn từ từ theo TurnSpeed
-        float maxRadiansDelta = controller.baseSpellData.homingTurnSpeed * Mathf.Deg2Rad * Time.deltaTime;
-        Vector2 newDirection = Vector3.RotateTowards(currentDir, desiredDirection, maxRadiansDelta, 0f);
-
-        // Trả hướng mới về cho SpellMovement để nó bay và bẻ hình ảnh viên đạn
-        movement.ReflectTo(newDirection.normalized);
+            // Dịch chuyển thẳng tới mục tiêu bất chấp nó là vật thể gì
+            transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+        }
     }
     
     // Vẽ vòng tròn tầm nhìn trong Editor để dễ canh chỉnh

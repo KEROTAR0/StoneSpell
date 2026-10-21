@@ -10,12 +10,14 @@ public class PlayerLevelComponent : MonoBehaviour
     public int currentLevel { get; private set; }
     public int currentXp { get; private set; }
     public int xpToNextLevel { get; private set; }
-    
+    public float percentMPRecoverOnLevelUp = 0.1f;
+
     [Tooltip("Hệ số nhân XP cần thiết cho cấp tiếp theo (VD: 1.2 = tăng 20%)")]
     public float xpScalingFactor = 1.2f;
 
     [Header("Events")]
     public UnityEvent OnLevelUp;
+    public int pendingLevelUps { get; private set; } = 0;
 
     public void Init(int currentXp, int xpToNextLevel, int currentLevel)
     {
@@ -37,7 +39,7 @@ public class PlayerLevelComponent : MonoBehaviour
         // 1. Hồi 20% Max Mana
         if (playerMana != null)
         {
-            playerMana.RestoreManaPercentage(0.2f);
+            playerMana.RestoreManaPercentage(percentMPRecoverOnLevelUp);
         }
 
         // 2. Mở khóa ô phép theo mốc Level (Ví dụ: Cấp 3 mở slot 3, Cấp 5 mở slot 4, Cấp 10 mở slot 5)
@@ -52,14 +54,47 @@ public class PlayerLevelComponent : MonoBehaviour
     {
         currentXp += amount;
         
-        // Dùng while để xử lý trường hợp ăn 1 cục XP to lên luôn 2-3 cấp
         while (currentXp >= xpToNextLevel)
         {
-            LevelUp();
+            currentXp -= xpToNextLevel;
+            currentLevel++;
+            xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * xpScalingFactor);
+            
+            pendingLevelUps++; // Tăng số lần "nợ" lên
+            
+            // Xử lý Hồi Mana và Mở Khóa ô phép (chạy ngầm, không cần chờ UI)
+            if (TryGetComponent(out PlayerManaComponent mana))
+                mana.RestoreManaPercentage(0.2f);
+
+            if (TryGetComponent(out PlayerSpellController spellController))
+            {
+                if (currentLevel == 3) spellController.UnlockSlot(2); 
+                if (currentLevel == 5) spellController.UnlockSlot(3); 
+                if (currentLevel == 10) spellController.UnlockSlot(4); 
+            }
+            
+            OnLevelUp?.Invoke();
         }
-        
-        // GỌI CẬP NHẬT UI THANH XP Ở ĐÂY
-        UpdateUI();
+
+        // Sau khi tính toán xong, cập nhật thanh UI và Bật bảng chọn
+        if (UIManager.Instance != null)
+            UIManager.Instance.UpdateExpUI(currentXp, xpToNextLevel, currentLevel);
+            
+        CheckAndShowLevelUpPanel();
+    }
+
+    // Gọi hàm này để hiển thị bảng nếu còn nợ lần chọn
+    public void CheckAndShowLevelUpPanel()
+    {
+        if (pendingLevelUps > 0 && UIManager.Instance != null && !UIManager.Instance.IsLevelUpPanelActive())
+        {
+            pendingLevelUps--; // Trừ đi 1 lần nợ
+            
+            if (UpgradeManager.Instance != null)
+                UpgradeManager.Instance.GenerateUpgrades(); 
+
+            UIManager.Instance.ShowLevelUpPanel(true); 
+        }
     }
 
     private void LevelUp()

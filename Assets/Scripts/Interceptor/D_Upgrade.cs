@@ -8,7 +8,7 @@ public class D_Upgrade : ScriptableObject
     public string upgradeName;
     [TextArea] public string description;
     public Sprite icon;
-    
+
     [Header("Spell Filters (Chỉ áp dụng nâng cấp nếu thỏa mãn)")]
     [Tooltip("Kéo D_Spell vào đây nếu thẻ này CHỈ dành cho 1 phép duy nhất")]
     public D_Spell targetSpecificSpell; 
@@ -25,6 +25,7 @@ public class D_Upgrade : ScriptableObject
     [Header("Player Stats Modifiers")]
     public int flatHealthBonus = 0;
     public int flatManaBonus = 0;
+    public float manaRegenBonus = 0f;
     public float moveSpeedBonus = 0f;
 
     [Header("Spell Stats Modifiers (Cộng thẳng)")]

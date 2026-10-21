@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0b3832d1a660b419b42561dd87d9fc, type: 3}
   m_Name: MeleeRanged Slime Data
   m_EditorClassIdentifier: Assembly-CSharp::D_Entity
+  xpYield: 200
   hasNoAnimLeftOrRight: 0
-  maxHealth: 100
+  maxHealth: 150
   stunResistance: 0
   stunRecoveryTime: 7
   stunVFXPrefabHeight: -0.1
@@ -30,7 +31,7 @@ MonoBehaviour:
   canDodgeSpells: 0
   spellDetectionRadius: 3
   meleeAttackPrefab: {fileID: 8399142430204242319, guid: 8bc61a29501f56b4099d4c21b23a85ce, type: 3}
-  rangedAttackPrefab: {fileID: 8739397420522011886, guid: 809be1dba7e42774dba77ebaaaefeabd, type: 3}
+  rangedAttackPrefab: {fileID: 0}
   meleeCooldown: 10
   rangedCooldown: 2
   canSelfDestruct: 0

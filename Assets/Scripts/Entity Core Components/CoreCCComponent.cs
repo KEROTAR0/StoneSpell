@@ -22,6 +22,7 @@ public class CoreCCComponent : MonoBehaviour
     /// <param name="isSleep">Bật true nếu là trạng thái Sleep (ngủ, sẽ tỉnh khi bị đánh)</param>
     public void ApplyStun(float duration, bool isSleep = false)
     {
+        if (!gameObject.activeInHierarchy) return;
         isSleeping = isSleep;
         isStunned = true;
         

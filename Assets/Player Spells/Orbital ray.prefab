@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3058839688596039905}
   - component: {fileID: 5989150476376687593}
   - component: {fileID: 7599980551214946021}
+  - component: {fileID: 7273187024373607422}
   m_Layer: 13
   m_Name: Orbital ray
   m_TagString: Untagged
@@ -209,3 +210,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0846f9542a229c648a0dcba69a3d9a9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameScripts::SpellAura
+--- !u!114 &7273187024373607422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138357846851509379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f60c0b1da1238d4bb3ef0a6a275c294, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameScripts::SpellChasingTrait

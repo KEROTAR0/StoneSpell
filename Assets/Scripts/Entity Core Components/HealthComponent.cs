@@ -43,6 +43,7 @@ public class HealthComponent : MonoBehaviour, IDamageable
         int finalDamage = Mathf.RoundToInt(rawDamage);
         
         currentHealth -= finalDamage;
+        Debug.Log($"Final Damage: {finalDamage}");
         UpdateUI();
 
         if (currentHealth <= 0)

@@ -12,15 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: Nature MP Regen Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
-  upgradeName: Nature Heal
-  description: "H\u1ED3i 2 mana m\u1ED7i gi\xE2y"
-  icon: {fileID: 0}
+  upgradeName: Nature Regen
+  description: "H\u1ED3i 1 mana m\u1ED7i gi\xE2y"
+  icon: {fileID: 5093978120288518676, guid: c202fc6725fb49e4285bd402d4a96dfb, type: 3}
   targetSpecificSpell: {fileID: 0}
   targetProjectilesOnly: 0
   targetToggleOnly: 0
   targetAurasOnly: 0
   flatHealthBonus: 0
   flatManaBonus: 0
+  manaRegenBonus: 1
   moveSpeedBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: 0
@@ -28,12 +29,5 @@ MonoBehaviour:
   bonusBounces: 0
   bonusBlocks: 0
   inaccuracy: 0
-  additionalHitEffects:
-  - type: 2
-    procChance: 0
-    duration: 0
-    value: 1
-    tickRate: 0.5
-    isBuff: 1
-    vfxPrefab: {fileID: 0}
+  additionalHitEffects: []
   behaviorComponentNames: []

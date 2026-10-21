@@ -19,7 +19,7 @@ public class SpellController : MonoBehaviour
     private float timeActivated;
     private float auraTimer = 0f; 
     private float orbitAngle = 0f;
-    private bool isOrbitingOrb = false;
+    public bool isOrbitingOrb = false;
 
     public void Initialize(Vector2 direction, int index = 0, int totalCount = 1)
     {

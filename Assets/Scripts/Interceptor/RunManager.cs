@@ -14,139 +14,107 @@ public class RunManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // -------------------------------------------------------------
-    // HÀM 1: GỌI KHI NHẶT NÂNG CẤP (Level Up / Mở Rương)
-    // -------------------------------------------------------------
     public void AddUpgrade(D_Upgrade newUpgrade)
     {
         activeUpgrades.Add(newUpgrade);
 
-        // Nâng cấp trực tiếp vào chỉ số cơ thể Player (Máu, Mana, Tốc chạy)
         if (PlayerController.Instance != null)
         {
-            if (newUpgrade.flatHealthBonus > 0 && PlayerController.Instance.Health != null)
-                PlayerController.Instance.Health.IncreaseMaxHealth(newUpgrade.flatHealthBonus);
+            // Tích hợp ĐẦY ĐỦ 4 chỉ số vào đây
+            if (newUpgrade.flatHealthBonus > 0 && PlayerController.Instance.TryGetComponent(out HealthComponent health))
+                health.IncreaseMaxHealth(newUpgrade.flatHealthBonus);
 
-            if (newUpgrade.flatManaBonus > 0 && PlayerController.Instance.Mana != null)
-                PlayerController.Instance.Mana.IncreaseMaxMana(newUpgrade.flatManaBonus);
+            if (newUpgrade.flatManaBonus > 0 && PlayerController.Instance.TryGetComponent(out PlayerManaComponent mana))
+                mana.IncreaseMaxMana(newUpgrade.flatManaBonus);
 
-            // (Có thể thêm code tăng MoveSpeed tại đây nếu playerData hỗ trợ)
+            if (newUpgrade.manaRegenBonus > 0 && PlayerController.Instance.TryGetComponent(out PlayerManaComponent manaRegen))
+                manaRegen.IncreaseManaRegen(newUpgrade.manaRegenBonus);
+                
+            if (newUpgrade.moveSpeedBonus > 0 && PlayerController.Instance.TryGetComponent(out CoreCCComponent cc))
+                cc.moveSpeedMultiplier += newUpgrade.moveSpeedBonus; 
         }
     }
 
-    // -------------------------------------------------------------
-    // HÀM 2: TRẠM KIỂM DUYỆT - GỌI MỖI KHI BẮN ĐẠN/DÙNG PHÉP
-    // -------------------------------------------------------------
     public void InterceptSpell(SpellController spell)
     {
         if (activeUpgrades.Count == 0) return;
 
         foreach (var upgrade in activeUpgrades)
         {
-            // Lọc theo tên phép cụ thể
-            if (upgrade.targetSpecificSpell != null && spell.baseSpellData != upgrade.targetSpecificSpell) 
-                continue; 
-                
-            // Lọc theo loại phép
-            if (upgrade.targetProjectilesOnly && !spell.baseSpellData.isProjectile) 
-                continue;
-            if (upgrade.targetToggleOnly && !spell.baseSpellData.isManualToggle) 
-                continue;
-            if (upgrade.targetAurasOnly && !spell.baseSpellData.hasAura) 
-                continue;
-
-            // A. Tăng Sát thương (Sát thương của bạn nằm trong EffectData)
-            foreach (var effect in spell.currentStats.activeEffects)
+            // =========================================================
+            // 1. LỌC THÔNG MINH (OR LOGIC)
+            // Nếu tick nhiều ô, đạn chỉ cần thỏa mãn 1 trong các ô đó là được qua!
+            // =========================================================
+            bool passFilter = false;
+            if (upgrade.targetSpecificSpell == null && !upgrade.targetProjectilesOnly && !upgrade.targetToggleOnly && !upgrade.targetAurasOnly)
             {
-                if (effect.type == EffectType.DoT && effect.duration == 0)
-                {
-                    // Cộng thẳng damage
-                    effect.value += upgrade.flatDamageBonus;
-                    
-                    // Nhân Damage Multiplier (percentDamageBonus)
-                    // Ví dụ: value = 10, bonus = 0.2 -> value += 2 (Tổng = 12)
-                    effect.value += (effect.value * upgrade.percentDamageBonus);
-                }
+                passFilter = true; // Không tick gì cả -> Áp dụng mọi phép
             }
-            // B. Áp dụng Chỉ số Động (Stats cơ bản)
+            else
+            {
+                if (upgrade.targetSpecificSpell != null && spell.baseSpellData == upgrade.targetSpecificSpell) passFilter = true;
+                if (upgrade.targetProjectilesOnly && spell.baseSpellData.isProjectile) passFilter = true;
+                if (upgrade.targetToggleOnly && spell.baseSpellData.isManualToggle) passFilter = true;
+                if (upgrade.targetAurasOnly && spell.baseSpellData.hasAura) passFilter = true;
+            }
+
+            if (!passFilter) continue;
+
+            // =========================================================
+            // 2. CHỈ SỐ ĐỘNG BẢN THÂN
+            // =========================================================
             spell.currentStats.moveSpeed += upgrade.speedBonus;
             spell.currentStats.maxBounces += upgrade.bonusBounces;
             spell.currentStats.maxBlocks += upgrade.bonusBlocks;
             spell.currentStats.inaccuracy += upgrade.inaccuracy;
 
             // =========================================================
-            // SỬA CHỮA: ÁP DỤNG SÁT THƯƠNG THEO CHUẨN DOT (TICKRATE = 0)
+            // 3. SÁT THƯƠNG: DEEP COPY BẰNG JSON (CHỐNG LỖI DATA GỐC VÀ X2)
+            // XÓA HOÀN TOÀN ĐOẠN CODE BỊ LẶP TRƯỚC ĐÂY!
             // =========================================================
             if (spell.currentStats.activeEffects != null)
             {
-                // Bước A: Tìm xem Phép này có sát thương gốc không (TickRate == 0)
                 bool hasBaseDamageEffect = false;
                 
                 for (int i = 0; i < spell.currentStats.activeEffects.Count; i++)
                 {
-                    EffectData currentEffect = spell.currentStats.activeEffects[i];
+                    EffectData originalEffect = spell.currentStats.activeEffects[i];
                     
-                    // Nếu nó là loại sát thương tức thì (DoT có tickRate = 0)
-                    if (currentEffect.type == EffectType.DoT && currentEffect.tickRate <= 0)
+                    if (originalEffect.type == EffectType.DoT && originalEffect.tickRate <= 0)
                     {
                         hasBaseDamageEffect = true;
                         
-                        // Cộng sát thương cố định (Flat)
-                        currentEffect.value += upgrade.flatDamageBonus;
+                        // DEEP COPY: Nhân bản Effect ra để thao tác, cách ly với Data của Unity
+                        EffectData clonedEffect = JsonUtility.FromJson<EffectData>(JsonUtility.ToJson(originalEffect));
                         
-                        // Cộng sát thương theo phần trăm (Percent) - Dựa vào Data Gốc
-                        // Ta cần đối chiếu với baseSpellData để tính % chuẩn xác
-                        if (upgrade.percentDamageBonus != 0) // Kiểm tra != 0 thay vì > 0
+                        clonedEffect.value += upgrade.flatDamageBonus;
+                        if (upgrade.percentDamageBonus != 0) 
                         {
-                            EffectData originalEffect = spell.baseSpellData.hitEffects.Find(e => e.type == EffectType.DoT && e.tickRate <= 0);
-                            if (originalEffect.type == EffectType.DoT) // Check an toàn
-                            {
-                                // Ví dụ: Base = 10, percent = -0.9f -> Trừ đi 9 máu
-                                currentEffect.value += (originalEffect.value * upgrade.percentDamageBonus);
-                            }
+                            clonedEffect.value += (originalEffect.value * upgrade.percentDamageBonus);
                         }
 
-                        // ÉP SÁT THƯƠNG TỐI THIỂU = 1 (Chỉ áp dụng nếu đây là đòn có sát thương lúc đầu)
-                        if (currentEffect.value < 1f && spell.baseSpellData.hitEffects.Exists(e => e.type == EffectType.DoT && e.tickRate <= 0))
-                        {
-                            currentEffect.value = 1f;
-                        }
+                        if (clonedEffect.value < 1f) clonedEffect.value = 1f; 
                         
-                        // Cập nhật lại vào danh sách Động
-                        spell.currentStats.activeEffects[i] = currentEffect;
+                        // Gắn bản sao đã sửa vào danh sách
+                        spell.currentStats.activeEffects[i] = clonedEffect;
                     }
                 }
 
-                // Bước B: Nếu phép này ban đầu KHÔNG CÓ sát thương (Ví dụ: phép Buff, hoặc Tường đá)
-                // Mà người chơi lại nhặt nâng cấp "Tăng 10 sát thương cho mọi đòn đánh", 
-                // thì ta tự động tạo mới một Effect Sát thương cho nó!
                 if (!hasBaseDamageEffect && (upgrade.flatDamageBonus > 0 || upgrade.percentDamageBonus > 0))
                 {
-                    EffectData newDamageEffect = new EffectData
-                    {
-                        type = EffectType.DoT,
-                        tickRate = 0, // Sát thương tức thì
-                        value = upgrade.flatDamageBonus // Chỉ lấy Flat, vì ban đầu không có Base để nhân %
-                    };
-                    spell.currentStats.activeEffects.Add(newDamageEffect);
+                    spell.currentStats.activeEffects.Add(new EffectData { type = EffectType.DoT, tickRate = 0, value = upgrade.flatDamageBonus });
                 }
             }
 
-            // =========================================================
-            // 2. Nhồi thêm Hiệu Ứng Bất Lợi (Độc, Choáng...)
-            // =========================================================
-            if (upgrade.additionalHitEffects != null && upgrade.additionalHitEffects.Count > 0)
+            // Copy Hiệu ứng bổ sung (Độc, Choáng...) cũng bằng Deep Copy
+            if (upgrade.additionalHitEffects != null)
             {
-                if (spell.currentStats.activeEffects == null) 
-                {
-                    spell.currentStats.activeEffects = new List<EffectData>();
+                foreach(var eff in upgrade.additionalHitEffects) {
+                    spell.currentStats.activeEffects.Add(JsonUtility.FromJson<EffectData>(JsonUtility.ToJson(eff)));
                 }
-                
-                spell.currentStats.activeEffects.AddRange(upgrade.additionalHitEffects);
             }
 
-            // 3. Phép thuật Component (Ma thuật thực sự)
-            // Tự động Add các file Script phụ (như để lại vũng lửa, bắn nảy ra 8 hướng)
+            // Gắn Component Phụ (Gatling, Chasing...)
             if (upgrade.behaviorComponentNames != null)
             {
                 foreach (string compName in upgrade.behaviorComponentNames)
@@ -154,11 +122,8 @@ public class RunManager : MonoBehaviour
                     System.Type type = System.Type.GetType(compName);
                     if (type != null && spell.GetComponent(type) == null)
                     {
-                        spell.gameObject.AddComponent(type);
-                    }
-                    else if (type == null)
-                    {
-                        Debug.LogWarning($"[RunManager] Không tìm thấy script nào tên là '{compName}'. Hãy kiểm tra lại lỗi chính tả trong D_Upgrade.");
+                        Component newComp = spell.gameObject.AddComponent(type);
+                        newComp.SendMessage("OnEnable", SendMessageOptions.DontRequireReceiver);
                     }
                 }
             }

@@ -4,7 +4,7 @@ public class PlayerManaComponent : MonoBehaviour
 {
     private float maxMana;
     public float currentMana { get; private set; }
-    
+    public float manaRegenPerSecond = 0f;
     public float manaGainMultiplier = 1f;
     private int hitCountNeedToSpawnMana;
     private int normalHitCount = 0;
@@ -15,6 +15,19 @@ public class PlayerManaComponent : MonoBehaviour
         this.currentMana = Mathf.RoundToInt(maxMana/2); // Bắt đầu với full mana
         this.hitCountNeedToSpawnMana = hitCountNeeded;
         UpdateUI();
+    }
+    private void Update()
+    {
+        if (manaRegenPerSecond > 0 && currentMana < maxMana)
+        {
+            currentMana += manaRegenPerSecond * Time.deltaTime;
+            currentMana = Mathf.Min(currentMana, maxMana);
+            UpdateUI(); 
+        }
+    }
+    public void IncreaseManaRegen(float amount)
+    {
+        manaRegenPerSecond += amount;
     }
     public void IncreaseMaxMana(int mana)
     {

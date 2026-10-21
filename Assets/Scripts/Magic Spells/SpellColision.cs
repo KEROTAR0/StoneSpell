@@ -165,14 +165,14 @@ public class SpellCollision : MonoBehaviour
                         enemyProj.ReflectedByPlayer();
                     }
 
-                    if (baseData.canBlock)
+                    if (currentBlocks > 0)
                     {
                         currentBlocks--;
                         if (currentBlocks <= 0) controller.Despawn();
                     }
                 }
                 // BLOCK
-                else if (baseData.canBlock)
+                else if (currentBlocks > 0)
                 {
                     enemyProj.Despawn(); 
 

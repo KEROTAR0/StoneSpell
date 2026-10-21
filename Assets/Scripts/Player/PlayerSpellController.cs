@@ -183,7 +183,7 @@ public class PlayerSpellController : MonoBehaviour
             if (UIManager.Instance != null)
             {
                 Sprite icon = cachedSpellData[i] != null ? cachedSpellData[i].spellIcon : null;
-                UIManager.Instance.SetSpellIcon(i, icon);
+                UIManager.Instance.SetSpellIcon(i, icon, i < unlockedSlotCount);
             }
         }
     }
@@ -192,10 +192,7 @@ public class PlayerSpellController : MonoBehaviour
         if (slotIndex < equippedSpellPrefabs.Length && slotIndex >= unlockedSlotCount)
         {
             unlockedSlotCount = slotIndex + 1;
-            Debug.Log($"Đã mở khóa ô phép số {unlockedSlotCount}!");
-            
-            // Cập nhật UI (Ví dụ: Gỡ hình ổ khóa ở ô này)
-            // UIManager.Instance.UnlockSpellSlotUI(slotIndex);
+            if (UIManager.Instance != null) UIManager.Instance.SetSpellIcon(slotIndex, null, true);
         }
     }
     public void EquipSpell(int slotIndex, GameObject spellPrefab)
@@ -214,7 +211,7 @@ public class PlayerSpellController : MonoBehaviour
         if (UIManager.Instance != null)
         {
             Sprite icon = cachedSpellData[slotIndex] != null ? cachedSpellData[slotIndex].spellIcon : null;
-            UIManager.Instance.SetSpellIcon(slotIndex, icon);
+            UIManager.Instance.SetSpellIcon(slotIndex, icon, true);
         }
     }
 

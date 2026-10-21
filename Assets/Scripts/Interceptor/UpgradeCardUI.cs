@@ -48,25 +48,37 @@ public class UpgradeCardUI : MonoBehaviour
             
             for (int i = 0; i < unlockedCount; i++)
             {
+                // Kiểm tra xem ô đó có trống không (chưa có phép nào được gán)
                 if (player.SpellController.equippedSpellPrefabs[i] == null)
                 {
+                    // Lắp phép vào ô trống
                     player.SpellController.EquipSpell(i, storedSpellPrefab);
                     equipSuccess = true;
-                    break;
+                    Debug.Log($"Đã lắp phép {storedSpellPrefab.name} vào ô số {i}");
+                    break; // Thoát khỏi vòng lặp sau khi lắp thành công
                 }
             }
             
-            // Nếu full ô đã mở khóa, có thể phải làm hệ thống thay thế (Replace)
-            if (!equipSuccess) Debug.Log("Túi đã đầy, không thể lắp thêm!"); 
+            // Nếu duyệt hết các ô đã mở khóa mà vẫn không lắp được
+            if (!equipSuccess) 
+            {
+                Debug.LogWarning("Túi đã đầy! Không còn ô trống để lắp thêm phép."); 
+                // TODO: Xử lý trường hợp túi đầy (Ví dụ: Mở bảng thay thế phép)
+            }
         }
         else
         {
-            // ÁP DỤNG CHỈ SỐ VÀO NGƯỜI
-            // (Bạn sẽ cần viết một hàm ApplyUpgrade(D_Upgrade) vào Player để cộng dồn máu/mana/sát thương)
-            // player.ApplyStatUpgrade(storedStatUpgrade); 
+            if (storedStatUpgrade != null && RunManager.Instance != null)
+            {
+                RunManager.Instance.AddUpgrade(storedStatUpgrade);
+            }
         }
 
         // Tắt bảng và tiếp tục Game
         UIManager.Instance.ShowLevelUpPanel(false);
+        if (player.TryGetComponent(out PlayerLevelComponent levelComp))
+        {
+            levelComp.CheckAndShowLevelUpPanel();
+        }
     }
 }

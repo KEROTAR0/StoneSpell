@@ -13,12 +13,16 @@ MonoBehaviour:
   m_Name: Gatling Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Gatling Projectile
-  description: "B\u1EAFn th\xEAm 6 vi\xEAn \u0111\u1EA1n ph\xE9p nh\u01B0ng gi\u1EA3m
-    s\xE1t th\u01B0\u01A1ng g\xE2y ra c\u1EE7a d\u1EA1ng ph\xE9p Projectile \u0111i
-    80% v\xE0 gi\u1EA3m \u0111\u1ED9 ch\xEDnh x\xE1c \u0111i 5"
+  description: Fire 6 additional projectiles alongside with projectile spell type
+    but all projectile damage is lowered by 80% and accurate decrease by 5
   icon: {fileID: -314987246507638928, guid: ac48f7a2a8e874c4f93509135a8aa4ad, type: 3}
+  targetSpecificSpell: {fileID: 0}
+  targetProjectilesOnly: 1
+  targetToggleOnly: 0
+  targetAurasOnly: 0
   flatHealthBonus: 0
   flatManaBonus: 0
+  manaRegenBonus: 0
   moveSpeedBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: -0.8

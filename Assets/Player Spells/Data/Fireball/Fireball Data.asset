@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::D_Spell
   spellName: Fireball
   spellIcon: {fileID: -2754850766384764900, guid: 52bf32cc5b0cc7246a02b05c5d4484b6, type: 3}
-  manaCost: 1
-  lifeTime: 3
+  manaCost: 20
+  lifeTime: 4
   castingTime: 0.3
-  cooldown: 1
+  cooldown: 2
   isSpawnAtMouse: 0
   maxCastRange: 15
   isProjectile: 1

@@ -15,25 +15,25 @@ MonoBehaviour:
   spellName: crossed bullet
   spellIcon: {fileID: -1259408508766424310, guid: 52bf00d4d3f481845a4c87a3d9ff6a8d, type: 3}
   manaCost: 1
-  lifeTime: 5
+  lifeTime: 10
   castingTime: 0
   cooldown: 0.3
   isSpawnAtMouse: 0
-  maxCastRange: 8
+  maxCastRange: 15
   isProjectile: 1
   isPenetrating: 0
   isLaser: 0
   isSelfTargeted: 1
   isManualToggle: 0
   inaccuracy: 0
-  moveSpeed: 6
+  moveSpeed: 1
   maxBounces: 1
   acceleration: 5
   laserMaxLength: 10
   laserWidth: 1
   explodeOnDespawn: 1
   explosionRadius: 1
-  isHoming: 0
+  isHoming: 1
   homingDetectionRadius: 8
   homingTurnSpeed: 180
   homingDelayTimer: 0.3
@@ -55,7 +55,7 @@ MonoBehaviour:
   - type: 0
     procChance: 1
     duration: 0
-    value: 10
+    value: 5
     tickRate: 0
     isBuff: 0
     vfxPrefab: {fileID: 7817449403422615033, guid: 55dfd287e30b28e458874e661717e8e2, type: 3}

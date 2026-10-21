@@ -12,11 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: Stun Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
-  upgradeName: 
-  description: 
+  upgradeName: Stun Upgrade
+  description: "G\xE2y s\xE1t th\u01B0\u01A1ng c\xF3 30% t\u1EC9 l\u1EC7 g\xE2y cho\xE1ng
+    m\u1EE5c ti\xEAu trong 3 gi\xE2y"
   icon: {fileID: 0}
+  targetSpecificSpell: {fileID: 0}
+  targetProjectilesOnly: 0
+  targetToggleOnly: 0
+  targetAurasOnly: 0
   flatHealthBonus: 0
   flatManaBonus: 0
+  manaRegenBonus: 0
   moveSpeedBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: 0
@@ -24,5 +30,12 @@ MonoBehaviour:
   bonusBounces: 0
   bonusBlocks: 0
   inaccuracy: 0
-  additionalHitEffects: []
+  additionalHitEffects:
+  - type: 3
+    procChance: 0.3
+    duration: 3
+    value: 0
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 0}
   behaviorComponentNames: []

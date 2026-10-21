@@ -107,28 +107,48 @@ public class PlayerCastingSpellState : PlayerAttackState
     {
         player.SpellController.TriggerCooldown(slotIndex);
 
-        Vector3 spawnPosition = player.attackPosition.position;
+        // 1. TÍNH TOÁN SỐ LƯỢNG (Tăng 1 nửa nếu thỏa mãn điều kiện)
+        int count = currentSpellData.spawnCount > 0 ? currentSpellData.spawnCount : 1;
+        
+        if ((currentSpellData.isSelfTargeted && currentSpellData.isProjectile) || 
+            (currentSpellData.isSpawnAtMouse && currentSpellData.isProjectile))
+        {
+            count = Mathf.CeilToInt(count * 1.5f); // Tăng 1.5 lần (Làm tròn lên)
+        }
+
+        // 2. TÍNH TOÁN VỊ TRÍ GỐC
+        Vector3 baseSpawnPos = player.attackPosition.position;
         if (currentSpellData.isSpawnAtMouse)
         {
             float distanceToMouse = Vector2.Distance(player.attackPosition.position, mouseWorldPos);
-            spawnPosition = distanceToMouse > currentSpellData.maxCastRange 
+            baseSpawnPos = distanceToMouse > currentSpellData.maxCastRange 
                 ? player.attackPosition.position + (Vector3)(shootDirection * currentSpellData.maxCastRange) 
                 : mouseWorldPos;
         }
 
+        // 3. SINH ĐẠN VÀ RẢI RÁC
         if (ObjectPoolManager.Instance != null)
         {
-            int count = currentSpellData.spawnCount > 0 ? currentSpellData.spawnCount : 1;
             for (int i = 0; i < count; i++)
             {
-                GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, spawnPosition, Quaternion.identity);
+                Vector3 finalSpawnPos = baseSpawnPos;
+
+                // NẾU LÀ BÃI MÌN (Spawn ở chuột) VÀ CÓ NHIỀU HƠN 1 CỤC
+                // Rải rác ngẫu nhiên trong phạm vi orbitRadius
+                if (currentSpellData.isSpawnAtMouse && count > 1)
+                {
+                    Vector2 randomOffset = Random.insideUnitCircle * currentSpellData.orbitRadius;
+                    finalSpawnPos += (Vector3)randomOffset;
+                }
+
+                GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, finalSpawnPos, Quaternion.identity);
                 
                 if (spellObj.TryGetComponent(out SpellController spellScript))
                 {
                     Vector2 castDir = currentSpellData.isSpawnAtMouse ? Vector2.zero : shootDirection;
                     spellScript.Initialize(castDir, i, count);
                 }   
-            }  
+            }
         }
     }
 }

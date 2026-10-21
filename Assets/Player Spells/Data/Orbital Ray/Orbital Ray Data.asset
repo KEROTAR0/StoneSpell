@@ -15,7 +15,7 @@ MonoBehaviour:
   spellName: Orbital Ray
   spellIcon: {fileID: -1451889756, guid: 11f00a0e4a149514eb9367a4af8c86b8, type: 3}
   manaCost: 0
-  lifeTime: 9
+  lifeTime: 0
   castingTime: 1
   cooldown: 2
   isSpawnAtMouse: 1
@@ -26,13 +26,17 @@ MonoBehaviour:
   isSelfTargeted: 0
   isManualToggle: 1
   inaccuracy: 0
-  moveSpeed: 0
+  moveSpeed: 0.5
   maxBounces: 0
   acceleration: 0
   laserMaxLength: 0
   laserWidth: 0
   explodeOnDespawn: 0
   explosionRadius: 2.5
+  isHoming: 1
+  homingDetectionRadius: 8
+  homingTurnSpeed: 180
+  homingDelayTimer: 0.3
   explosionVFX: {fileID: 0}
   toggleIndicatorVFX: {fileID: 0}
   isRotating: 0
