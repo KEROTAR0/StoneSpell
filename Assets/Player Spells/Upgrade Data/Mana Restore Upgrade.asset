@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Mana Restore Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Mana Limitbreak
-  description: "T\u0103ng 80 mana t\u1ED1i \u0111a v\xE0 h\u1ED3i mana m\u1ED9t l\u01B0\u1EE3ng
-    t\u01B0\u01A1ng \u0111\u01B0\u01A1ng"
+  description: Increase max mana by 80 and restore mana for the same amount
   icon: {fileID: -1504793436433039653, guid: 77b1eb5c6e87100458fe8845125f7bd7, type: 3}
   targetSpecificSpell: {fileID: 0}
   targetProjectilesOnly: 0

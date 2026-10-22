@@ -23,17 +23,17 @@ MonoBehaviour:
   isProjectile: 1
   isPenetrating: 0
   isLaser: 0
-  isSelfTargeted: 1
+  isSelfTargeted: 0
   isManualToggle: 0
   inaccuracy: 0
-  moveSpeed: 1
+  moveSpeed: 4
   maxBounces: 1
   acceleration: 5
   laserMaxLength: 10
   laserWidth: 1
   explodeOnDespawn: 1
   explosionRadius: 1
-  isHoming: 1
+  isHoming: 0
   homingDetectionRadius: 8
   homingTurnSpeed: 180
   homingDelayTimer: 0.3
@@ -48,9 +48,12 @@ MonoBehaviour:
   hasAura: 0
   auraCheckRadius: 3
   auraTickRate: 0.1
-  spawnCount: 3
+  spawnCount: 2
   orbitRadius: 1.5
   orbRotationSpeed: 90
+  multiShotPattern: 3
+  multiShotAngle: 30
+  multiShotSpacing: 0.5
   hitEffects:
   - type: 0
     procChance: 1

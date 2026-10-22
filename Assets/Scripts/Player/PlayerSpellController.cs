@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerManaComponent))]
 public class PlayerSpellController : MonoBehaviour
 {
+    private PlayerInputHandler inputHandler;
     [Header("Spell Slots (Kéo Prefab Phép Thuật vào đây)")]
     public GameObject[] equippedSpellPrefabs = new GameObject[5]; 
     
@@ -14,11 +15,16 @@ public class PlayerSpellController : MonoBehaviour
     private GameObject[] activeToggleVFX = new GameObject[5];
     private PlayerManaComponent playerMana;
     public int unlockedSlotCount { get; private set; } = 2;
+    private bool isWaitingToReplace = false;
+    private GameObject pendingSpellPrefab;
+    
 
     private void Awake()
     {
         // Liên kết nội bộ thay vì dùng PlayerController.Instance
         playerMana = GetComponent<PlayerManaComponent>();
+        inputHandler = GetComponent<PlayerInputHandler>();
+        //if (inputHandler == null) inputHandler = GetComponentInParent<PlayerInputHandler>();
     }
 
     private void Start()
@@ -33,9 +39,7 @@ public class PlayerSpellController : MonoBehaviour
 
     private void Update()
     {
-        // ====================================================
-        // 1. VÒNG LẶP TRỪ THỜI GIAN COOLDOWN VÀ CẬP NHẬT UI
-        // ====================================================
+        // COOLDOWN
         for (int i = 0; i < cooldownTimers.Length; i++)
         {
             // Nếu là phép Toggle và ĐANG BẬT: Giữ UI màu Xanh, bỏ qua trừ Cooldown
@@ -56,10 +60,7 @@ public class PlayerSpellController : MonoBehaviour
                 }
             }
         }
-
-        // ====================================================
-        // 2. VÒNG LẶP DUY TRÌ TOGGLE VÀ TRỪ MANA
-        // ====================================================
+        // MANA
         for (int i = 0; i < toggleStates.Length; i++)
         {
             if (toggleStates[i] && cachedSpellData[i] != null)
@@ -85,6 +86,39 @@ public class PlayerSpellController : MonoBehaviour
                 {
                     Debug.Log($"Hết Mana! Tự động tắt chiêu ở slot {i+1}");
                     ToggleSpell(i, gameObject);
+                }
+            }
+        }
+        // REPLACE
+        if (isWaitingToReplace && pendingSpellPrefab != null && inputHandler != null)
+        {
+            int slotToReplace = -1;
+
+            // Kiểm tra Input từ hệ thống mới dựa trên số ô đã mở khóa
+            if (inputHandler.Spell1Input && unlockedSlotCount > 0) slotToReplace = 0;
+            else if (inputHandler.Spell2Input && unlockedSlotCount > 1) slotToReplace = 1;
+            else if (inputHandler.Spell3Input && unlockedSlotCount > 2) slotToReplace = 2;
+            else if (inputHandler.Spell4Input && unlockedSlotCount > 3) slotToReplace = 3;
+            else if (inputHandler.Spell5Input && unlockedSlotCount > 4) slotToReplace = 4;
+
+            if (slotToReplace != -1)
+            {
+                // 1. Tắt tín hiệu Input ngay lập tức để không bị tự động xuất chiêu khi game hết Pause
+                inputHandler.UseSpellInputByIndex(slotToReplace);
+
+                // 2. Lắp đè phép
+                EquipSpell(slotToReplace, pendingSpellPrefab);
+                Debug.Log($"Đã thay thế ô số {slotToReplace + 1} bằng phép mới!");
+                
+                // 3. Xóa trạng thái chờ
+                isWaitingToReplace = false;
+                pendingSpellPrefab = null;
+
+                // 4. Đóng bảng và gọi lần lên cấp tiếp theo (nếu nợ)
+                UIManager.Instance.ShowLevelUpPanel(false);
+                if (TryGetComponent(out PlayerLevelComponent levelComp))
+                {
+                    levelComp.CheckAndShowLevelUpPanel();
                 }
             }
         }
@@ -186,6 +220,12 @@ public class PlayerSpellController : MonoBehaviour
                 UIManager.Instance.SetSpellIcon(i, icon, i < unlockedSlotCount);
             }
         }
+    }
+    public void StartReplaceMode(GameObject newSpell)
+    {
+        isWaitingToReplace = true;
+        pendingSpellPrefab = newSpell;
+        UIManager.Instance.ChangeSText("Press 1, 2, 3... corresponding to the spell slot to replace");
     }
     public void UnlockSlot(int slotIndex)
     {

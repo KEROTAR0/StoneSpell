@@ -13,12 +13,17 @@ MonoBehaviour:
   m_Name: Damage Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Power up
-  description: "T\u0103ng th\xEAm 5 s\xE1t th\u01B0\u01A1ng"
+  description: Increase 1 damage for all spells, not available for Damage over Time
   icon: {fileID: -2124102372771563869, guid: a8dccce8c0501e146bd247abf9925c97, type: 3}
+  targetSpecificSpell: {fileID: 0}
+  targetProjectilesOnly: 0
+  targetToggleOnly: 0
+  targetAurasOnly: 0
   flatHealthBonus: 0
   flatManaBonus: 0
+  manaRegenBonus: 0
   moveSpeedBonus: 0
-  flatDamageBonus: 5
+  flatDamageBonus: 1
   percentDamageBonus: 0
   speedBonus: 0
   bonusBounces: 0

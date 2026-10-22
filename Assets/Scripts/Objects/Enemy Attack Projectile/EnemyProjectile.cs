@@ -60,19 +60,18 @@ public class EnemyProjectile : MonoBehaviour
         if (!gameObject.activeInHierarchy || !collision.gameObject.activeInHierarchy) return;
         int colLayer = collision.gameObject.layer;
 
+        // 1. Nếu đã bị phản đòn, Đạn Quái trở thành Đạn Player, chỉ đánh Quái
         if (isReflected && (GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
         {
-            // 1. Gây sát thương
             if (collision.TryGetComponent(out IDamageable damageable))
             {
                 AttackDetails details = new AttackDetails 
                 { 
-                    damageAmount = Mathf.RoundToInt(attackData.damage * 10), // Đạn bật lại giữ nguyên sát thương (hoặc bạn có thể nhân 2 ở đây)
+                    damageAmount = Mathf.RoundToInt(attackData.damage * 10), 
                     position = transform.position 
                 };
                 damageable.TakeDamage(details);
             }
-            // 2. Trả lại Effect cho quái
             if (collision.TryGetComponent(out EffectReceiver receiver))
             {
                 if (attackData.hitEffects != null && attackData.hitEffects.Count > 0)
@@ -85,9 +84,33 @@ public class EnemyProjectile : MonoBehaviour
             return;
         }
 
+        // 2. Chạm vào Khiên/Phép của Player -> Nhường cho Khiên tự xử lý
+        if ((GameLayers.PlayerAttackMask.value & (1 << colLayer)) > 0)
+        {
+            return; 
+        }
+
+        // 3. Nếu Đạn/Đòn Quái chạm vào Player
         if (!isReflected && (GameLayers.PlayerAndDamageableMask.value & (1 << colLayer)) > 0)
         {
-            // 1. Gây sát thương cơ bản (Base Damage)
+            // =========================================================
+            // BỘ LỌC CHỐNG XUYÊN KHIÊN DỰA THEO Ý TƯỞNG CỦA BẠN
+            // Quái đánh trúng Player, nhưng phải tìm xem quanh Player
+            // có đang bọc cái Khiên (isSelfTargeted) nào không!
+            // =========================================================
+            SpellController[] activeSpells = collision.GetComponentsInChildren<SpellController>();
+            foreach (var spell in activeSpells)
+            {
+                // Kiểm tra xem đó có phải là Khiên có khả năng Đỡ đòn hoặc Phản đòn không
+                if (spell.currentStats.isSelfTargeted && (spell.baseSpellData.canReflect || spell.currentStats.maxBlocks > 0))
+                {
+                    // NẾU CÓ KHIÊN -> Lập tức quay xe, không gây sát thương cho Player!
+                    // Quyền xử lý phản đòn sẽ được nhường lại cho hàm OnTriggerEnter2D bên SpellCollision của Khiên.
+                    return; 
+                }
+            }
+
+            // Nếu quét qua không thấy cái Khiên nào, thì Player ăn sát thương bình thường
             if (collision.TryGetComponent(out IDamageable damageable))
             {
                 AttackDetails details = new AttackDetails 
@@ -98,13 +121,15 @@ public class EnemyProjectile : MonoBehaviour
                 damageable.TakeDamage(details);
             }
 
-            // 2. NHÉT TOÀN BỘ EFFECT VÀO EFFECT RECEIVER (MỚI)
+            // Gắn Effect
             if (collision.TryGetComponent(out EffectReceiver receiver) && attackData.hitEffects != null)
             {
                 foreach (var effect in attackData.hitEffects) receiver.ApplyEffect(effect, transform.position);
             }
             Despawn();
         }
+        
+        // 4. Va chạm tường
         else if ((GameLayers.WallAndHighObstacleMask.value & (1 << colLayer)) > 0)
         {
             Despawn();

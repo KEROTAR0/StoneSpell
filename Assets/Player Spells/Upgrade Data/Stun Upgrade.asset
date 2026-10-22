@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Stun Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Stun Upgrade
-  description: "G\xE2y s\xE1t th\u01B0\u01A1ng c\xF3 30% t\u1EC9 l\u1EC7 g\xE2y cho\xE1ng
-    m\u1EE5c ti\xEAu trong 3 gi\xE2y"
+  description: Deal damage to target has 30% chance to stun the target
   icon: {fileID: 0}
   targetSpecificSpell: {fileID: 0}
   targetProjectilesOnly: 0

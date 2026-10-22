@@ -23,10 +23,16 @@ public class UIManager : MonoBehaviour
 
     [Header("Level Up UI")]
     [SerializeField] private GameObject levelUpPanel;
+    [SerializeField] private TMP_Text textChooseSpell;
+
 
     private void Awake()
     {
         Instance = this;
+    }
+    private void Start()
+    {
+        levelUpPanel.SetActive(false);
     }
 
     // 1. Cập nhật Trái tim
@@ -85,6 +91,7 @@ public class UIManager : MonoBehaviour
     }
     public void ShowLevelUpPanel(bool show)
     {
+        textChooseSpell.text = "Choose One";
         if (levelUpPanel != null)
         {
             levelUpPanel.SetActive(show);
@@ -110,5 +117,9 @@ public class UIManager : MonoBehaviour
                 spellIconImages[slotIndex].color = isUnlocked ? new Color(1, 1, 1, 0) : Color.white; 
             }
         }
+    }
+    public void ChangeSText(string text)
+    {
+        textChooseSpell.text = text;
     }
 }

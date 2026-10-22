@@ -25,7 +25,6 @@ public class SpellCollision : MonoBehaviour
         currentBlocks = controller.currentStats.maxBlocks;
         
         hitTargets.Clear();
-        GetComponent<Collider2D>().enabled = true;
         
         if (TryGetComponent(out Animator animChild))
         {
@@ -33,14 +32,18 @@ public class SpellCollision : MonoBehaviour
             animChild.Update(0f);
         }
 
+        Collider2D col = GetComponent<Collider2D>();
+
+        // ĐÃ SỬA: Bắt buộc phải có dấu tick UseMultiStateAnimation thì mới được phép tắt Hitbox
         if (controller.useMultiStateAnimation && controller.baseSpellData.castingTime > 0)
         {
             isHitboxActive = false; 
-            Invoke(nameof(EnableHitboxDelayed), controller.baseSpellData.castingTime); 
+            if (col != null) col.enabled = false; 
         }
         else
         {
             isHitboxActive = true; 
+            if (col != null) col.enabled = true; 
         }
     }
 
@@ -52,8 +55,7 @@ public class SpellCollision : MonoBehaviour
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
         {
-            col.enabled = false;
-            col.enabled = true;
+            col.enabled = true; // BẬT LẠI KHI ĐÃ GỒNG XONG
         }
     }
 
@@ -73,6 +75,9 @@ public class SpellCollision : MonoBehaviour
     public void AnimationEvent_DisableHitbox()
     {
         isHitboxActive = false;
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null) col.enabled = false;
+        
         if (movement != null) movement.SetFinishedAttackFrame(true);
     }
 
@@ -84,18 +89,73 @@ public class SpellCollision : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!gameObject.activeInHierarchy || !collision.gameObject.activeInHierarchy) return;
-        D_Spell baseData = controller.baseSpellData;
         int colLayer = collision.gameObject.layer;
 
-        // 1. Kiểm tra Va chạm Tường
-        if ((GameLayers.WallMask.value & (1 << colLayer)) > 0 || 
-            ((GameLayers.HighObstacleMask.value & (1 << colLayer)) > 0 && !baseData.isPassThroughtHighObstacle))
+        // =======================================================
+        // 1. ƯU TIÊN SỐ 1: TƯƠNG TÁC VỚI ĐẠN VÀ ĐÒN ĐÁNH CỦA ĐỊCH
+        // =======================================================
+        if ((GameLayers.EnemyAttackMask.value & (1 << colLayer)) > 0)
         {
-            if (baseData.isPenetrating || baseData.isSelfTargeted) return;
+            if (collision.TryGetComponent(out EnemyProjectile enemyProj))
+            {
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                controller.SpawnImpactVFXAtPosition(hitPoint);
+
+                // REFLECT (PHẢN ĐÒN)
+                if (controller.currentStats.canReflect)
+                {
+                    // A. Phản đòn Cận chiến (Parry Melee)
+                    if (enemyProj.attackData.behavior == AttackBehavior.StationaryMelee)
+                    {
+                        EnemyController enemy = enemyProj.GetComponentInParent<EnemyController>();
+                        
+                        if (enemy != null && enemy.TryGetComponent(out IDamageable damageable))
+                        {
+                            AttackDetails details = new AttackDetails 
+                            { 
+                                damageAmount = enemyProj.attackData.damage * 2f, 
+                                position = transform.position,
+                                knockbackForce = 5f 
+                            };
+                            damageable.TakeDamage(details);
+                        }
+                        
+                        enemyProj.Despawn();
+                    }
+                    // B. Phản Đạn bay / Bãi lầy (Reflect Projectiles)
+                    else 
+                    {
+                        enemyProj.ReflectedByPlayer();
+                    }
+
+                    if (currentBlocks > 0)
+                    {
+                        currentBlocks--;
+                        if (currentBlocks <= 0) controller.Despawn();
+                    }
+                }
+                // BLOCK (ĐỠ ĐÒN)
+                else if (currentBlocks > 0)
+                {
+                    enemyProj.Despawn(); 
+
+                    currentBlocks--;
+                    if (currentBlocks <= 0) controller.Despawn();
+                }
+            }
+            return; // Đã xử lý đạn địch xong thì thoát luôn, không cho chạy xuống dưới
+        }
+
+        // =======================================================
+        // 2. KIỂM TRA VA CHẠM TƯỜNG (Sau khi đã loại trừ đạn địch)
+        // =======================================================
+        if ((GameLayers.WallMask.value & (1 << colLayer)) > 0 || 
+            ((GameLayers.HighObstacleMask.value & (1 << colLayer)) > 0 && !controller.currentStats.isPassThroughtHighObstacle))
+        {
+            if (controller.currentStats.isPenetrating || controller.currentStats.isSelfTargeted) return;
 
             if (currentBounces > 0 && movement != null)
             {
-                // CHỐNG VA CHẠM KÉP Ở GÓC VUÔNG: Chỉ cho phép nảy tối đa 1 lần mỗi 0.05 giây
                 if (Time.time < lastBounceTime + 0.05f) return; 
                 
                 lastBounceTime = Time.time;
@@ -104,12 +164,9 @@ public class SpellCollision : MonoBehaviour
                 Vector2 currentDir = Vector2.zero;
                 if (TryGetComponent(out Rigidbody2D rbBounce)) currentDir = rbBounce.linearVelocity.normalized;
 
-                // CÁCH TÍNH GÓC MẶT PHẲNG (NORMAL) CHUẨN NHẤT CHO VẬT THỂ TRÒN:
-                // Lấy vector nối từ tâm vật thể đập vuông góc ra mép va chạm
                 Vector2 hitPoint = collision.ClosestPoint(transform.position);
                 Vector2 surfaceNormal = ((Vector2)transform.position - hitPoint).normalized;
                 
-                // Nếu đạn bay quá nhanh lún thẳng vào tâm, phép trừ bị bằng 0 -> Dùng Raycast cứu viện
                 if (surfaceNormal == Vector2.zero) 
                 {
                     RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position - currentDir * 0.5f, currentDir, 2f, GameLayers.WallMask.value | GameLayers.HighObstacleMask.value);
@@ -128,61 +185,6 @@ public class SpellCollision : MonoBehaviour
             return; 
         }
 
-        // 2. Tương tác với Đạn địch
-        if ((GameLayers.EnemyAttackMask.value & (1 << colLayer)) > 0)
-        {
-            if (collision.TryGetComponent(out EnemyProjectile enemyProj))
-            {
-                // BỎ QUA TelegraphedAoE (Sét đánh, Cột lửa từ dưới đất...)
-                // Không thể Block hay Reflect những loại này
-                // if (enemyProj.attackData.behavior == AttackBehavior.TelegraphedAoE) return;
-
-                Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                controller.SpawnImpactVFXAtPosition(hitPoint);
-
-                // REFLECT
-                if (baseData.canReflect)
-                {
-                    // A. Phản đòn Cận chiến (Parry Melee)
-                    if (enemyProj.attackData.behavior == AttackBehavior.StationaryMelee)
-                    {
-                        EnemyController enemy = enemyProj.GetComponentInParent<EnemyController>();
-                        if (enemy != null && enemy.TryGetComponent(out IDamageable damageable))
-                        {
-                            AttackDetails details = new AttackDetails 
-                            { 
-                                damageAmount = enemyProj.attackData.damage * 10f, 
-                                position = transform.position,
-                                knockbackForce = 5f 
-                            };
-                            damageable.TakeDamage(details);
-                        }
-                        enemyProj.Despawn();
-                    }
-                    // B. Phản Đạn bay / Bãi lầy (Reflect Projectiles)
-                    else 
-                    {
-                        enemyProj.ReflectedByPlayer();
-                    }
-
-                    if (currentBlocks > 0)
-                    {
-                        currentBlocks--;
-                        if (currentBlocks <= 0) controller.Despawn();
-                    }
-                }
-                // BLOCK
-                else if (currentBlocks > 0)
-                {
-                    enemyProj.Despawn(); 
-
-                    currentBlocks--;
-                    if (currentBlocks <= 0) controller.Despawn();
-                }
-            }
-            return;
-        }
-
         // 3. Trúng Mục Tiêu (Quái hoặc Đồ vật)
         if (isHitboxActive) 
         {
@@ -194,19 +196,29 @@ public class SpellCollision : MonoBehaviour
         D_Spell baseData = controller.baseSpellData;
         int colLayer = collision.gameObject.layer;
 
-        // Nếu chạm trúng Quái hoặc Đồ vật phá được
         if ((GameLayers.EnemyAndDamageableMask.value & (1 << colLayer)) > 0)
         {
-            // Tránh việc 1 viên đạn giật cùng 1 mục tiêu 2 lần
-            if (!hitTargets.Contains(collision.gameObject))
+            // ==============================================================
+            // ĐÃ SỬA: TÌM ROOT OBJECT (ĐỐI TƯỢNG GỐC)
+            // Thay vì lưu Collider con, ta tìm gốc chứa EffectReceiver/Health
+            // Điều này đảm bảo dù quái có 10 cái Collider, nó chỉ nhận 1 lần sát thương!
+            // ==============================================================
+            EffectReceiver receiver = collision.GetComponentInParent<EffectReceiver>();
+            
+            // Nếu tìm thấy gốc, lấy gốc. Nếu không, lấy chính nó.
+            GameObject rootObject = receiver != null ? receiver.gameObject : collision.gameObject;
+
+            if (!hitTargets.Contains(rootObject))
             {
-                Vector2 hitPoint = (Vector2)transform.position + ((Vector2)collision.transform.position - (Vector2)transform.position) * 0.5f;
-                controller.ApplyEffectsToTarget(collision.gameObject);
+                Vector2 hitPoint = collision.ClosestPoint(transform.position);
+                
+                // Truyền rootObject vào hàm Apply thay vì truyền Collider con
+                controller.ApplyEffectsToTarget(rootObject);
                 controller.SpawnImpactVFXAtPosition(hitPoint);
                 
-                hitTargets.Add(collision.gameObject);
+                // Đánh dấu Root Object đã bị đánh trúng
+                hitTargets.Add(rootObject);
 
-                // NẾU KHÔNG PHẢI XUYÊN THẤU -> HỦY VIÊN ĐẠN NGAY LẬP TỨC
                 if (!baseData.isPenetrating && !baseData.isLaser && baseData.isProjectile && !baseData.hasAura)
                 {
                     controller.Despawn();

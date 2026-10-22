@@ -22,25 +22,27 @@ public class SpellGatlingTrait : MonoBehaviour
 
     private void Update()
     {
-        // Chốt chặn: Nếu là đạn con, hoặc đã nhả đạn rồi thì bỏ qua
         if (isClone || hasTriggered) return;
-        if( !controller.baseSpellData.isProjectile || 
-            controller.baseSpellData.hasAura || 
-            controller.baseSpellData.isSelfTargeted ||
-            controller.baseSpellData.isSpawnAtMouse) return;
+        
+        // ====================================================
+        // CHỐNG NHÂN BẢN: CHỈ VIÊN ĐẠN ĐẦU TIÊN MỚI KÍCH HOẠT GATLING
+        // Nếu đạn này là đạn số 1, 2 (phụ) của chùm Spread, bỏ qua ngay!
+        // ====================================================
+        if (controller.spellIndex != 0) return; 
 
-        // if(!controller.baseSpellData.isProjectile) return;
-        // if(controller.baseSpellData.hasAura && !controller.baseSpellData.isProjectile) return;
-        // if(controller.baseSpellData.isSelfTargeted && !controller.baseSpellData.isProjectile) return;
+        if(!controller.baseSpellData.isProjectile) return;
+        if(controller.baseSpellData.hasAura && !controller.baseSpellData.isProjectile) return;
+        if(controller.baseSpellData.isSelfTargeted) return;
 
-        hasTriggered = true; // Khóa chốt ngay lập tức để không nhả đạn ở frame tiếp theo
+        hasTriggered = true; 
 
         if (RunManager.Instance != null && controller != null)
         {
+            // Truyền hướng ngắm thẳng (rawBaseDirection) vào Gatling thay vì initialDirection (có thể bị xéo do Spread)
             RunManager.Instance.StartCoroutine(FireGatlingRoutine(
                 gameObject, 
                 transform.position, 
-                controller.initialDirection
+                controller.rawBaseDirection 
             ));
         }
     }
@@ -57,7 +59,8 @@ public class SpellGatlingTrait : MonoBehaviour
             Vector2 currentFirePos = spawnPosition;
             if (PlayerController.Instance != null)
             {
-                currentFirePos = PlayerController.Instance.transform.position;
+                // Gatling luôn bắn ra từ miệng súng (vị trí hiện tại của Player)
+                currentFirePos = PlayerController.Instance.attackPosition.position;
             }
 
             GameObject cloneObj = ObjectPoolManager.Instance.GetFromPool(bulletPrefab, currentFirePos, Quaternion.identity);
@@ -69,15 +72,14 @@ public class SpellGatlingTrait : MonoBehaviour
 
                 if (cloneObj.TryGetComponent(out SpellController cloneController))
                 {
-                    // Dán nhãn Clone để nó không đẻ tiếp
                     if (cloneObj.TryGetComponent(out SpellGatlingTrait trait))
                     {
                         trait.isClone = true;
                         trait.hasTriggered = true; 
                     }
 
-                    // 2. Lúc này viên đạn đã sẵn sàng 100%, truyền lệnh sẽ không bao giờ lỗi
-                    cloneController.Initialize(rawDirection);
+                    // Gán index = -1 cho đạn Gatling để nó biết nó là đạn cộng thêm và truyền hướng bay THẲNG (rawDirection)
+                    cloneController.Initialize(rawDirection, -1, 1, rawDirection);
                 }
             }
         }

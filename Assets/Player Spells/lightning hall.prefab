@@ -126,7 +126,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7126008695879052131}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameScripts::SpellController
   baseSpellData: {fileID: 11400000, guid: 6cab618ab219abe48a0757ad0c32a6f8, type: 2}
   visualHolder: {fileID: 0}
+  useMultiStateAnimation: 1
 --- !u!114 &1867052301334544326
 MonoBehaviour:
   m_ObjectHideFlags: 0

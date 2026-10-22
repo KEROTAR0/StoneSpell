@@ -14,6 +14,10 @@ public class RuntimeSpellStats
     public float laserWidth;
     public float rotationSpeed;
     public float inaccuracy;
+    public bool isSelfTargeted;
+    public bool canReflect;
+    public bool isPenetrating;
+    public bool isPassThroughtHighObstacle;
     
     // Bản sao danh sách hiệu ứng để Trạm kiểm duyệt nhét thêm Độc, Cháy...
     public List<EffectData> activeEffects;
@@ -31,6 +35,10 @@ public class RuntimeSpellStats
         laserWidth = template.laserWidth;
         rotationSpeed = template.rotationSpeed;
         inaccuracy = template.inaccuracy;
+        isSelfTargeted = template.isSelfTargeted;
+        canReflect= template.canReflect;
+        isPenetrating = template.isPenetrating;
+        isPassThroughtHighObstacle = template.isPassThroughtHighObstacle;
 
         activeEffects = new List<EffectData>();
         if (template.hitEffects != null)

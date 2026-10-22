@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Nature MP Regen Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Nature Regen
-  description: "H\u1ED3i 1 mana m\u1ED7i gi\xE2y"
+  description: Regen 2 mana per second
   icon: {fileID: 5093978120288518676, guid: c202fc6725fb49e4285bd402d4a96dfb, type: 3}
   targetSpecificSpell: {fileID: 0}
   targetProjectilesOnly: 0

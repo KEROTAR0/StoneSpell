@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::D_Entity
   xpYield: 180
   hasNoAnimLeftOrRight: 0
-  maxHealth: 50
+  maxHealth: 20
   stunResistance: 0
   stunRecoveryTime: 7
   stunVFXPrefabHeight: -0.1

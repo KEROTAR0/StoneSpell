@@ -51,12 +51,15 @@ MonoBehaviour:
   spawnCount: 1
   orbitRadius: 1.5
   orbRotationSpeed: 90
+  multiShotPattern: 0
+  multiShotAngle: 30
+  multiShotSpacing: 0.5
   hitEffects:
   - type: 2
     procChance: 1
     duration: 1
     value: 1
-    tickRate: 0.01
+    tickRate: 0.06
     isBuff: 1
     vfxPrefab: {fileID: 0}
   - type: 7

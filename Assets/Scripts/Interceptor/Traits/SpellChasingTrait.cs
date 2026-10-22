@@ -80,7 +80,10 @@ public class SpellChasingTrait : MonoBehaviour
     {
         // 1. PHÁ VỠ QUỸ ĐẠO (Dành riêng cho Quả cầu xoay quanh người)
         // Khi phát hiện mục tiêu, lập tức ngắt liên kết bám theo Player
-        controller.isOrbitingOrb = false;
+        if (controller.currentStats.isSelfTargeted)
+        {
+            controller.currentStats.isSelfTargeted = false; 
+        }
 
         Vector2 desiredDirection = ((Vector2)target.position - (Vector2)transform.position).normalized;
 

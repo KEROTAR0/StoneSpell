@@ -15,7 +15,7 @@ MonoBehaviour:
   upgradeName: ???
   description: ????
   icon: {fileID: 0}
-  targetSpecificSpell: {fileID: 0}
+  targetSpecificSpell: {fileID: 11400000, guid: 5e48a320e1c30fd4593a3c4d70e59388, type: 2}
   targetProjectilesOnly: 0
   targetToggleOnly: 0
   targetAurasOnly: 0
@@ -23,7 +23,7 @@ MonoBehaviour:
   flatManaBonus: 0
   manaRegenBonus: 0
   moveSpeedBonus: 0
-  flatDamageBonus: 5
+  flatDamageBonus: 0
   percentDamageBonus: 0
   speedBonus: 0
   bonusBounces: 0

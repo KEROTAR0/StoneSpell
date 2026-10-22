@@ -132,21 +132,48 @@ public class PlayerCastingSpellState : PlayerAttackState
             for (int i = 0; i < count; i++)
             {
                 Vector3 finalSpawnPos = baseSpawnPos;
+                Vector2 castDir = currentSpellData.isSpawnAtMouse ? Vector2.zero : shootDirection;
 
-                // NẾU LÀ BÃI MÌN (Spawn ở chuột) VÀ CÓ NHIỀU HƠN 1 CỤC
-                // Rải rác ngẫu nhiên trong phạm vi orbitRadius
-                if (currentSpellData.isSpawnAtMouse && count > 1)
+                // RẢI MÌN BÒ XUNG QUANH CHUỘT
+                if (currentSpellData.isSpawnAtMouse && count > 1 && !currentSpellData.isProjectile)
                 {
                     Vector2 randomOffset = Random.insideUnitCircle * currentSpellData.orbitRadius;
                     finalSpawnPos += (Vector3)randomOffset;
+                }
+                
+                // ==========================================
+                // XỬ LÝ ĐỘI HÌNH BẮN ĐẠN (SPREAD / LINE)
+                // ==========================================
+                if (!currentSpellData.isSpawnAtMouse && currentSpellData.isProjectile && count > 1)
+                {
+                    if (currentSpellData.multiShotPattern == MultiShotPattern.Spread)
+                    {
+                        // Hình quạt: Chia đều góc
+                        float startAngle = -currentSpellData.multiShotAngle / 2f;
+                        float step = count > 1 ? currentSpellData.multiShotAngle / (count - 1) : 0;
+                        float angle = startAngle + (step * i);
+                        castDir = Quaternion.Euler(0, 0, angle) * shootDirection;
+                    }
+                    else if (currentSpellData.multiShotPattern == MultiShotPattern.TrailingLine)
+                    {
+                        // Thẳng hàng nối đuôi: Kéo lùi vị trí đẻ đạn về phía sau
+                        finalSpawnPos -= (Vector3)(shootDirection * (currentSpellData.multiShotSpacing * i));
+                    }
+                    else if (currentSpellData.multiShotPattern == MultiShotPattern.ParallelLine)
+                    {
+                        // Song song dàn ngang: Dịch chuyển sang hai bên hướng bắn
+                        Vector2 right = Vector2.Perpendicular(shootDirection) * -1f;
+                        float offset = (i - (count - 1) / 2f) * currentSpellData.multiShotSpacing;
+                        finalSpawnPos += (Vector3)(right * offset);
+                    }
                 }
 
                 GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(currentSpellPrefab, finalSpawnPos, Quaternion.identity);
                 
                 if (spellObj.TryGetComponent(out SpellController spellScript))
                 {
-                    Vector2 castDir = currentSpellData.isSpawnAtMouse ? Vector2.zero : shootDirection;
-                    spellScript.Initialize(castDir, i, count);
+                    // Truyền shootDirection (Hướng ngắm thẳng) làm rawDir để đạn Gatling dùng
+                    spellScript.Initialize(castDir, i, count, shootDirection);
                 }   
             }
         }

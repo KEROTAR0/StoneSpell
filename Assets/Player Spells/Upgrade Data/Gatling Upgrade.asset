@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: Gatling Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Gatling Projectile
-  description: Fire 6 additional projectiles alongside with projectile spell type
-    but all projectile damage is lowered by 80% and accurate decrease by 5
+  description: 'Fire 6 additional projectiles but all projectile damage is reduced
+    by 80% and accurate decrease by 5
+
+'
   icon: {fileID: -314987246507638928, guid: ac48f7a2a8e874c4f93509135a8aa4ad, type: 3}
   targetSpecificSpell: {fileID: 0}
   targetProjectilesOnly: 1

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum MultiShotPattern { Normal, Spread, TrailingLine, ParallelLine }
 [CreateAssetMenu(fileName = "newSpellData", menuName = "Data/Spell Data")]
 public class D_Spell : ScriptableObject
 {    
@@ -71,10 +71,18 @@ public class D_Spell : ScriptableObject
     public float auraCheckRadius = 3f;
     public float auraTickRate = 0.5f;
 
-    [Header("Orb & Mine Mechanics (Only if isProjectile / isSelfTargeted)")]
+   [Header("Spawn")]
     public int spawnCount = 1;
+     [Header("Orb & Mine Mechanics (Only if isProjectile / isSelfTargeted)")]
     public float orbitRadius = 1.5f;
     public float orbRotationSpeed = 90f;
+
+    [Header("Multi-Shot Patterns (Spawn Count > 1)")]
+    public MultiShotPattern multiShotPattern = MultiShotPattern.Normal;
+    [Tooltip("Dùng cho Spread: Góc tỏa ra của chùm đạn")]
+    public float multiShotAngle = 30f; 
+    [Tooltip("Dùng cho Line: Khoảng cách giãn cách giữa các viên đạn")]
+    public float multiShotSpacing = 0.5f;
 
     [Header("Effects")]
     public List<EffectData> hitEffects;

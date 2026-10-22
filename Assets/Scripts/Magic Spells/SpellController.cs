@@ -19,11 +19,14 @@ public class SpellController : MonoBehaviour
     private float timeActivated;
     private float auraTimer = 0f; 
     private float orbitAngle = 0f;
-    public bool isOrbitingOrb = false;
+    public int spellIndex { get; private set; } 
+    public Vector2 rawBaseDirection { get; private set; }
 
-    public void Initialize(Vector2 direction, int index = 0, int totalCount = 1)
+    public void Initialize(Vector2 direction, int index = 0, int totalCount = 1, Vector2 rawDir = default)
     {
         this.initialDirection = direction;
+        this.spellIndex = index;
+        this.rawBaseDirection = rawDir == default ? direction : rawDir;
         // 1. TẠO BẢN SAO DỮ LIỆU ĐỘNG
         currentStats = new RuntimeSpellStats(baseSpellData);
     
@@ -44,12 +47,11 @@ public class SpellController : MonoBehaviour
         }
 
         // 3. KHỞI TẠO LOGIC
-        if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)
+        if (currentStats.isSelfTargeted && PlayerController.Instance != null)
         {
             // NẾU LÀ ORBITING ORB (Đạn bay quanh người)
             if (baseSpellData.isProjectile) 
             {
-                isOrbitingOrb = true;
                 orbitAngle = (360f / totalCount) * index; // Chia đều góc cho các viên
                 
                 // Cập nhật vị trí ban đầu ngay lập tức
@@ -92,17 +94,17 @@ public class SpellController : MonoBehaviour
 
     private void Update()
     {
-        if (baseSpellData.isSelfTargeted && baseSpellData.isRotating)
+        if (currentStats.isSelfTargeted && baseSpellData.isRotating)
         {
             Transform targetRotate = visualHolder != null ? visualHolder : transform;
             targetRotate.Rotate(Vector3.forward, currentStats.rotationSpeed * Time.deltaTime);
         }
-        if (isOrbitingOrb && PlayerController.Instance != null)
+        if (currentStats.isSelfTargeted && baseSpellData.isProjectile && PlayerController.Instance != null)
         {
             orbitAngle += baseSpellData.orbRotationSpeed * Time.deltaTime;
             UpdateOrbitPosition();
         }
-        if (baseSpellData.isSelfTargeted && PlayerController.Instance != null && currentStats.auraTickRate > 0)
+        if (currentStats.isSelfTargeted && PlayerController.Instance != null && currentStats.auraTickRate > 0)
         {
             auraTimer += Time.deltaTime;
             if (auraTimer >= currentStats.auraTickRate)
@@ -251,7 +253,7 @@ public class SpellController : MonoBehaviour
     }
     private void FinalizeDespawn()
     {
-        if (baseSpellData.isSelfTargeted && PlayerController.Instance != null)
+        if (currentStats.isSelfTargeted && PlayerController.Instance != null)
         {
             if (PlayerController.Instance.TryGetComponent(out EffectReceiver receiver))
             {

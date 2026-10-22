@@ -13,11 +13,16 @@ MonoBehaviour:
   m_Name: DoT Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeName: Damage over Time
-  description: "G\xE2y s\xE1t th\u01B0\u01A1ng c\xF3 50% c\u01A1 h\u1ED9i g\xE2y
-    1 s\xE1t th\u01B0\u01A1ng li\xEAn t\u1EE5c m\u1ED7i gi\xE2y trong 5 gi\xE2y"
+  description: Deal damage to target has 50% chance to deal consecutive damage to
+    the target for 5 seconds
   icon: {fileID: 4812645761167233964, guid: f6a53d4d9acb7e949aa4845a00bf0bca, type: 3}
+  targetSpecificSpell: {fileID: 0}
+  targetProjectilesOnly: 0
+  targetToggleOnly: 0
+  targetAurasOnly: 0
   flatHealthBonus: 0
   flatManaBonus: 0
+  manaRegenBonus: 0
   moveSpeedBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: 0
