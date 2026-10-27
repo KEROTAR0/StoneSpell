@@ -43,7 +43,7 @@ MonoBehaviour:
   rotationSpeed: 360
   isPassThroughtHighObstacle: 1
   canBlock: 0
-  maxBlocks: 3
+  maxBlocks: 0
   canReflect: 0
   hasAura: 1
   auraCheckRadius: 0.8

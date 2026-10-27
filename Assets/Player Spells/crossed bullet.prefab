@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 7418918842879474855}
   - component: {fileID: 3542385396001981262}
   - component: {fileID: 2222583778521501203}
-  - component: {fileID: 1677522524419310947}
   m_Layer: 13
   m_Name: crossed bullet
   m_TagString: Untagged
@@ -223,15 +222,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f87ed3278f292644aaa9a6ba75791ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameScripts::SpellMovement
---- !u!114 &1677522524419310947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1846696923644892286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f60c0b1da1238d4bb3ef0a6a275c294, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameScripts::SpellChasingTrait

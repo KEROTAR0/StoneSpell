@@ -101,11 +101,10 @@ public class EnemyProjectile : MonoBehaviour
             SpellController[] activeSpells = collision.GetComponentsInChildren<SpellController>();
             foreach (var spell in activeSpells)
             {
-                // Kiểm tra xem đó có phải là Khiên có khả năng Đỡ đòn hoặc Phản đòn không
-                if (spell.currentStats.isSelfTargeted && (spell.baseSpellData.canReflect || spell.currentStats.maxBlocks > 0))
+                // ĐÃ SỬA: Kiểm tra thêm spell.currentStats.canReflect
+                if (spell.currentStats != null && spell.currentStats.isSelfTargeted && 
+                    (spell.currentStats.canReflect || spell.baseSpellData.canReflect || spell.currentStats.maxBlocks > 0))
                 {
-                    // NẾU CÓ KHIÊN -> Lập tức quay xe, không gây sát thương cho Player!
-                    // Quyền xử lý phản đòn sẽ được nhường lại cho hàm OnTriggerEnter2D bên SpellCollision của Khiên.
                     return; 
                 }
             }
@@ -153,18 +152,75 @@ public class EnemyProjectile : MonoBehaviour
     }
 
     // Khi Player dùng khiên phản đòn
+    // Khi Player dùng khiên phản đòn
     public void ReflectedByPlayer()
     {
+        if (isReflected) return;
         isReflected = true;
+        gameObject.layer = GameLayers.PlayerAttackLayerIndex;
+
+        // MELEE Reflect
+        if (attackData.behavior == AttackBehavior.StationaryMelee)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 3f, GameLayers.EnemyAndDamageableMask);
+            Collider2D closestEnemy = null;
+            float minDistance = Mathf.Infinity;
+
+            foreach (var hit in hits)
+            {
+                float dist = Vector2.Distance(transform.position, hit.transform.position);
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    closestEnemy = hit;
+                }
+            }
+
+            if (closestEnemy != null)
+            {
+                // Tìm IDamageable ở chính nó hoặc Object cha (Root của quái)
+                IDamageable damageable = closestEnemy.GetComponentInParent<IDamageable>();
+                if (damageable != null)
+                {
+                    AttackDetails details = new AttackDetails
+                    {
+                        damageAmount = Mathf.RoundToInt(attackData.damage * 10),
+                        position = transform.position,
+                        isDoT = false
+                    };
+                    damageable.TakeDamage(details);
+                }
+
+                EffectReceiver receiver = closestEnemy.GetComponentInParent<EffectReceiver>();
+                if (receiver != null && attackData.hitEffects != null && attackData.hitEffects.Count > 0)
+                {
+                    foreach (var effect in attackData.hitEffects)
+                    {
+                        receiver.ApplyEffect(effect, transform.position);
+                    }
+                }
+            }
+
+            // Thu hồi ngay nhát chém của quái sau khi đã phản sát thương
+            Despawn();
+            return;
+        }
+
+        // RANGED Reflect
         currentDirection = -currentDirection;
         rb.linearVelocity = currentDirection * attackData.moveSpeed;
-        gameObject.layer = GameLayers.PlayerAttackLayerIndex; 
-        
-        // FIX 1: CẬP NHẬT GÓC XOAY CHO ĐẠN
-        if (attackData.rotateToDirection) 
+
+        if (attackData.rotateToDirection)
         {
             float angle = Mathf.Atan2(currentDirection.y, currentDirection.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle);
+        }
+
+        // Reset nhanh Collider để ép Unity bắt lại va chạm OnTriggerEnter2D nếu quái đứng sát cạnh
+        if (col != null && col.enabled)
+        {
+            col.enabled = false;
+            col.enabled = true;
         }
     }
 

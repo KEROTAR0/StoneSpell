@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject sleepVfxPrefab;
     [SerializeField] private GameObject healVfxPrefab;
     [SerializeField] private GameObject slowVfxPrefab;
+
+    [Header("Global UI VFX")]
+    public GameObject damageTextPrefab;
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -23,6 +26,20 @@ public class GameManager : MonoBehaviour
     // ==========================================
     // CÁC HÀM SPAWN VFX DÙNG CHUNG
     // ==========================================
+    public void SpawnDamageText(Vector3 position, int damage, Color color)
+    {
+        if (damageTextPrefab == null || ObjectPoolManager.Instance == null) return;
+        
+        // Random ra xung quanh một chút để các con số không bị đè xếp lớp lên nhau nếu dính 5-6 hit cùng lúc
+        Vector3 randomOffset = new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(0.2f, 0.6f), 0);
+        
+        GameObject textObj = ObjectPoolManager.Instance.GetFromPool(damageTextPrefab, position + randomOffset, Quaternion.identity);
+        
+        if (textObj.TryGetComponent(out FloatingText floatingText))
+        {
+            floatingText.Setup(damage, color);
+        }
+    }
     public GameObject SpawnStunVFX(Transform parent, float heightOffset)
     {
         if (stunVfxPrefab == null) return null;

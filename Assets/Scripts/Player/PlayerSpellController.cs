@@ -17,6 +17,7 @@ public class PlayerSpellController : MonoBehaviour
     public int unlockedSlotCount { get; private set; } = 2;
     private bool isWaitingToReplace = false;
     private GameObject pendingSpellPrefab;
+    private float[] toggleFireTimers = new float[5];
     
 
     private void Awake()
@@ -61,31 +62,39 @@ public class PlayerSpellController : MonoBehaviour
             }
         }
         // MANA
+        // MANA & AUTO FIRE CHO TOGGLE
         for (int i = 0; i < toggleStates.Length; i++)
         {
             if (toggleStates[i] && cachedSpellData[i] != null)
             {
                 D_Spell data = cachedSpellData[i];
 
-                float manaDrainPerSec = 0f;
-                foreach (var effect in data.hitEffects)
+                // 1. Trừ mana dựa theo ManaCost mỗi giây (Không dùng Effect nữa)
+                float manaDrainPerSec = data.manaCost;
+                if (manaDrainPerSec > 0)
                 {
-                    if (effect.type == EffectType.ManaRestore && effect.value < 0)
-                    {
-                        float tick = effect.tickRate > 0 ? effect.tickRate : 1f;
-                        manaDrainPerSec += (effect.value / tick); 
-                    }
+                    playerMana.RestoreMana(-manaDrainPerSec * Time.deltaTime);
                 }
 
-                if (manaDrainPerSec < 0)
-                {
-                    playerMana.RestoreMana(manaDrainPerSec * Time.deltaTime);
-                }
-
+                // Hết Mana -> Tự tắt
                 if (playerMana.currentMana <= 0)
                 {
                     Debug.Log($"Hết Mana! Tự động tắt chiêu ở slot {i+1}");
                     ToggleSpell(i, gameObject);
+                    continue;
+                }
+
+                // 2. KHAI HỎA TỰ ĐỘNG
+                bool isSpamToggle = !data.isSelfTargeted && !data.hasAura; 
+                
+                if (isSpamToggle)
+                {
+                    toggleFireTimers[i] -= Time.deltaTime;
+                    if (toggleFireTimers[i] <= 0)
+                    {
+                        toggleFireTimers[i] = data.cooldown > 0 ? data.cooldown : 1f; 
+                        AutoFireToggleSpell(i, data);
+                    }
                 }
             }
         }
@@ -147,33 +156,51 @@ public class PlayerSpellController : MonoBehaviour
 
         if (toggleStates[slotIndex])
         {
-            // BẬT: 
             if (UIManager.Instance != null) UIManager.Instance.UpdateCooldownUI(slotIndex + 1, 1f, 1f, true);
             
-            if (playerObj != null && data.isSelfTargeted) 
+            // XỬ LÝ ĐẺ ĐÚNG 1 LẦN CHO BUFF TỰ THÂN HOẶC AURA
+            if (data.isSelfTargeted || data.hasAura) 
             {
-                // Bỏ logic Instantiate cái toggleIndicatorVFX đi, 
-                // hoặc gộp nó làm child của cái auraObj bên dưới để dễ quản lý.
-                
-                if (equippedSpellPrefabs[slotIndex].TryGetComponent(out SpellController prefabCtrl))
-                {
-                    // Sinh ra CÁI AURA (chứa logic sát thương và trừ mana)
-                    GameObject auraObj = Instantiate(equippedSpellPrefabs[slotIndex], playerObj.transform);
-                    
-                    // LƯU CÁI AURA VÀO MẢNG ĐỂ LÁT NỮA TÌM VÀ TẮT NÓ!
-                    activeToggleVFX[slotIndex] = auraObj; 
+                Vector3 spawnPos = playerObj != null ? playerObj.transform.position : transform.position;
+                Transform parent = null;
 
-                    if (auraObj.TryGetComponent(out SpellController activeCtrl))
-                    {
-                        activeCtrl.Initialize(Vector2.zero);
-                        
-                        // Nếu có Indicator hình ảnh, sinh nó ra và làm con của Aura
-                        if (data.toggleIndicatorVFX != null)
-                        {
-                            GameObject indicator = Instantiate(data.toggleIndicatorVFX, auraObj.transform);
-                            indicator.transform.localPosition = Vector3.zero;
-                        }
-                    }
+                if (data.isSelfTargeted && playerObj != null) 
+                {
+                    parent = playerObj.transform;
+                }
+                else if (data.isSpawnAtMouse)
+                {
+                    Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(inputHandler.MousePosition);
+                    Vector2 origin = PlayerController.Instance != null && PlayerController.Instance.attackPosition != null
+                        ? (Vector2)PlayerController.Instance.attackPosition.position
+                        : (Vector2)transform.position;
+
+                    float distanceToMouse = Vector2.Distance(origin, mouseWorldPos);
+                    Vector2 shootDir = (mouseWorldPos - origin).normalized;
+
+                    spawnPos = distanceToMouse > data.maxCastRange
+                        ? (Vector3)(origin + shootDir * data.maxCastRange)
+                        : (Vector3)mouseWorldPos;
+                    spawnPos.z = 0f;
+                }
+
+                GameObject auraObj = ObjectPoolManager.Instance != null
+                    ? ObjectPoolManager.Instance.GetFromPool(equippedSpellPrefabs[slotIndex], spawnPos, Quaternion.identity)
+                    : Instantiate(equippedSpellPrefabs[slotIndex], spawnPos, Quaternion.identity);
+
+                if (parent != null)
+                {
+                    auraObj.transform.SetParent(parent);
+                    auraObj.transform.localPosition = Vector3.zero;
+                }
+
+                activeToggleVFX[slotIndex] = auraObj; 
+
+                if (auraObj.TryGetComponent(out SpellController activeCtrl))
+                {
+                    Vector2 mousePos = Camera.main.ScreenToWorldPoint(inputHandler.MousePosition);
+                    Vector2 dir = (mousePos - (Vector2)transform.position).normalized;
+                    activeCtrl.Initialize(dir);
                 }
             }
         }
@@ -183,6 +210,7 @@ public class PlayerSpellController : MonoBehaviour
             TriggerCooldown(slotIndex);
             if (UIManager.Instance != null) UIManager.Instance.UpdateCooldownUI(slotIndex + 1, cooldownTimers[slotIndex], 1f, false);
 
+            // 1. Tắt object đã lưu trong mảng activeToggleVFX
             if (activeToggleVFX[slotIndex] != null) 
             {
                 if (activeToggleVFX[slotIndex].TryGetComponent(out SpellController ctrl))
@@ -195,19 +223,49 @@ public class PlayerSpellController : MonoBehaviour
                 }
                 activeToggleVFX[slotIndex] = null; 
             }
-            else if (!data.isSelfTargeted)
+
+            if (!data.isSelfTargeted)
             {
-                // TÌM THEO TÊN HOẶC CHỈ SỐ LAYER CHO CHẮC CHẮN
                 SpellController[] activeSpells = FindObjectsByType<SpellController>(FindObjectsInactive.Exclude);
                 foreach (var spell in activeSpells)
                 {
-                    // So sánh theo Tên của Data (chính xác hơn so sánh object reference)
                     if (spell.baseSpellData != null && spell.baseSpellData.name == data.name) 
                     {
                         spell.Despawn(); 
                     }
                 }
             }
+        }
+    }
+    private void AutoFireToggleSpell(int slotIndex, D_Spell data)
+    {
+        // Lấy hướng ngắm từ chuột
+        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(inputHandler.MousePosition);
+        Vector2 shootDirection = (mouseWorldPos - (Vector2)PlayerController.Instance.attackPosition.position).normalized;
+
+        int count = data.spawnCount > 0 ? data.spawnCount : 1;
+        
+        Vector3 baseSpawnPos = PlayerController.Instance.attackPosition.position;
+        if (data.isSpawnAtMouse) baseSpawnPos = mouseWorldPos;
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector3 finalSpawnPos = baseSpawnPos;
+            Vector2 castDir = data.isSpawnAtMouse ? Vector2.zero : shootDirection;
+
+            // Tính toán chùm đạn Spread (Nếu cần - copy logic từ PlayerCastingSpellState)
+            if (!data.isSpawnAtMouse && data.isProjectile && count > 1 && data.multiShotPattern == MultiShotPattern.Spread)
+            {
+                float startAngle = -data.multiShotAngle / 2f;
+                float step = count > 1 ? data.multiShotAngle / (count - 1) : 0;
+                castDir = Quaternion.Euler(0, 0, startAngle + (step * i)) * shootDirection;
+            }
+
+            GameObject spellObj = ObjectPoolManager.Instance.GetFromPool(equippedSpellPrefabs[slotIndex], finalSpawnPos, Quaternion.identity);
+            if (spellObj.TryGetComponent(out SpellController spellScript))
+            {
+                spellScript.Initialize(castDir, i, count, shootDirection);
+            }   
         }
     }
     public void InitializeUI()
@@ -226,6 +284,11 @@ public class PlayerSpellController : MonoBehaviour
         isWaitingToReplace = true;
         pendingSpellPrefab = newSpell;
         UIManager.Instance.ChangeSText("Press 1, 2, 3... corresponding to the spell slot to replace");
+    }
+    public void CancelReplaceMode()
+    {
+        isWaitingToReplace = false;
+        pendingSpellPrefab = null;
     }
     public void UnlockSlot(int slotIndex)
     {

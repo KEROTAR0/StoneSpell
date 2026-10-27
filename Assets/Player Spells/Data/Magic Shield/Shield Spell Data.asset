@@ -17,7 +17,7 @@ MonoBehaviour:
   manaCost: 1
   lifeTime: 99
   castingTime: 0.3
-  cooldown: 8
+  cooldown: 1
   isSpawnAtMouse: 0
   maxCastRange: 8
   isProjectile: 0
@@ -43,7 +43,7 @@ MonoBehaviour:
   rotationSpeed: 360
   isPassThroughtHighObstacle: 0
   canBlock: 1
-  maxBlocks: 3
+  maxBlocks: 10
   canReflect: 1
   hasAura: 0
   auraCheckRadius: 3

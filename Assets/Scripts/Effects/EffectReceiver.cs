@@ -117,7 +117,12 @@ public class EffectReceiver : MonoBehaviour
     {
         if (TryGetComponent(out IDamageable damageable))
         {
-            damageable.TakeDamage(new AttackDetails { damageAmount = amount, position = transform.position });
+            damageable.TakeDamage(new AttackDetails 
+                { 
+                    damageAmount = amount, 
+                    position = transform.position,
+                    isDoT = true
+                });
         }
     }
 

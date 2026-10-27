@@ -43,7 +43,7 @@ MonoBehaviour:
   rotationSpeed: 360
   isPassThroughtHighObstacle: 0
   canBlock: 0
-  maxBlocks: 3
+  maxBlocks: 0
   canReflect: 0
   hasAura: 0
   auraCheckRadius: 3
@@ -51,6 +51,9 @@ MonoBehaviour:
   spawnCount: 1
   orbitRadius: 1.5
   orbRotationSpeed: 90
+  multiShotPattern: 0
+  multiShotAngle: 30
+  multiShotSpacing: 0.5
   hitEffects:
   - type: 3
     procChance: 0.7

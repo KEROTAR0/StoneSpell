@@ -24,6 +24,12 @@ public class UIManager : MonoBehaviour
     [Header("Level Up UI")]
     [SerializeField] private GameObject levelUpPanel;
     [SerializeField] private TMP_Text textChooseSpell;
+    [SerializeField] private TMP_Text textRerollButton;
+
+    [Header("Floating Text Colors")]
+    public Color instantDamageColor = new Color(1f, 0.5f, 0f); // Cam
+    public Color dotDamageColor = new Color(0.6f, 0.1f, 1f);   // Tím (Độc/Cháy)
+    public Color healColor = Color.green;
 
 
     private void Awake()
@@ -95,10 +101,19 @@ public class UIManager : MonoBehaviour
         if (levelUpPanel != null)
         {
             levelUpPanel.SetActive(show);
-            // Dừng thời gian khi bảng nâng cấp hiện lên (Giống Vampire Survivors)
             Time.timeScale = show ? 0f : 1f; 
             
-            // Tùy chọn: Ở đây bạn có thể gọi hàm random 3 phép và gán hình ảnh/text vào upgradeCards
+            if (show && UpgradeManager.Instance != null)
+            {
+                UpdateRerollText(UpgradeManager.Instance.currentRerolls);
+            }
+        }
+    }
+    public void UpdateRerollText(int rerollCount)
+    {
+        if (textRerollButton != null)
+        {
+            textRerollButton.text = $"Reroll (Remaining: {rerollCount})";
         }
     }
     public void SetSpellIcon(int slotIndex, Sprite icon, bool isUnlocked = true)

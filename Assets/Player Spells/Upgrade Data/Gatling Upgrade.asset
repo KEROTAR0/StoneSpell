@@ -12,26 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: Gatling Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
-  upgradeName: Gatling Projectile
-  description: 'Fire 6 additional projectiles but all projectile damage is reduced
-    by 80% and accurate decrease by 5
+  isUnique: 1
+  maxUpgrade: 0
+  upgradeName: Gatling Trait
+  description: 'Fire 6 additional projectiles but all projectiles'' damage are reduced
+    by 80% (min 1) and accurate decrease by 5
 
 '
   icon: {fileID: -314987246507638928, guid: ac48f7a2a8e874c4f93509135a8aa4ad, type: 3}
   targetSpecificSpell: {fileID: 0}
-  targetProjectilesOnly: 1
-  targetToggleOnly: 0
-  targetAurasOnly: 0
+  categoryFilter: 1
   flatHealthBonus: 0
   flatManaBonus: 0
   manaRegenBonus: 0
   moveSpeedBonus: 0
+  sizePercentBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: -0.8
+  cooldownReduction: 0
+  manaCostReduction: 0
+  castTimeReduction: 0
+  lifeTimeBonus: 0
   speedBonus: 0
+  accelerationBonus: 0
+  rotationSpeedBonus: 0
+  inaccuracyBonus: 0
+  bonusSpawnCount: 0
   bonusBounces: 0
   bonusBlocks: 0
-  inaccuracy: 5
+  laserLengthBonus: 0
+  laserWidthBonus: 0
+  explosionRadiusBonus: 0
   additionalHitEffects: []
   behaviorComponentNames:
   - SpellGatlingTrait

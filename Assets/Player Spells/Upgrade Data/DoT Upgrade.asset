@@ -12,24 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: DoT Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
+  isUnique: 1
+  maxUpgrade: 0
   upgradeName: Damage over Time
-  description: Deal damage to target has 50% chance to deal consecutive damage to
-    the target for 5 seconds
+  description: Deal damage to target has 50% chance to deal DoT 1/1s in 5s
   icon: {fileID: 4812645761167233964, guid: f6a53d4d9acb7e949aa4845a00bf0bca, type: 3}
   targetSpecificSpell: {fileID: 0}
-  targetProjectilesOnly: 0
-  targetToggleOnly: 0
-  targetAurasOnly: 0
+  categoryFilter: -1
   flatHealthBonus: 0
   flatManaBonus: 0
   manaRegenBonus: 0
   moveSpeedBonus: 0
+  sizePercentBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: 0
+  cooldownReduction: 0
+  manaCostReduction: 0
+  castTimeReduction: 0
+  lifeTimeBonus: 0
   speedBonus: 0
+  accelerationBonus: 0
+  rotationSpeedBonus: 0
+  inaccuracyBonus: 0
+  bonusSpawnCount: 0
   bonusBounces: 0
   bonusBlocks: 0
-  inaccuracy: 0
+  laserLengthBonus: 0
+  laserWidthBonus: 0
+  explosionRadiusBonus: 0
   additionalHitEffects:
   - type: 0
     procChance: 0.5

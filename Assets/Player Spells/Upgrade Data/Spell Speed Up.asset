@@ -10,25 +10,38 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
-  m_Name: Custom
+  m_Name: Spell Speed Up
   m_EditorClassIdentifier: GameScripts::D_Upgrade
-  upgradeName: ???
-  description: ????
+  isUnique: 1
+  maxUpgrade: 0
+  upgradeName: Spell Spedd Up
+  description: 'Increase spell speed by 1.5, not available for some spells
+
+'
   icon: {fileID: 0}
-  targetSpecificSpell: {fileID: 11400000, guid: 5e48a320e1c30fd4593a3c4d70e59388, type: 2}
-  targetProjectilesOnly: 0
-  targetToggleOnly: 0
-  targetAurasOnly: 0
+  targetSpecificSpell: {fileID: 0}
+  categoryFilter: -1
   flatHealthBonus: 0
   flatManaBonus: 0
   manaRegenBonus: 0
   moveSpeedBonus: 0
+  sizePercentBonus: 0
   flatDamageBonus: 0
   percentDamageBonus: 0
-  speedBonus: 0
+  cooldownReduction: 0
+  manaCostReduction: 0
+  castTimeReduction: 0
+  lifeTimeBonus: 0
+  speedBonus: 1.5
+  accelerationBonus: 0
+  rotationSpeedBonus: 0
+  inaccuracyBonus: 0
+  bonusSpawnCount: 0
   bonusBounces: 0
   bonusBlocks: 0
-  inaccuracy: 0
+  laserLengthBonus: 0
+  laserWidthBonus: 0
+  auraRadiusBonus: 0
+  explosionRadiusBonus: 0
   additionalHitEffects: []
-  behaviorComponentNames:
-  - SpellGatlingTrait
+  behaviorComponentNames: []

@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: -738285397999786225}
   - component: {fileID: -4054764600948137172}
   - component: {fileID: -1090562163357208198}
-  - component: {fileID: -2421455836124344763}
   m_Layer: 13
   m_Name: faraday aegis
   m_TagString: Untagged
@@ -137,7 +136,6 @@ MonoBehaviour:
   baseSpellData: {fileID: 11400000, guid: 3c69ce649c616224a9f38af1260ca122, type: 2}
   visualHolder: {fileID: 0}
   useMultiStateAnimation: 0
-  isOrbitingOrb: 0
 --- !u!50 &5098496276261812383
 Rigidbody2D:
   serializedVersion: 5
@@ -237,15 +235,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a308de3c29f974c98376204896e311, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameScripts::SpellCollision
---- !u!114 &-2421455836124344763
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2152531758829435016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f60c0b1da1238d4bb3ef0a6a275c294, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: GameScripts::SpellChasingTrait

@@ -55,21 +55,21 @@ public class D_Spell : ScriptableObject
     public GameObject toggleIndicatorVFX;
 
     [Header("Animation & Visuals")]
-    public bool isRotating;
+    public bool isRotating = false;
     public float rotationSpeed = 360f;
     [Header("Obstacle Interaction")]
     public bool isPassThroughtHighObstacle;
 
 
     [Header("Defensive Traits")]
-    public bool canBlock;
-    public int maxBlocks = 1;
-    public bool canReflect;
+    public bool canBlock = false;
+    public int maxBlocks = 0;
+    public bool canReflect = false;
 
     [Header("Aura")]
-    public bool hasAura;
-    public float auraCheckRadius = 3f;
-    public float auraTickRate = 0.5f;
+    public bool hasAura = false;
+    public float auraCheckRadius = 0f;
+    public float auraTickRate = 0f;
 
    [Header("Spawn")]
     public int spawnCount = 1;

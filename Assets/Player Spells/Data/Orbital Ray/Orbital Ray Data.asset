@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameScripts::D_Spell
   spellName: Orbital Ray
   spellIcon: {fileID: -1451889756, guid: 11f00a0e4a149514eb9367a4af8c86b8, type: 3}
-  manaCost: 0
+  manaCost: 20
   lifeTime: 0
   castingTime: 1
   cooldown: 2
@@ -26,43 +26,39 @@ MonoBehaviour:
   isSelfTargeted: 0
   isManualToggle: 1
   inaccuracy: 0
-  moveSpeed: 0.5
+  moveSpeed: 1
   maxBounces: 0
   acceleration: 0
   laserMaxLength: 0
   laserWidth: 0
   explodeOnDespawn: 0
   explosionRadius: 2.5
-  isHoming: 1
+  isHoming: 0
   homingDetectionRadius: 8
   homingTurnSpeed: 180
   homingDelayTimer: 0.3
   explosionVFX: {fileID: 0}
   toggleIndicatorVFX: {fileID: 0}
   isRotating: 0
-  rotationSpeed: 360
+  rotationSpeed: 0
   isPassThroughtHighObstacle: 0
   canBlock: 0
-  maxBlocks: 9999
+  maxBlocks: 0
   canReflect: 0
   hasAura: 1
-  auraCheckRadius: 1
+  auraCheckRadius: 2
   auraTickRate: 0.2
   spawnCount: 1
   orbitRadius: 1.5
   orbRotationSpeed: 90
+  multiShotPattern: 3
+  multiShotAngle: 30
+  multiShotSpacing: 0.5
   hitEffects:
   - type: 0
     procChance: 1
     duration: 0
     value: 2
     tickRate: 0
-    isBuff: 0
-    vfxPrefab: {fileID: 0}
-  - type: 2
-    procChance: 1
-    duration: 0
-    value: -1
-    tickRate: 0.05
     isBuff: 0
     vfxPrefab: {fileID: 0}

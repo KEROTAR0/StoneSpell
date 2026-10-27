@@ -24,22 +24,36 @@ MonoBehaviour:
   isPenetrating: 0
   isLaser: 0
   isSelfTargeted: 0
-  isPermanentPassive: 0
+  isManualToggle: 0
   inaccuracy: 0
   moveSpeed: 1
   maxBounces: 0
   acceleration: 10
   laserMaxLength: 10
   laserWidth: 1
+  explodeOnDespawn: 0
+  explosionRadius: 2.5
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 180
+  homingDelayTimer: 0.3
+  explosionVFX: {fileID: 0}
+  toggleIndicatorVFX: {fileID: 0}
   isRotating: 1
   rotationSpeed: 360
   isPassThroughtHighObstacle: 1
   canBlock: 0
-  maxBlocks: 3
+  maxBlocks: 0
   canReflect: 0
   hasAura: 1
   auraCheckRadius: 1.5
   auraTickRate: 0.5
+  spawnCount: 1
+  orbitRadius: 1.5
+  orbRotationSpeed: 90
+  multiShotPattern: 0
+  multiShotAngle: 30
+  multiShotSpacing: 0.5
   hitEffects:
   - type: 0
     procChance: 1

@@ -36,12 +36,6 @@ public class PlayerLevelComponent : MonoBehaviour
     }
     private void HandleLevelUpRewards()
     {
-        // 1. Hồi 20% Max Mana
-        if (playerMana != null)
-        {
-            playerMana.RestoreManaPercentage(percentMPRecoverOnLevelUp);
-        }
-
         // 2. Mở khóa ô phép theo mốc Level (Ví dụ: Cấp 3 mở slot 3, Cấp 5 mở slot 4, Cấp 10 mở slot 5)
         if (spellController != null)
         {
@@ -64,7 +58,7 @@ public class PlayerLevelComponent : MonoBehaviour
             
             // Xử lý Hồi Mana và Mở Khóa ô phép (chạy ngầm, không cần chờ UI)
             if (TryGetComponent(out PlayerManaComponent mana))
-                mana.RestoreManaPercentage(0.2f);
+                mana.RestoreManaPercentage(percentMPRecoverOnLevelUp);
 
             if (TryGetComponent(out PlayerSpellController spellController))
             {
@@ -72,7 +66,13 @@ public class PlayerLevelComponent : MonoBehaviour
                 if (currentLevel == 5) spellController.UnlockSlot(3); 
                 if (currentLevel == 10) spellController.UnlockSlot(4); 
             }
-            
+            if (currentLevel % 3 == 0)
+            {
+                if (UpgradeManager.Instance != null)
+                {
+                    UpgradeManager.Instance.AddReroll(1);
+                }
+            }
             OnLevelUp?.Invoke();
         }
 
@@ -89,11 +89,11 @@ public class PlayerLevelComponent : MonoBehaviour
         if (pendingLevelUps > 0 && UIManager.Instance != null && !UIManager.Instance.IsLevelUpPanelActive())
         {
             pendingLevelUps--; // Trừ đi 1 lần nợ
+
+            UIManager.Instance.ShowLevelUpPanel(true); 
             
             if (UpgradeManager.Instance != null)
                 UpgradeManager.Instance.GenerateUpgrades(); 
-
-            UIManager.Instance.ShowLevelUpPanel(true); 
         }
     }
 

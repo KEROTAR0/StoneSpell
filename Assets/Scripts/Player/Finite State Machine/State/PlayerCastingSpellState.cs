@@ -81,13 +81,13 @@ public class PlayerCastingSpellState : PlayerAttackState
 
                 if (currentSpellData.isManualToggle)
                 {
-                    if (currentSpellData.isSelfTargeted)
+                    if (currentSpellData.isSelfTargeted || currentSpellData.hasAura)
                     {
                         player.SpellController.ToggleSpell(slotIndex, player.gameObject);
                     }
                     else 
                     {
-                        // ĐÃ SỬA: Sinh Cột sét ra sân
+                        // Chỉ những phép Toggle dạng bắn đạn liên thanh mới gọi thêm CastSpell phát đầu
                         player.SpellController.ToggleSpell(slotIndex, null);
                         CastSpell(); 
                     }
@@ -107,13 +107,13 @@ public class PlayerCastingSpellState : PlayerAttackState
     {
         player.SpellController.TriggerCooldown(slotIndex);
 
-        // 1. TÍNH TOÁN SỐ LƯỢNG (Tăng 1 nửa nếu thỏa mãn điều kiện)
         int count = currentSpellData.spawnCount > 0 ? currentSpellData.spawnCount : 1;
-        
-        if ((currentSpellData.isSelfTargeted && currentSpellData.isProjectile) || 
-            (currentSpellData.isSpawnAtMouse && currentSpellData.isProjectile))
+        bool isSingleInstanceSpell = (currentSpellData.isSelfTargeted && !currentSpellData.isProjectile && !currentSpellData.isLaser) 
+                                     || (currentSpellData.isManualToggle && currentSpellData.hasAura);
+
+        if (isSingleInstanceSpell)
         {
-            count = Mathf.CeilToInt(count * 1.5f); // Tăng 1.5 lần (Làm tròn lên)
+            count = 1;
         }
 
         // 2. TÍNH TOÁN VỊ TRÍ GỐC

@@ -43,8 +43,13 @@ public class HealthComponent : MonoBehaviour, IDamageable
         int finalDamage = Mathf.RoundToInt(rawDamage);
         
         currentHealth -= finalDamage;
-        Debug.Log($"Final Damage: {finalDamage}");
+        
         UpdateUI();
+        if (finalDamage > 0 && GameManager.Instance != null)
+        {
+            Color dmgColor = attackDetails.isDoT ? UIManager.Instance.dotDamageColor : UIManager.Instance.instantDamageColor;
+            GameManager.Instance.SpawnDamageText(transform.position, finalDamage, dmgColor );
+        }
 
         if (currentHealth <= 0)
         {

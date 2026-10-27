@@ -10,6 +10,7 @@ public struct AttackDetails
     public CCType crowdControl;
     public float ccDuration;
     public bool bypassHurtAnim;
+    public bool isDoT;
 }
 
 // Khai báo Enum này ở ngoài cùng để dễ dùng chung

@@ -104,29 +104,7 @@ public class SpellCollision : MonoBehaviour
                 // REFLECT (PHẢN ĐÒN)
                 if (controller.currentStats.canReflect)
                 {
-                    // A. Phản đòn Cận chiến (Parry Melee)
-                    if (enemyProj.attackData.behavior == AttackBehavior.StationaryMelee)
-                    {
-                        EnemyController enemy = enemyProj.GetComponentInParent<EnemyController>();
-                        
-                        if (enemy != null && enemy.TryGetComponent(out IDamageable damageable))
-                        {
-                            AttackDetails details = new AttackDetails 
-                            { 
-                                damageAmount = enemyProj.attackData.damage * 2f, 
-                                position = transform.position,
-                                knockbackForce = 5f 
-                            };
-                            damageable.TakeDamage(details);
-                        }
-                        
-                        enemyProj.Despawn();
-                    }
-                    // B. Phản Đạn bay / Bãi lầy (Reflect Projectiles)
-                    else 
-                    {
-                        enemyProj.ReflectedByPlayer();
-                    }
+                    enemyProj.ReflectedByPlayer();
 
                     if (currentBlocks > 0)
                     {

@@ -28,9 +28,8 @@ public class SpellChasingTrait : MonoBehaviour
 
     private void Update()
     {
-        if (controller.baseSpellData == null || !controller.baseSpellData.isHoming) return;
-
-        if (delayTimer < controller.baseSpellData.homingDelayTimer)
+        float delay = controller.baseSpellData != null ? controller.baseSpellData.homingDelayTimer : 0.3f;
+        if (delayTimer < delay)
         {
             delayTimer += Time.deltaTime;
             return;
@@ -48,7 +47,6 @@ public class SpellChasingTrait : MonoBehaviour
             SteerTowardsTarget();
         }
     }
-
     private void FindNearestTarget()
     {
         Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, controller.baseSpellData.homingDetectionRadius, GameLayers.EnemyAndDamageableMask);

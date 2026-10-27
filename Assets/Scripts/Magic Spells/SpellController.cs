@@ -21,14 +21,21 @@ public class SpellController : MonoBehaviour
     private float orbitAngle = 0f;
     public int spellIndex { get; private set; } 
     public Vector2 rawBaseDirection { get; private set; }
+    private Vector3 defaultScale;
 
+    private void Awake()
+    {
+        defaultScale = transform.localScale;
+    }
     public void Initialize(Vector2 direction, int index = 0, int totalCount = 1, Vector2 rawDir = default)
     {
         this.initialDirection = direction;
         this.spellIndex = index;
         this.rawBaseDirection = rawDir == default ? direction : rawDir;
+
+        transform.localScale = defaultScale;
         // 1. TẠO BẢN SAO DỮ LIỆU ĐỘNG
-        currentStats = new RuntimeSpellStats(baseSpellData);
+        currentStats = new RuntimeSpellStats(baseSpellData, transform.localScale);
     
         // 2. TRẠM KIỂM DUYỆT (INTERCEPTOR)
         if (RunManager.Instance != null)
@@ -155,7 +162,7 @@ public class SpellController : MonoBehaviour
                 else 
                 {
                     // Bỏ qua các hiệu ứng Buff tốt để không lỡ tay hồi máu cho địch
-                    if (effect.isBuff) continue;
+                    if (effect.type == EffectType.DoT && effect.tickRate <= 0) continue;
                 }
 
                 receiver.ApplyEffect(effect, transform.position);
@@ -181,6 +188,7 @@ public class SpellController : MonoBehaviour
                 { 
                     damageAmount = totalFlatDamage, 
                     position = transform.position,
+                    isDoT = false
                 };
                 damageable.TakeDamage(details);
             }
@@ -206,9 +214,8 @@ public class SpellController : MonoBehaviour
         }
 
         // 2. GÂY SÁT THƯƠNG AOE
-        // Quét tất cả Quái và Thùng gỗ trong bán kính
-        Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, baseSpellData.explosionRadius, GameLayers.EnemyAndDamageableMask);
-        
+        Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, currentStats.explosionRadius, GameLayers.EnemyAndDamageableMask);
+
         foreach (Collider2D target in targets)
         {
             // Dùng lại hàm ApplyEffectsToTarget thần thánh để truyền Độc, Cháy, Choáng, Sát thương... vào vùng nổ
@@ -223,17 +230,24 @@ public class SpellController : MonoBehaviour
     }
     public void Despawn()
     {
+        // CHỐT CHẶN QUAN TRỌNG: Nếu phép đang trong quá trình chạy Animation FadeOut rồi
+        // thì bỏ qua mọi lệnh gọi Despawn() lặp lại sau đó!
+        if (isFadingOut) return;
+
         // KÍCH NỔ (Nếu có)
-        if (baseSpellData.explodeOnDespawn && !isFadingOut)
+        if (baseSpellData.explodeOnDespawn)
         {
             TriggerExplosion();
         }
 
-        // NẾU DÙNG MULTI-STATE ANIMATION (Bao gồm cả Toggle) VÀ CHƯA CHẠY FADE
-        if (useMultiStateAnimation && anim != null && !isFadingOut)
+        // NẾU DÙNG MULTI-STATE ANIMATION (Bao gồm cả Toggle)
+        if (useMultiStateAnimation && anim != null)
         {
             isFadingOut = true;
             
+            // Tắt Hitbox ngay khi bắt đầu mờ dần để không gây thêm sát thương thừa
+            if (TryGetComponent(out Collider2D col)) col.enabled = false;
+
             // Gửi lệnh kích hoạt Animation FadeOut
             anim.SetTrigger("FadeOut");
             
@@ -251,9 +265,14 @@ public class SpellController : MonoBehaviour
         // Nếu không có Animation nhiều bước, thu hồi ngay lập tức
         FinalizeDespawn();
     }
+
     private void FinalizeDespawn()
     {
-        if (currentStats.isSelfTargeted && PlayerController.Instance != null)
+        // Hủy các lệnh Invoke còn tồn đọng và reset cờ trước khi trả về Pool
+        CancelInvoke(nameof(FinalizeDespawn));
+        isFadingOut = false;
+
+        if (currentStats != null && currentStats.isSelfTargeted && PlayerController.Instance != null)
         {
             if (PlayerController.Instance.TryGetComponent(out EffectReceiver receiver))
             {
