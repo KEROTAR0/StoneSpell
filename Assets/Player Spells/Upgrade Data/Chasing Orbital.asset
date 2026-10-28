@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: Chasing Orbital
   m_EditorClassIdentifier: GameScripts::D_Upgrade
+  upgradeCategory: 1
   isUnique: 1
   maxUpgrade: 3
   upgradeCost: 1
   upgradeName: Orbital
-  description: 'Orbital Ray can chase the target but reduce its size by 50%
+  description: 'Orbital Ray can chase the target but reduce its size by 75%
 
 '
   icon: {fileID: 0}
@@ -26,7 +27,7 @@ MonoBehaviour:
   flatManaBonus: 0
   manaRegenBonus: 0
   moveSpeedBonus: 0
-  sizePercentBonus: -0.5
+  sizePercentBonus: -0.75
   flatDamageBonus: 0
   percentDamageBonus: 0
   cooldownReduction: 0
@@ -43,6 +44,12 @@ MonoBehaviour:
   laserLengthBonus: 0
   laserWidthBonus: 0
   explosionRadiusBonus: 0
+  pullForce: 0
+  knockbackForce: 0
+  pushPullRadius: 0
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0
   additionalHitEffects: []
   behaviorComponentNames:
   - SpellChasingTrait

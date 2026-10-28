@@ -239,7 +239,13 @@ public class SpellController : MonoBehaviour
         {
             TriggerExplosion();
         }
-
+        else
+        {
+            if (baseSpellData.explosionVFX != null)
+            {
+                ObjectPoolManager.Instance.GetFromPool(baseSpellData.explosionVFX, transform.position, Quaternion.identity);
+            }
+        }
         // NẾU DÙNG MULTI-STATE ANIMATION (Bao gồm cả Toggle)
         if (useMultiStateAnimation && anim != null)
         {
@@ -261,7 +267,7 @@ public class SpellController : MonoBehaviour
             Invoke(nameof(FinalizeDespawn), fadeDuration);
             return; 
         }
-
+        
         // Nếu không có Animation nhiều bước, thu hồi ngay lập tức
         FinalizeDespawn();
     }

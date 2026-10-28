@@ -47,18 +47,24 @@ MonoBehaviour:
   canReflect: 0
   hasAura: 1
   auraCheckRadius: 0.8
-  auraTickRate: 0.25
+  auraTickRate: 0.8
   spawnCount: 1
   orbitRadius: 1.5
   orbRotationSpeed: 90
   multiShotPattern: 0
   multiShotAngle: 30
   multiShotSpacing: 0.5
+  pullForce: 0
+  knockbackForce: 0
+  pushPullRadius: 0
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0.5
   hitEffects:
   - type: 0
     procChance: 1
     duration: 0
-    value: 1
+    value: 3
     tickRate: 0
     isBuff: 0
     vfxPrefab: {fileID: 7689684247619834549, guid: d95165f5c26d24f4faabe4ca23d46141, type: 3}

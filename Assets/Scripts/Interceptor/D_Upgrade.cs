@@ -70,6 +70,16 @@ public class D_Upgrade : ScriptableObject
     public float laserWidthBonus = 0f;
     public float explosionRadiusBonus = 0f;
 
+    [Header("Đẩy Lùi / Hút (Vacuum)")]
+    public float pullForce;
+    public float knockbackForce;
+    public float pushPullRadius;
+
+    [Header("Xuyên Thấu & Vỡ Vụn (Fragmentation)")]
+    public int maxPierce;
+    public int fragmentCount;
+    public float fragmentDamageMultiplier;
+
     [Header("--- HIỆU ỨNG VÀ COMPONENT ---")]
     public List<EffectData> additionalHitEffects = new List<EffectData>();
     public List<string> behaviorComponentNames = new List<string>();

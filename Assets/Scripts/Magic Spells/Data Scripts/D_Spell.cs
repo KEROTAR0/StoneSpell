@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-public enum MultiShotPattern { Normal, Spread, TrailingLine, ParallelLine }
+public enum MultiShotPattern { Normal, Spread, TrailingLine, ParallelLine, Parabola }
 [CreateAssetMenu(fileName = "newSpellData", menuName = "Data/Spell Data")]
 public class D_Spell : ScriptableObject
 {    
@@ -83,6 +83,16 @@ public class D_Spell : ScriptableObject
     public float multiShotAngle = 30f; 
     [Tooltip("Dùng cho Line: Khoảng cách giãn cách giữa các viên đạn")]
     public float multiShotSpacing = 0.5f;
+    
+    [Header("Đẩy Lùi / Hút (Vacuum)")]
+    public float pullForce;
+    public float knockbackForce;
+    public float pushPullRadius;
+
+    [Header("Xuyên Thấu & Vỡ Vụn (Fragmentation)")]
+    public int maxPierce;        
+    public int fragmentCount;    
+    public float fragmentDamageMultiplier = 0.5f;
 
     [Header("Effects")]
     public List<EffectData> hitEffects;

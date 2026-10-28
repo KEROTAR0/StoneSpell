@@ -52,6 +52,8 @@ public class SpellGatlingTrait : MonoBehaviour
         int maxProjectiles = 5; 
         float fireDelay = 0.12f; 
 
+        RuntimeSpellStats parentStats = controller.currentStats;
+
         for (int i = 0; i < maxProjectiles; i++)
         {
             yield return new WaitForSeconds(fireDelay);
@@ -59,7 +61,6 @@ public class SpellGatlingTrait : MonoBehaviour
             Vector2 currentFirePos = spawnPosition;
             if (PlayerController.Instance != null)
             {
-                // Gatling luôn bắn ra từ miệng súng (vị trí hiện tại của Player)
                 currentFirePos = PlayerController.Instance.attackPosition.position;
             }
 
@@ -78,7 +79,15 @@ public class SpellGatlingTrait : MonoBehaviour
                         trait.hasTriggered = true; 
                     }
 
-                    // Gán index = -1 cho đạn Gatling để nó biết nó là đạn cộng thêm và truyền hướng bay THẲNG (rawDirection)
+                    // 1. Áp dụng Scale vật lý cho cục đạn Clone
+                    cloneObj.transform.localScale = parentStats.currentScale;
+                    
+                    // 2. Chép lại các thông số kích thước ảo vào hệ thống của Clone
+                    cloneController.currentStats.currentScale = parentStats.currentScale;
+                    cloneController.currentStats.explosionRadius = parentStats.explosionRadius;
+                    cloneController.currentStats.pushPullRadius = parentStats.pushPullRadius;
+
+                    // Khởi tạo đạn
                     cloneController.Initialize(rawDirection, -1, 1, rawDirection);
                 }
             }

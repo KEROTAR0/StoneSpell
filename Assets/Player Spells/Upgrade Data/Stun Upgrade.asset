@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: Stun Upgrade
   m_EditorClassIdentifier: GameScripts::D_Upgrade
+  upgradeCategory: 1
   isUnique: 1
   maxUpgrade: 0
+  upgradeCost: 1
   upgradeName: Stun Upgrade
   description: Deal damage to target has 30% chance to stun the target 3s
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 0b44628eb9290a64188083171425e339, type: 3}
   targetSpecificSpell: {fileID: 0}
   categoryFilter: -1
   flatHealthBonus: 0
@@ -40,6 +42,12 @@ MonoBehaviour:
   laserLengthBonus: 0
   laserWidthBonus: 0
   explosionRadiusBonus: 0
+  pullForce: 0
+  knockbackForce: 0
+  pushPullRadius: 0
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0
   additionalHitEffects:
   - type: 3
     procChance: 0.3

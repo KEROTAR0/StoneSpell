@@ -32,7 +32,7 @@ MonoBehaviour:
   laserMaxLength: 10
   laserWidth: 1
   explodeOnDespawn: 1
-  explosionRadius: 2
+  explosionRadius: 1
   isHoming: 0
   homingDetectionRadius: 8
   homingTurnSpeed: 30

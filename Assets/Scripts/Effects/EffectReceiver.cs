@@ -28,15 +28,49 @@ public class EffectReceiver : MonoBehaviour
     {
         if (Random.value > data.procChance) return;
         
+        bool isInstantDamageOrHeal = (data.type == EffectType.DoT || data.type == EffectType.Heal || data.type == EffectType.ManaRestore) && data.tickRate <= 0f;
+        bool isInstantPushPull = (data.type == EffectType.Pull || data.type == EffectType.Knockback);
+
+        if (isInstantDamageOrHeal || isInstantPushPull)
+        {
+            if (EffectDictionary.OnStartMap.TryGetValue(data.type, out var instantAction))
+            {
+                instantAction.Invoke(this, data, sourcePosition);
+            }
+            return; 
+        }
+
         if (activeEffects.TryGetValue(data.type, out ActiveEffect existingEffect))
         {
-            // Trùng hiệu ứng -> Reset lại thời gian (Không bị cộng dồn vô hạn)
-            existingEffect.Reset(data, sourcePosition);
+            bool isStronger = false;
+
+            if (data.type == EffectType.MovementMultiplier)
+            {
+                // Làm chậm (Slow): Hệ số càng NHỎ thì tốc độ càng chậm -> Mạnh hơn
+                if (data.value < existingEffect.data.value) isStronger = true;
+            }
+            else
+            {
+                // Các loại khác (DoT, Tăng sát thương...): Value càng LỚN càng mạnh
+                if (data.value > existingEffect.data.value) isStronger = true;
+            }
+
+            if (isStronger)
+            {
+                RemoveEffect(data.type);
+            }
+            else
+            {
+                // NẾU BẰNG HOẶC YẾU HƠN: Giữ nguyên Value cũ đang mạnh, CHỈ làm mới lại thời gian
+                existingEffect.currentTimer = Mathf.Max(existingEffect.currentTimer, data.duration);
+                return;
+            }
         }
-        else
+
+        if (!activeEffects.ContainsKey(data.type))
         {
-            // Hiệu ứng mới -> Khởi tạo và thêm vào Dictionary
             ActiveEffect newEffect = new ActiveEffect { data = data, currentTimer = data.duration, tickTimer = data.tickRate, sourcePos = sourcePosition };
+            
             if (data.vfxPrefab != null)
             {
                 newEffect.vfxInstance = ObjectPoolManager.Instance.GetFromPool(data.vfxPrefab, transform.position, Quaternion.identity);
@@ -44,7 +78,6 @@ public class EffectReceiver : MonoBehaviour
             }
             activeEffects.Add(data.type, newEffect);
 
-            // Kích hoạt tác dụng tức thời (nếu có)
             if (EffectDictionary.OnStartMap.TryGetValue(data.type, out var action))
                 action.Invoke(this, data, sourcePosition);
         }
@@ -104,9 +137,14 @@ public class EffectReceiver : MonoBehaviour
         if (TryGetComponent(out KnockbackComponent kb)) kb.ApplyPull(pos, force, duration);
     }
 
-    public void HandleContinuousVacuum(Vector2 pos, float speed)
+    public void HandleContinuousVacuum(Vector2 pos, float speed, float duration)
     {
-        if (TryGetComponent(out PullableComponent pullable)) pullable.ReceiveContinuousVacuum(pos, speed);
+        if (TryGetComponent(out PullableComponent pullable)) 
+        {
+            // Truyền 3 biến sang cho PullableComponent
+            pullable.ReceiveContinuousVacuum(pos, speed, duration);
+        }
+
         if (TryGetComponent(out CoreCCComponent cc)) 
         {
             cc.OnInterrupt?.Invoke(); 

@@ -35,6 +35,10 @@ public class PlayerSpellController : MonoBehaviour
         {
             CacheSpellData(i, equippedSpellPrefabs[i]);
         }
+        if (TryGetComponent(out CoreCCComponent cc))
+        {
+            cc.OnInterrupt.AddListener(TurnOffAllToggles);
+        }
         InitializeUI();
     }
 
@@ -303,7 +307,7 @@ public class PlayerSpellController : MonoBehaviour
         if (slotIndex < 0 || slotIndex >= equippedSpellPrefabs.Length) return;
         if (slotIndex >= unlockedSlotCount) 
         {
-            Debug.LogWarning("Ô phép này chưa được mở khóa!");
+            UIManager.Instance.ChangeSText("This slot has not been unlocked yet!");
             return; 
         }
         equippedSpellPrefabs[slotIndex] = spellPrefab;
@@ -331,7 +335,31 @@ public class PlayerSpellController : MonoBehaviour
 
         return true;
     }
-
+    public void TurnOffAllToggles()
+    {
+        for (int i = 0; i < toggleStates.Length; i++)
+        {
+            if (toggleStates[i])
+            {
+                // Dùng chính hàm ToggleSpell để nó lo việc xóa VFX và hồi chiêu
+                if (cachedSpellData[i] != null)
+                {
+                    if (cachedSpellData[i].isSelfTargeted || cachedSpellData[i].hasAura)
+                        ToggleSpell(i, gameObject);
+                    else
+                        ToggleSpell(i, null);
+                }
+            }
+        }
+    }
+    private void OnDisable()
+    {
+        // Gỡ sự kiện khi Player chết/xóa để tránh lỗi rò rỉ bộ nhớ
+        if (TryGetComponent(out CoreCCComponent cc))
+        {
+            cc.OnInterrupt.RemoveListener(TurnOffAllToggles);
+        }
+    }
     public void TriggerCooldown(int slotIndex)
     {
         D_Spell data = cachedSpellData[slotIndex];

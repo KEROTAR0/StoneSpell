@@ -10,8 +10,7 @@ public static class EffectDictionary
         { EffectType.Stun, (receiver, data, pos) => receiver.HandleStun(data.duration) },
         { EffectType.Sleep, (receiver, data, pos) => receiver.HandleSleep(data.duration) },
         { EffectType.Pull, (receiver, data, pos) => receiver.HandleImpulsePull(pos, data.value, data.duration) },
-        { EffectType.Vacuum, (receiver, data, pos) => receiver.HandleContinuousVacuum(pos, data.value) },
-        { EffectType.Knockback, (receiver, data, pos) => receiver.HandleKnockback(pos, data.value) },
+        { EffectType.Vacuum, (receiver, data, pos) => receiver.HandleContinuousVacuum(pos, data.value, data.tickRate > 0 ? data.tickRate : data.duration) },        { EffectType.Knockback, (receiver, data, pos) => receiver.HandleKnockback(pos, data.value) },
         { EffectType.MovementMultiplier, (receiver, data, pos) => receiver.ModifyMovement(data.value) },
         { EffectType.DamageMultiplier, (receiver, data, pos) => receiver.ModifyDamageTaken(data.value) },
 

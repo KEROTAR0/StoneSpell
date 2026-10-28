@@ -32,16 +32,14 @@ public class KnockbackComponent : MonoBehaviour
     }
     private IEnumerator KnockbackRoutine(Vector2 direction, float force, float duration)
     {
-        // 1. NGẮT QUYỀN ĐIỀU KHIỂN CỦA AIPATH
         isKnockedBack = true;
         if (aiPath != null) aiPath.canMove = false;
 
-        // 2. ÁP DỤNG LỰC ĐẨY
+        // Xóa vận tốc cũ và tác dụng lực Đẩy nguyên bản
         rb.linearVelocity = Vector2.zero;
         Vector2 appliedForce = direction * force;
         rb.AddForce(appliedForce, ForceMode2D.Impulse);
 
-        // 3. VÒNG LẶP KIỂM TRA WALL SLAM
         float timer = 0f;
         bool hasSlammed = false;
 
@@ -49,39 +47,31 @@ public class KnockbackComponent : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            // Bắn tia quét xem có chạm tường không. 
-            // Quét theo hướng đang bay, dài khoảng 0.5f (tùy thuộc vào độ lớn của quái)
+            // Bắn tia quét kiểm tra chạm tường (Wall Slam)
             RaycastHit2D hit = Physics2D.Raycast(transform.position, direction, 0.5f, GameLayers.WallAndHighObstacleMask);
             
             if (hit.collider != null)
             {
                 hasSlammed = true;
-                break; // Thoát vòng lặp ngay khi chạm tường
+                break; 
             }
             
             yield return null;
         }
 
-        // 4. NẾU BỊ ÉP TƯỜNG -> GÂY CHOÁNG (STUN)
+        // Bị đập vào tường -> Stun
         if (hasSlammed)
         {
-            // Ép dừng ngay lập tức để không bị trượt dọc theo tường
             rb.linearVelocity = Vector2.zero; 
             
             if (ccComponent != null)
             {
-                // Choáng 1.5 giây khi đập tường
                 ccComponent.ApplyStun(1.5f, false); 
-                Debug.Log("Wall Slammed!");
             }
-            
-            // Tùy chọn: Spawn VFX đập tường ở đây (hit.point)
         }
 
-        // 5. TRẢ LẠI QUYỀN ĐIỀU KHIỂN (NẾU KHÔNG BỊ CHOÁNG)
+        // KẾT THÚC QUÁ TRÌNH
         isKnockedBack = false;
-        
-        // Luôn xóa vận tốc thừa khi kết thúc đẩy
         rb.linearVelocity = Vector2.zero; 
 
         if (aiPath != null && ccComponent != null && !ccComponent.isStunned)

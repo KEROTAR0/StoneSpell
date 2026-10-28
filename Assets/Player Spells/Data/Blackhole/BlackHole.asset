@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: BlackHole
+  m_EditorClassIdentifier: GameScripts::D_Spell
+  spellName: Black Hole
+  spellIcon: {fileID: -4247337945467477181, guid: 7a6072c7913901b42939c39ebbf0d5e9, type: 3}
+  manaCost: 10
+  lifeTime: 2
+  castingTime: 0.3
+  cooldown: 1
+  isSpawnAtMouse: 1
+  maxCastRange: 8
+  isProjectile: 0
+  isPenetrating: 0
+  isLaser: 0
+  isSelfTargeted: 0
+  isManualToggle: 1
+  inaccuracy: 0
+  moveSpeed: 5
+  maxBounces: 0
+  acceleration: 1.1
+  laserMaxLength: 10
+  laserWidth: 1
+  explodeOnDespawn: 1
+  explosionRadius: 2
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 180
+  homingDelayTimer: 0.3
+  explosionVFX: {fileID: 5794580132710866120, guid: 30f4b9b39018f744ba412d3474e1d2ab, type: 3}
+  toggleIndicatorVFX: {fileID: 0}
+  isRotating: 1
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 0
+  canBlock: 0
+  maxBlocks: 0
+  canReflect: 0
+  hasAura: 1
+  auraCheckRadius: 0.8
+  auraTickRate: 0.25
+  spawnCount: 1
+  orbitRadius: 1.5
+  orbRotationSpeed: 90
+  multiShotPattern: 0
+  multiShotAngle: 30
+  multiShotSpacing: 0.5
+  pullForce: 1
+  knockbackForce: 0
+  pushPullRadius: 10
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0.5
+  hitEffects:
+  - type: 0
+    procChance: 1
+    duration: 0
+    value: 2
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 0}

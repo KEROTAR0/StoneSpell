@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
+  m_Name: Storm Bullet
+  m_EditorClassIdentifier: GameScripts::D_Spell
+  spellName: Parabola Bullets
+  spellIcon: {fileID: -5678556934015464833, guid: 9fdbdcc12ff3b0c4fad42d5c872d699d, type: 3}
+  manaCost: 1
+  lifeTime: 20
+  castingTime: 0.3
+  cooldown: 0
+  isSpawnAtMouse: 0
+  maxCastRange: 8
+  isProjectile: 1
+  isPenetrating: 0
+  isLaser: 0
+  isSelfTargeted: 0
+  isManualToggle: 0
+  inaccuracy: 0
+  moveSpeed: 5
+  maxBounces: 0
+  acceleration: 7
+  laserMaxLength: 10
+  laserWidth: 1
+  explodeOnDespawn: 0
+  explosionRadius: 2.5
+  isHoming: 0
+  homingDetectionRadius: 8
+  homingTurnSpeed: 360
+  homingDelayTimer: 0.3
+  explosionVFX: {fileID: 0}
+  toggleIndicatorVFX: {fileID: 0}
+  isRotating: 1
+  rotationSpeed: 360
+  isPassThroughtHighObstacle: 0
+  canBlock: 1
+  maxBlocks: 1
+  canReflect: 0
+  hasAura: 0
+  auraCheckRadius: 0
+  auraTickRate: 0
+  spawnCount: 10
+  orbitRadius: 1.5
+  orbRotationSpeed: 90
+  multiShotPattern: 4
+  multiShotAngle: 0
+  multiShotSpacing: 0
+  hitEffects:
+  - type: 0
+    procChance: 1
+    duration: 0
+    value: 5
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 9000838001843951506, guid: 1ebd67ac44a0797449c8f446d8aa9416, type: 3}

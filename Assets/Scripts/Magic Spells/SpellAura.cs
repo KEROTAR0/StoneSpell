@@ -36,19 +36,48 @@ public class SpellAura : MonoBehaviour
         }
 
         auraTimer += Time.deltaTime;
-        if (auraTimer >= controller.currentStats.auraTickRate)
+        
+        // Đảm bảo TickRate không bao giờ bằng 0 (Gây treo máy)
+        float tickRate = controller.currentStats.auraTickRate > 0f ? controller.currentStats.auraTickRate : 0.2f;
+
+        if (auraTimer >= tickRate)
         {
             auraTimer = 0f;
             
-            // ĐÃ SỬA: Dùng currentStats.auraCheckRadius thay vì baseSpellData.auraCheckRadius
             float currentRadius = Mathf.Max(0.1f, controller.currentStats.auraCheckRadius);
             Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, currentRadius, GameLayers.EnemyAndDamageableMask);
 
             foreach (Collider2D target in targets)
             {
                 EffectReceiver receiver = target.GetComponentInParent<EffectReceiver>();
-                GameObject rootObj = receiver != null ? receiver.gameObject : target.gameObject;
-                controller.ApplyEffectsToTarget(rootObj);
+                
+                // NẾU TÌM THẤY QUÁI VẬT (Có EffectReceiver)
+                if (receiver != null)
+                {
+                    controller.ApplyEffectsToTarget(receiver.gameObject);
+                }
+                // ====================================================
+                // ĐÃ THÊM: NẾU TÌM THẤY THÙNG GỖ (Không có EffectReceiver nhưng có IDamageable)
+                // ====================================================
+                else if (target.TryGetComponent(out IDamageable damageable))
+                {
+                    // Lọc tìm Sát thương (DoT) từ danh sách Effect của Aura
+                    float totalDmg = 0f;
+                    foreach(var eff in controller.currentStats.activeEffects)
+                    {
+                        if (eff.type == EffectType.DoT) totalDmg += eff.value;
+                    }
+
+                    if (totalDmg > 0)
+                    {
+                        // Gửi thẳng cục sát thương vào thùng gỗ
+                        damageable.TakeDamage(new AttackDetails { 
+                            damageAmount = totalDmg, 
+                            position = transform.position, 
+                            isDoT = false 
+                        });
+                    }
+                }
             }
         }
     }

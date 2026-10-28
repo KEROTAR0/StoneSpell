@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [Header("Core Systems")]
     public PlayerStateMachine StateMachine { get; private set; }
     public PlayerInputHandler InputHandler { get; private set; }
-    public PlayerSpellController SpellController { get; private set; }
+    public PlayerSpellController PSpellController { get; private set; }
     public KnockbackComponent Knockback { get; private set; }
 
     // --- CÁC LINH KIỆN ĐỘC LẬP (COMPONENTS) ---
@@ -58,7 +58,7 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         InputHandler = GetComponent<PlayerInputHandler>();
-        SpellController = GetComponent<PlayerSpellController>();
+        PSpellController = GetComponent<PlayerSpellController>();
         
         Health = GetComponent<HealthComponent>();
         Mana = GetComponent<PlayerManaComponent>();
@@ -121,6 +121,7 @@ public class PlayerController : MonoBehaviour
     {
         // Nhận sát thương -> Đánh thức (nếu đang ngủ) và ép StateMachine chuyển sang bị thương
         CC.WakeUp();
+        PSpellController.TurnOffAllToggles();
         StateMachine.ChangeState(HurtState);
     }
     private void HandleDeath()
@@ -205,7 +206,7 @@ public class PlayerController : MonoBehaviour
         {
             InputHandler.UseSpellInputByIndex(requestedSlot);
             
-            if (SpellController.CanCastSpell(requestedSlot))
+            if (PSpellController.CanCastSpell(requestedSlot))
             {
                 currentSpellSlot = requestedSlot;
                 StateMachine.ChangeState(CastingSpellState);

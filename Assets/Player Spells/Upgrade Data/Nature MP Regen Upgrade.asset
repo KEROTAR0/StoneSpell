@@ -17,13 +17,13 @@ MonoBehaviour:
   maxUpgrade: 0
   upgradeCost: 1
   upgradeName: Nature Regen
-  description: Regen 2 mana per second
-  icon: {fileID: 5093978120288518676, guid: c202fc6725fb49e4285bd402d4a96dfb, type: 3}
+  description: Regen 1 mana per second
+  icon: {fileID: 21300000, guid: c202fc6725fb49e4285bd402d4a96dfb, type: 3}
   targetSpecificSpell: {fileID: 0}
   categoryFilter: -1
   flatHealthBonus: 0
   flatManaBonus: 0
-  manaRegenBonus: 2
+  manaRegenBonus: 1
   moveSpeedBonus: 0
   sizePercentBonus: 0
   flatDamageBonus: 0
@@ -42,5 +42,11 @@ MonoBehaviour:
   laserLengthBonus: 0
   laserWidthBonus: 0
   explosionRadiusBonus: 0
+  pullForce: 0
+  knockbackForce: 0
+  pushPullRadius: 0
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0
   additionalHitEffects: []
   behaviorComponentNames: []

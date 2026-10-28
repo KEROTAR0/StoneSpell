@@ -38,13 +38,13 @@ public class UpgradeManager : MonoBehaviour
         PlayerController player = PlayerController.Instance;
 
         // Lọc Phép (Chỉ lấy phép chưa được gắn vào 5 ô của Player)
-        if (player != null && player.SpellController != null)
+        if (player != null && player.PSpellController != null)
         {
             foreach (GameObject spellPrefab in availableSpellPrefabs)
             {
                 if (spellPrefab == null) continue;
                 bool alreadyEquipped = false;
-                foreach (GameObject equipped in player.SpellController.equippedSpellPrefabs)
+                foreach (GameObject equipped in player.PSpellController.equippedSpellPrefabs)
                 {
                     if (equipped == spellPrefab) 
                     {
@@ -144,14 +144,12 @@ public class UpgradeManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Đã hết lượt Reroll!");
             UIManager.Instance.ChangeSText("You dont have any reroll left!");
         }
     }
     public void AddReroll(int amount = 1)
     {
         currentRerolls += amount;
-        Debug.Log($"Nhận thêm {amount} lượt Reroll! Hiện đang có: {currentRerolls} lượt.");
     }
     public void SkipUpgrade()
     {
@@ -164,8 +162,8 @@ public class UpgradeManager : MonoBehaviour
         PlayerController player = PlayerController.Instance;
         if (player != null)
         {
-            if (player.SpellController != null) 
-                player.SpellController.CancelReplaceMode();
+            if (player.PSpellController != null) 
+                player.PSpellController.CancelReplaceMode();
 
             if (player.TryGetComponent(out PlayerLevelComponent levelComp))
                 levelComp.CheckAndShowLevelUpPanel();

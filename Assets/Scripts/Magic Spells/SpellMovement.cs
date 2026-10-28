@@ -9,6 +9,8 @@ public class SpellMovement : MonoBehaviour
     public Vector2 currentDirection { get; private set; }
     public float currentSpeed { get; private set; }
     private bool hasFinishedAttackFrame = false; 
+    private bool isParabola = false;
+    private Vector2 targetDirection;
 
     private void Awake()
     {
@@ -24,11 +26,27 @@ public class SpellMovement : MonoBehaviour
         D_Spell baseData = controller.baseSpellData;
         RuntimeSpellStats stats = controller.currentStats;
         
-        float randomAngle = Random.Range(-baseData.inaccuracy, baseData.inaccuracy);
-        currentDirection = (Quaternion.Euler(0, 0, randomAngle) * direction.normalized).normalized;
-        
-        // ĐỌC TỐC ĐỘ TỪ BẢN SAO ĐỘNG
-        currentSpeed = baseData.isPenetrating ? 0f : stats.moveSpeed;
+        // KIỂM TRA ĐÂY CÓ PHẢI PATTERN PARABOL KHÔNG
+        if (baseData.isProjectile && baseData.multiShotPattern == MultiShotPattern.Parabola)
+        {
+            isParabola = true;
+            targetDirection = direction.normalized; // Lưu hướng ngắm chuẩn
+            
+            // Hướng bay khởi điểm: Tỏa ra hai bên hoặc lùi về sau (Bẻ 90 đến 180 độ)
+            float randomAngle = Random.Range(90f, 270f); 
+            currentDirection = (Quaternion.Euler(0, 0, randomAngle) * direction.normalized).normalized;
+            
+            // Giảm tốc khởi điểm để đạn vòng nhanh hơn
+            currentSpeed = stats.moveSpeed * 0.3f; 
+        }
+        else
+        {
+            isParabola = false;
+            float randomAngle = Random.Range(-baseData.inaccuracy, baseData.inaccuracy);
+            currentDirection = (Quaternion.Euler(0, 0, randomAngle) * direction.normalized).normalized;
+            currentSpeed = baseData.isPenetrating ? 0f : stats.moveSpeed;
+        }
+
         hasFinishedAttackFrame = false;
 
         if (baseData.isProjectile || baseData.isPenetrating) 
@@ -41,7 +59,20 @@ public class SpellMovement : MonoBehaviour
         D_Spell baseData = controller.baseSpellData;
         RuntimeSpellStats stats = controller.currentStats;
 
-        if (baseData.isPenetrating && !baseData.isLaser)
+        if (isParabola)
+        {
+            // Tăng tốc dần lên
+            currentSpeed += stats.acceleration * Time.deltaTime;
+            if (currentSpeed > stats.moveSpeed) currentSpeed = stats.moveSpeed;
+
+            // Uốn hướng bay (currentDirection) xoay dần về hướng chuột (targetDirection)
+            // Lực uốn mạnh hay yếu phụ thuộc vào gia tốc (acceleration)
+            float turnSpeed = stats.acceleration > 0 ? stats.acceleration : 5f; 
+            currentDirection = Vector3.RotateTowards(currentDirection, targetDirection, turnSpeed * Time.deltaTime, 0f).normalized;
+
+            SetVelocity(currentDirection * currentSpeed);
+        }
+        else if (baseData.isPenetrating && !baseData.isLaser)
         {
             if (!hasFinishedAttackFrame) currentSpeed += stats.acceleration * Time.deltaTime;
             else currentSpeed -= stats.acceleration * Time.deltaTime;

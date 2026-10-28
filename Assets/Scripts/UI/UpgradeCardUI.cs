@@ -209,14 +209,14 @@ public class UpgradeCardUI : MonoBehaviour
 
         if (isSpellCard)
         {
-            int unlockedCount = player.SpellController.unlockedSlotCount;
+            int unlockedCount = player.PSpellController.unlockedSlotCount;
             bool equipSuccess = false;
             
             for (int i = 0; i < unlockedCount; i++)
             {
-                if (player.SpellController.equippedSpellPrefabs[i] == null)
+                if (player.PSpellController.equippedSpellPrefabs[i] == null)
                 {
-                    player.SpellController.EquipSpell(i, storedSpellPrefab);
+                    player.PSpellController.EquipSpell(i, storedSpellPrefab);
                     equipSuccess = true;
                     Debug.Log($"Đã lắp phép {storedSpellPrefab.name} vào ô số {i}");
                     break;
@@ -226,7 +226,7 @@ public class UpgradeCardUI : MonoBehaviour
             if (!equipSuccess) 
             {
                 Debug.LogWarning("Túi đã đầy! Đang kích hoạt chế độ THAY THẾ PHÉP.");
-                player.SpellController.StartReplaceMode(storedSpellPrefab);
+                player.PSpellController.StartReplaceMode(storedSpellPrefab);
                 return; 
             }
         }

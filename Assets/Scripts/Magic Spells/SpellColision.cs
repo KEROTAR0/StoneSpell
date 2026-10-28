@@ -99,7 +99,6 @@ public class SpellCollision : MonoBehaviour
             if (collision.TryGetComponent(out EnemyProjectile enemyProj))
             {
                 Vector2 hitPoint = collision.ClosestPoint(transform.position);
-                controller.SpawnImpactVFXAtPosition(hitPoint);
 
                 // REFLECT (PHẢN ĐÒN)
                 if (controller.currentStats.canReflect)
@@ -120,6 +119,7 @@ public class SpellCollision : MonoBehaviour
                     currentBlocks--;
                     if (currentBlocks <= 0) controller.Despawn();
                 }
+                controller.SpawnImpactVFXAtPosition(hitPoint);
             }
             return; // Đã xử lý đạn địch xong thì thoát luôn, không cho chạy xuống dưới
         }
@@ -199,7 +199,67 @@ public class SpellCollision : MonoBehaviour
 
                 if (!baseData.isPenetrating && !baseData.isLaser && baseData.isProjectile && !baseData.hasAura)
                 {
-                    controller.Despawn();
+                    if (controller.currentStats.maxPierce > 0)
+                    {
+                        // Giảm số lần xuyên và cho phép đạn bay tiếp
+                        controller.currentStats.maxPierce--;
+                    }
+                    else
+                    {
+                        // Khi hết lượt xuyên (hoặc không có xuyên), đạn sẽ vỡ và hủy
+                        TriggerFragmentation();
+                        controller.Despawn();
+                    }
+                }
+            }
+        }
+    }
+
+    // HÀM MỚI: Kích hoạt hiệu ứng Vỡ Vụn (Fragmentation)
+    private void TriggerFragmentation()
+    {
+        int fragCount = controller.currentStats.fragmentCount;
+        if (fragCount <= 0) return;
+
+        // Tính góc chia đều dựa trên multiShotAngle (Mượn cấu trúc Gatling)
+        float totalAngle = controller.baseSpellData.multiShotAngle > 0 ? controller.baseSpellData.multiShotAngle : 360f;
+        float startAngle = -totalAngle / 2f;
+        float angleStep = fragCount > 1 ? totalAngle / (fragCount - 1) : 0;
+        
+        Vector2 currentDir = Vector2.up; // Mặc định nếu đạn đang đứng yên
+        if (TryGetComponent(out Rigidbody2D rb) && rb.linearVelocity.sqrMagnitude > 0.1f)
+        {
+            currentDir = rb.linearVelocity.normalized;
+        }
+
+        for (int i = 0; i < fragCount; i++)
+        {
+            // Bẻ góc đạn vỡ
+            Vector2 fragDir = Quaternion.Euler(0, 0, startAngle + (angleStep * i)) * currentDir;
+            
+            // Sinh mảnh vỡ (Sử dụng chính Prefab gốc, hoặc bạn có thể tạo Prefab mảnh vỡ riêng)
+            GameObject fragObj = ObjectPoolManager.Instance.GetFromPool(controller.gameObject, transform.position, Quaternion.identity);
+            
+            if (fragObj.TryGetComponent(out SpellController fragCtrl))
+            {
+                // Khởi tạo mảnh vỡ
+                fragCtrl.Initialize(fragDir);
+                
+                // Tránh việc mảnh vỡ tự đẻ ra mảnh vỡ vô tận
+                fragCtrl.currentStats.fragmentCount = 0; 
+                fragCtrl.currentStats.maxPierce = 0;
+                
+                // Giảm Scale và Sát thương của mảnh vỡ
+                fragCtrl.currentStats.currentScale *= 0.5f;
+                fragCtrl.transform.localScale = fragCtrl.currentStats.currentScale;
+
+                foreach (var effect in fragCtrl.currentStats.activeEffects)
+                {
+                    if (effect.type == EffectType.DoT) 
+                    {
+                        effect.value *= fragCtrl.currentStats.fragmentDamageMultiplier;
+                        if (effect.value < 1f) effect.value = 1f;
+                    }
                 }
             }
         }

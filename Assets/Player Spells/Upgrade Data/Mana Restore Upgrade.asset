@@ -18,7 +18,7 @@ MonoBehaviour:
   upgradeCost: 1
   upgradeName: Mana Limitbreak
   description: Increase max mana by 80 and restore mana for the same amount
-  icon: {fileID: -1504793436433039653, guid: 77b1eb5c6e87100458fe8845125f7bd7, type: 3}
+  icon: {fileID: 21300000, guid: 77b1eb5c6e87100458fe8845125f7bd7, type: 3}
   targetSpecificSpell: {fileID: 0}
   categoryFilter: -1
   flatHealthBonus: 0
@@ -42,5 +42,11 @@ MonoBehaviour:
   laserLengthBonus: 0
   laserWidthBonus: 0
   explosionRadiusBonus: 0
+  pullForce: 0
+  knockbackForce: 0
+  pushPullRadius: 0
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0
   additionalHitEffects: []
   behaviorComponentNames: []

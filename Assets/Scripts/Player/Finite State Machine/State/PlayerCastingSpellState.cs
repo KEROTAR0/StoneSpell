@@ -20,17 +20,16 @@ public class PlayerCastingSpellState : PlayerAttackState
         manaDrainedThisCast = 0f;
         
         slotIndex = player.currentSpellSlot;
-        currentSpellPrefab = player.SpellController.equippedSpellPrefabs[slotIndex];
+        currentSpellPrefab = player.PSpellController.equippedSpellPrefabs[slotIndex];
         currentSpellData = currentSpellPrefab.GetComponent<SpellController>().baseSpellData;
 
-        // ĐÃ THÊM: NẾU ĐANG BẬT TOGGLE -> TẮT NGAY LẬP TỨC VÀ KẾT THÚC STATE, KHÔNG CẦN CHỜ CASTING TIME
-        if (currentSpellData.isManualToggle && player.SpellController.toggleStates[slotIndex])
+        // CHỐT CHẶN: Nếu State bị gọi khi Toggle ĐANG BẬT -> Tắt đi và thoát ngay
+        if (currentSpellData.isManualToggle && player.PSpellController.toggleStates[slotIndex])
         {
-            if (currentSpellData.isSelfTargeted) player.SpellController.ToggleSpell(slotIndex, player.gameObject);
-            else player.SpellController.ToggleSpell(slotIndex, null);
-            
+            TurnOffToggle();
             hasCast = true;
             FinishAttack();
+            stateMachine.ChangeState(player.IdleState);
             return;
         }
     }
@@ -39,31 +38,77 @@ public class PlayerCastingSpellState : PlayerAttackState
     {
         base.LogicUpdate();
 
-        if (player.CC != null && player.CC.isStunned) return;
+        // 1. NẾU BỊ CHOÁNG -> TẮT CHIÊU
+        if (player.CC != null && player.CC.isStunned)
+        {
+            if (hasCast && currentSpellData.isManualToggle && player.PSpellController.toggleStates[slotIndex])
+            {
+                TurnOffToggle();
+            }
+            return;
+        }
 
+        // 2. HỦY CHIÊU HOẶC NGẮT TOGGLE BẰNG LƯỚT (DASH)
         if (player.InputHandler.DashInput && player.CanDash())
         {
+            if (hasCast && currentSpellData.isManualToggle && player.PSpellController.toggleStates[slotIndex])
+            {
+                TurnOffToggle();
+            }
             player.InputHandler.UsedDashInput(); 
             stateMachine.ChangeState(player.DashState); 
             return; 
         }
 
+        // ========================================================
+        // 3. XỬ LÝ KHI TOGGLE ĐANG HOẠT ĐỘNG (ĐỨNG IM VẬN CÔNG)
+        // ========================================================
+        if (hasCast && currentSpellData.isManualToggle)
+        {
+            // A. Tự động thoát nếu hết Mana (Toggle đã bị PlayerSpellController tắt)
+            if (!player.PSpellController.toggleStates[slotIndex])
+            {
+                stateMachine.ChangeState(player.IdleState);
+                return;
+            }
+
+            // B. Chờ người chơi bấm phím kỹ năng MỘT LẦN NỮA để tắt
+            bool isInputPressedAgain = false;
+            if (slotIndex == 0 && player.InputHandler.Spell1Input) isInputPressedAgain = true;
+            else if (slotIndex == 1 && player.InputHandler.Spell2Input) isInputPressedAgain = true;
+            else if (slotIndex == 2 && player.InputHandler.Spell3Input) isInputPressedAgain = true;
+            else if (slotIndex == 3 && player.InputHandler.Spell4Input) isInputPressedAgain = true;
+            else if (slotIndex == 4 && player.InputHandler.Spell5Input) isInputPressedAgain = true;
+
+            if (isInputPressedAgain)
+            {
+                player.InputHandler.UseSpellInputByIndex(slotIndex); // Xóa bộ nhớ phím
+                TurnOffToggle();
+                stateMachine.ChangeState(player.IdleState);
+                return;
+            }
+            
+            // C. NẾU CHƯA BẤM GÌ -> GIỮ KẸT Ở STATE NÀY ĐỂ NHÂN VẬT ĐỨNG IM
+            return; 
+        }
+
+        // ========================================================
+        // 4. QUÁ TRÌNH GỒNG (CASTING TIME) VÀ BẮN
+        // ========================================================
         if (!hasCast)
         {
+            // Xử lý trừ Mana khi đang gồng
             if (currentSpellData.castingTime > 0)
             {
                 float manaDrainPerFrame = (currentSpellData.manaCost / currentSpellData.castingTime) * Time.deltaTime;
-                
                 if (manaDrainedThisCast + manaDrainPerFrame > currentSpellData.manaCost)
                 {
                     manaDrainPerFrame = currentSpellData.manaCost - manaDrainedThisCast;
                 }
 
-                // GỌI COMPONENT MANA: Truyền số âm để trừ Mana
                 player.Mana.RestoreMana(-manaDrainPerFrame);
                 manaDrainedThisCast += manaDrainPerFrame;
 
-                // KIỂM TRA TỪ COMPONENT MANA
                 if (player.Mana.currentMana <= 0)
                 {
                     stateMachine.ChangeState(player.IdleState);
@@ -71,41 +116,55 @@ public class PlayerCastingSpellState : PlayerAttackState
                 }
             }
 
+            // Đã gồng xong
             if (Time.time >= (startTime + currentSpellData.castingTime))
             {
+                // Bù trừ phần Mana lẻ còn thiếu
                 float leftoverMana = currentSpellData.manaCost - manaDrainedThisCast;
-                if (leftoverMana > 0)
-                {
-                    player.Mana.RestoreMana(-leftoverMana);
-                }
+                if (leftoverMana > 0) player.Mana.RestoreMana(-leftoverMana);
 
+                // NẾU LÀ PHÉP TOGGLE: Bật chiêu và GIỮ LẠI State
                 if (currentSpellData.isManualToggle)
                 {
                     if (currentSpellData.isSelfTargeted || currentSpellData.hasAura)
-                    {
-                        player.SpellController.ToggleSpell(slotIndex, player.gameObject);
-                    }
+                        player.PSpellController.ToggleSpell(slotIndex, player.gameObject);
                     else 
                     {
-                        // Chỉ những phép Toggle dạng bắn đạn liên thanh mới gọi thêm CastSpell phát đầu
-                        player.SpellController.ToggleSpell(slotIndex, null);
+                        player.PSpellController.ToggleSpell(slotIndex, null);
                         CastSpell(); 
                     }
+                    
+                    hasCast = true; 
+                    // BỎ QUA ChangeState Ở ĐÂY ĐỂ ĐỨNG IM CẦM CHIÊU
                 }
                 else
                 {
-                    CastSpell(); // Phép bắn bình thường
+                    // NẾU LÀ PHÉP BẮN 1 LẦN: Bắn đạn và THOÁT State
+                    CastSpell(); 
+                    hasCast = true;
+                    FinishAttack();
+
+                    if (player.InputHandler.movementInput != Vector2.zero)
+                        stateMachine.ChangeState(player.MoveState);
+                    else
+                        stateMachine.ChangeState(player.IdleState);
                 }
-                
-                hasCast = true;
-                FinishAttack();
             }
         }
     }
 
+    // Hàm tiện ích để gọi tắt Toggle cho gọn code
+    private void TurnOffToggle()
+    {
+        if (currentSpellData.isSelfTargeted || currentSpellData.hasAura) 
+            player.PSpellController.ToggleSpell(slotIndex, player.gameObject);
+        else 
+            player.PSpellController.ToggleSpell(slotIndex, null);
+    }
+
     private void CastSpell()
     {
-        player.SpellController.TriggerCooldown(slotIndex);
+        player.PSpellController.TriggerCooldown(slotIndex);
 
         int count = currentSpellData.spawnCount > 0 ? currentSpellData.spawnCount : 1;
         bool isSingleInstanceSpell = (currentSpellData.isSelfTargeted && !currentSpellData.isProjectile && !currentSpellData.isLaser) 
@@ -116,7 +175,6 @@ public class PlayerCastingSpellState : PlayerAttackState
             count = 1;
         }
 
-        // 2. TÍNH TOÁN VỊ TRÍ GỐC
         Vector3 baseSpawnPos = player.attackPosition.position;
         if (currentSpellData.isSpawnAtMouse)
         {
@@ -126,7 +184,6 @@ public class PlayerCastingSpellState : PlayerAttackState
                 : mouseWorldPos;
         }
 
-        // 3. SINH ĐẠN VÀ RẢI RÁC
         if (ObjectPoolManager.Instance != null)
         {
             for (int i = 0; i < count; i++)
@@ -134,21 +191,16 @@ public class PlayerCastingSpellState : PlayerAttackState
                 Vector3 finalSpawnPos = baseSpawnPos;
                 Vector2 castDir = currentSpellData.isSpawnAtMouse ? Vector2.zero : shootDirection;
 
-                // RẢI MÌN BÒ XUNG QUANH CHUỘT
                 if (currentSpellData.isSpawnAtMouse && count > 1 && !currentSpellData.isProjectile)
                 {
                     Vector2 randomOffset = Random.insideUnitCircle * currentSpellData.orbitRadius;
                     finalSpawnPos += (Vector3)randomOffset;
                 }
                 
-                // ==========================================
-                // XỬ LÝ ĐỘI HÌNH BẮN ĐẠN (SPREAD / LINE)
-                // ==========================================
                 if (!currentSpellData.isSpawnAtMouse && currentSpellData.isProjectile && count > 1)
                 {
                     if (currentSpellData.multiShotPattern == MultiShotPattern.Spread)
                     {
-                        // Hình quạt: Chia đều góc
                         float startAngle = -currentSpellData.multiShotAngle / 2f;
                         float step = count > 1 ? currentSpellData.multiShotAngle / (count - 1) : 0;
                         float angle = startAngle + (step * i);
@@ -156,12 +208,10 @@ public class PlayerCastingSpellState : PlayerAttackState
                     }
                     else if (currentSpellData.multiShotPattern == MultiShotPattern.TrailingLine)
                     {
-                        // Thẳng hàng nối đuôi: Kéo lùi vị trí đẻ đạn về phía sau
                         finalSpawnPos -= (Vector3)(shootDirection * (currentSpellData.multiShotSpacing * i));
                     }
                     else if (currentSpellData.multiShotPattern == MultiShotPattern.ParallelLine)
                     {
-                        // Song song dàn ngang: Dịch chuyển sang hai bên hướng bắn
                         Vector2 right = Vector2.Perpendicular(shootDirection) * -1f;
                         float offset = (i - (count - 1) / 2f) * currentSpellData.multiShotSpacing;
                         finalSpawnPos += (Vector3)(right * offset);
@@ -172,7 +222,6 @@ public class PlayerCastingSpellState : PlayerAttackState
                 
                 if (spellObj.TryGetComponent(out SpellController spellScript))
                 {
-                    // Truyền shootDirection (Hướng ngắm thẳng) làm rawDir để đạn Gatling dùng
                     spellScript.Initialize(castDir, i, count, shootDirection);
                 }   
             }
