@@ -15,7 +15,7 @@ MonoBehaviour:
   upgradeCategory: 0
   isUnique: 1
   maxUpgrade: 0
-  upgradeCost: 1
+  upgradeCost: 3
   upgradeName: Gatling Trait
   description: Fire 6 additional projectiles but reduced projectiles damage by 80%
     and 5 inaccurate

@@ -15,9 +15,9 @@ MonoBehaviour:
   upgradeCategory: 1
   isUnique: 1
   maxUpgrade: 0
-  upgradeCost: 1
+  upgradeCost: 0
   upgradeName: Spell Spedd Up
-  description: 'Increase spell speed by 1.5, not available for some spells
+  description: 'Increase spell speed by 1, not available for some spells
 
 '
   icon: {fileID: 21300000, guid: d8174bcaf28a3ed419dd9f2b87b36e38, type: 3}

@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject sleepVfxPrefab;
     [SerializeField] private GameObject healVfxPrefab;
     [SerializeField] private GameObject slowVfxPrefab;
+    [SerializeField] private GameObject hasteVfxPrefab;
+    [SerializeField] private GameObject freezeVfxPrefab;
+    [SerializeField] private GameObject markedVfxPrefab;
+    [SerializeField] private GameObject shieldVfxPrefab;
 
     [Header("Global UI VFX")]
     public GameObject damageTextPrefab;
@@ -39,6 +43,35 @@ public class GameManager : MonoBehaviour
         {
             floatingText.Setup(damage, color);
         }
+    }
+    public GameObject SpawnSpeedVFX(Transform parent, float multiplier, float heightOffset)
+    {
+        GameObject prefabToSpawn = null;
+        if (multiplier == 0f) prefabToSpawn = freezeVfxPrefab;
+        else if (multiplier < 1f) prefabToSpawn = slowVfxPrefab;
+        else if (multiplier > 1f) prefabToSpawn = hasteVfxPrefab;
+
+        if (prefabToSpawn == null) return null;
+
+        Vector3 spawnPos = parent.position + Vector3.up * heightOffset;
+        GameObject vfx = ObjectPoolManager.Instance.GetFromPool(prefabToSpawn, spawnPos, Quaternion.identity);
+        vfx.transform.SetParent(parent);
+        return vfx;
+    }
+    public GameObject SpawnDamageMultiplierVFX(Transform parent, float multiplier, float heightOffset)
+    {
+        GameObject prefabToSpawn = null;
+        
+        // Value = 1 thì prefabToSpawn vẫn là null (Không hiện gì)
+        if (multiplier > 1f) prefabToSpawn = markedVfxPrefab;
+        else if (multiplier < 1f) prefabToSpawn = shieldVfxPrefab;
+
+        if (prefabToSpawn == null) return null;
+
+        Vector3 spawnPos = parent.position + Vector3.up * heightOffset;
+        GameObject vfx = ObjectPoolManager.Instance.GetFromPool(prefabToSpawn, spawnPos, Quaternion.identity);
+        vfx.transform.SetParent(parent);
+        return vfx;
     }
     public GameObject SpawnStunVFX(Transform parent, float heightOffset)
     {

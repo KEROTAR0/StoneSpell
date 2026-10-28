@@ -12,18 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
   m_Name: Orbiting Ice
   m_EditorClassIdentifier: GameScripts::D_Spell
-  spellName: 
-  spellIcon: {fileID: 0}
-  manaCost: 10
+  spellName: Orbiting Ice
+  spellIcon: {fileID: 21300000, guid: e3bc6f2986097574b83183dcce480306, type: 3}
+  manaCost: 1
   lifeTime: 5
   castingTime: 0.3
-  cooldown: 2
+  cooldown: 0.5
   isSpawnAtMouse: 0
   maxCastRange: 8
-  isProjectile: 0
+  isProjectile: 1
   isPenetrating: 0
   isLaser: 0
-  isSelfTargeted: 0
+  isSelfTargeted: 1
   isManualToggle: 0
   inaccuracy: 0
   moveSpeed: 5
@@ -32,32 +32,39 @@ MonoBehaviour:
   laserMaxLength: 10
   laserWidth: 1
   explodeOnDespawn: 0
-  explosionRadius: 2.5
+  explosionRadius: 0.5
   isHoming: 0
   homingDetectionRadius: 8
   homingTurnSpeed: 180
   homingDelayTimer: 0.3
-  explosionVFX: {fileID: 0}
+  explosionVFX: {fileID: 8270719405292781467, guid: f3c274c2ea9536e42b8661ad12aff6c2, type: 3}
   toggleIndicatorVFX: {fileID: 0}
   isRotating: 0
   rotationSpeed: 360
   isPassThroughtHighObstacle: 0
-  canBlock: 0
-  maxBlocks: 0
+  canBlock: 1
+  maxBlocks: 1
   canReflect: 0
   hasAura: 0
   auraCheckRadius: 0
   auraTickRate: 0
-  spawnCount: 1
+  spawnCount: 3
   orbitRadius: 1.5
   orbRotationSpeed: 90
   multiShotPattern: 0
-  multiShotAngle: 30
+  multiShotAngle: 180
   multiShotSpacing: 0.5
   pullForce: 0
   knockbackForce: 0
   pushPullRadius: 0
   maxPierce: 0
   fragmentCount: 0
-  fragmentDamageMultiplier: 0.5
-  hitEffects: []
+  fragmentDamageMultiplier: 0
+  hitEffects:
+  - type: 9
+    procChance: 1
+    duration: 5
+    value: 0.5
+    tickRate: 0
+    isBuff: 0
+    vfxPrefab: {fileID: 8270719405292781467, guid: f3c274c2ea9536e42b8661ad12aff6c2, type: 3}

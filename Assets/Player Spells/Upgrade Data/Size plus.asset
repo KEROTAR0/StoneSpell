@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2160e5dbfe905149a9af954b336279e, type: 3}
   m_Name: Size plus
   m_EditorClassIdentifier: GameScripts::D_Upgrade
-  upgradeCategory: 0
+  upgradeCategory: 1
   isUnique: 1
   maxUpgrade: 3
   upgradeCost: 1

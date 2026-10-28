@@ -4642,7 +4642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpellController
   equippedSpellPrefabs:
   - {fileID: 3096916757620853090, guid: 64aff26500c69fa458d5ee09e76db815, type: 3}
-  - {fileID: 5026741589083801411, guid: d8a5cafa13e29df47985f4d2919809c9, type: 3}
+  - {fileID: 1500414760482316006, guid: a705ea735efbc1f458320fe7656c1b8a, type: 3}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -27463,6 +27463,10 @@ MonoBehaviour:
   sleepVfxPrefab: {fileID: 2860926418365774488, guid: a11921c5b0430c9448caa7e9b19f8663, type: 3}
   healVfxPrefab: {fileID: 2627941269065692918, guid: ae36c43c77fe5ea44a6cecf6b22aa6e2, type: 3}
   slowVfxPrefab: {fileID: 5868586001970382911, guid: 82b2fdbbf48a3b14fafa690204fca542, type: 3}
+  hasteVfxPrefab: {fileID: 1127326781523620416, guid: 3fbe8e8a6af5f864a89cf2e621381f90, type: 3}
+  freezeVfxPrefab: {fileID: 4700414792535289365, guid: 864f1800e5753c248a38827cc46f7900, type: 3}
+  markedVfxPrefab: {fileID: 2012184978741342708, guid: b2b27af260bd72444aaebb86b83b334b, type: 3}
+  shieldVfxPrefab: {fileID: 4404606538251088012, guid: 16b007d2a1bdef84fb77bce68183a399, type: 3}
   damageTextPrefab: {fileID: 8899764411280041286, guid: ada1d76ad03db6f4eb56a64e44835bc6, type: 3}
 --- !u!4 &2094396116
 Transform:
@@ -27541,6 +27545,8 @@ MonoBehaviour:
   - {fileID: 8593318080321558633, guid: 1d8a739a7465d8e42919b723f4611c2d, type: 3}
   - {fileID: 5805104165631598183, guid: f34e5463427a6794b8c8b79d5c48a183, type: 3}
   - {fileID: 2560549786875120092, guid: 7512ed43f328c134e95739d3dfebe744, type: 3}
+  - {fileID: 5026741589083801411, guid: d8a5cafa13e29df47985f4d2919809c9, type: 3}
+  - {fileID: 2241419460842617233, guid: ea49a0de6e0f19f43992cb251b40fffe, type: 3}
   upgradeCards:
   - {fileID: 636162987}
   - {fileID: 1779486514}

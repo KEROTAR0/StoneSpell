@@ -137,7 +137,8 @@ public class EnemyController : MonoBehaviour
     {
         if (aiPath != null && CC != null)
         {
-             aiPath.maxSpeed = entityData.movementSpeed * CC.moveSpeedMultiplier;
+            float safeMultiplier = Mathf.Max(0.0001f, CC.moveSpeedMultiplier);
+            aiPath.maxSpeed = entityData.movementSpeed * safeMultiplier;
         }
 
         if (!CC.isStunned)
@@ -298,6 +299,8 @@ public class EnemyController : MonoBehaviour
 
     public virtual void UpdateFacingFromPathfinding(Vector2 moveDirection)
     {
+        if (CC != null && CC.moveSpeedMultiplier == 0f) return; 
+
         if (moveDirection.sqrMagnitude > 0.01f)
         {
             facingDirection = moveDirection.normalized;
@@ -307,6 +310,8 @@ public class EnemyController : MonoBehaviour
 
     public void CheckIfShouldFlip(float xInput)
     {
+        if (CC != null && CC.moveSpeedMultiplier == 0f) return;
+
         if ((xInput > 0.01f && FacingDirX == -1) || (xInput < -0.01f && FacingDirX == 1))
         {
             FacingDirX *= -1;

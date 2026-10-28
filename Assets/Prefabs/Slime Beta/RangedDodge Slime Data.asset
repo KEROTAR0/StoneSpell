@@ -32,7 +32,7 @@ MonoBehaviour:
   spellDetectionRadius: 2
   meleeAttackPrefab: {fileID: 0}
   rangedAttackPrefab: {fileID: 8739397420522011886, guid: 809be1dba7e42774dba77ebaaaefeabd, type: 3}
-  meleeCooldown: 10
+  meleeCooldown: 2
   rangedCooldown: 3.5
   canSelfDestruct: 1
   knockbackForce: 1

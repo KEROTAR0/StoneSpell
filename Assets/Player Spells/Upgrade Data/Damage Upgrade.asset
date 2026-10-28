@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: GameScripts::D_Upgrade
   upgradeCategory: 0
   isUnique: 0
-  maxUpgrade: 5
+  maxUpgrade: 2
   upgradeCost: 1
   upgradeName: Power up
-  description: Increase 1 damage for all spells, not available for DoT, max 5 upgrades
+  description: Increase 2 damage for all spells, not available for DoT, max 2 upgrades
   icon: {fileID: 21300000, guid: 5b571b135e7896d4cac2bf690f889df1, type: 3}
   targetSpecificSpell: {fileID: 0}
   categoryFilter: -1

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2db9f964b2637b4ca6c947e20dc19ed, type: 3}
   m_Name: Storm Bullet
   m_EditorClassIdentifier: GameScripts::D_Spell
-  spellName: Parabola Bullets
+  spellName: Storm Bullet
   spellIcon: {fileID: -5678556934015464833, guid: 9fdbdcc12ff3b0c4fad42d5c872d699d, type: 3}
   manaCost: 1
   lifeTime: 20
@@ -54,6 +54,12 @@ MonoBehaviour:
   multiShotPattern: 4
   multiShotAngle: 0
   multiShotSpacing: 0
+  pullForce: 0
+  knockbackForce: 0
+  pushPullRadius: 0
+  maxPierce: 0
+  fragmentCount: 0
+  fragmentDamageMultiplier: 0.5
   hitEffects:
   - type: 0
     procChance: 1

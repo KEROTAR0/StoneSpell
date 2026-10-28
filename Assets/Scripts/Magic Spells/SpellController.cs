@@ -148,11 +148,17 @@ public class SpellController : MonoBehaviour
                 return; 
             }
         }
-
+        
+        float spellDamageMultiplier = 1f;
         if (target.TryGetComponent(out EffectReceiver receiver))
         {
             foreach (var effect in currentStats.activeEffects)
             {
+                if (effect.type == EffectType.DamageMultiplier && effect.duration <= 0f)
+                {
+                    spellDamageMultiplier *= effect.value;
+                    continue; // Bỏ qua, KHÔNG gửi sang EffectReceiver
+                }
                 if (isTargetingPlayer)
                 {
                     // Từ chối các loại Buff tốt (Trừ ManaRestore âm/dương tùy hệ thống của bạn)
@@ -186,7 +192,7 @@ public class SpellController : MonoBehaviour
             {
                 AttackDetails details = new AttackDetails 
                 { 
-                    damageAmount = totalFlatDamage, 
+                    damageAmount = totalFlatDamage * spellDamageMultiplier,
                     position = transform.position,
                     isDoT = false
                 };
